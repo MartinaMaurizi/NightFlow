@@ -16,23 +16,18 @@ import java.util.Locale;
 public class DashboardClientGUIView extends DashboardGUIView {
 
     public final Button logoutBtn = new Button("Log out");
-    // --- IL CAMPO DI RICERCA ORA È PUBBLICO PER ESSERE CLICCATO ---
     public final TextField searchField = new TextField();
     public Button profileBtn = new Button();
     public Button homeBtn = new Button();
     private final VBox leftColumn = new VBox(50);
     private final VBox rightColumn = new VBox(50);
 
-    // Sostituisci l'inizio del buildRoot per accettare anche onProfile
     public BorderPane buildRoot(Runnable onLogout, Runnable onProfile) {
         BorderPane root = new BorderPane();
         root.setId("Dashboard-Root");
 
-        // Passiamo l'azione della navigazione alla navbar
         root.setTop(buildCustomNavbar(onLogout, onProfile));
 
-
-        // 2. Container eventi
         VBox mainContainer = new VBox(20);
         mainContainer.setPadding(new Insets(30, 50, 30, 50));
 
@@ -40,7 +35,6 @@ public class DashboardClientGUIView extends DashboardGUIView {
         titleLbl.setStyle("-fx-font-size: 26px; -fx-text-fill: #1a1a1a; -fx-font-weight: bold;");
         mainContainer.getChildren().add(titleLbl);
 
-        // 3. Colonne
         HBox columnsBox = new HBox(60);
         columnsBox.setAlignment(Pos.TOP_CENTER);
 
@@ -66,32 +60,27 @@ public class DashboardClientGUIView extends DashboardGUIView {
         nav.setPadding(new Insets(15, 30, 15, 30));
         nav.setStyle("-fx-background-color: white; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);");
 
-        // 1. SINISTRA: Logo NightFlow
         Label logo = new Label("NightFlow");
         logo.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #651fff; -fx-font-family: 'Brush Script MT', cursive;");
         logo.setMinWidth(Region.USE_PREF_SIZE);
         nav.setLeft(logo);
         BorderPane.setAlignment(logo, Pos.CENTER_LEFT);
 
-        // 2. CENTRO: Barra di ricerca (Contenitore bianco con Icona + Campo di testo)
-        HBox searchContainer = new HBox(8); // 8px di spazio tra icona e testo
+        HBox searchContainer = new HBox(8);
         searchContainer.setAlignment(Pos.CENTER_LEFT);
         searchContainer.setPrefWidth(350);
         searchContainer.setMaxWidth(350);
-        // Sfondo BIANCO e bordo rotondo
         searchContainer.setStyle("-fx-background-color: white; -fx-background-radius: 20; -fx-border-radius: 20; -fx-border-color: #651fff; -fx-padding: 4 15;");
 
-        // Caricamento dell'icona cerca.png
         ImageView searchIcon = new ImageView();
         try {
             searchIcon.setImage(new Image(getClass().getResourceAsStream("/icons/cerca.png")));
             searchIcon.setFitHeight(16);
             searchIcon.setFitWidth(16);
         } catch (Exception e) {
-            System.err.println("Icona cerca non trovata");
+            // Blocco vuoto per non sporcare la console
         }
 
-        // Il searchField (che ora è definito in alto) viene configurato
         searchField.setPromptText("Cerca");
         HBox.setHgrow(searchField, Priority.ALWAYS);
         searchField.setStyle("-fx-background-color: transparent; -fx-border-color: transparent; -fx-text-fill: #5e17eb; -fx-prompt-text-fill: #5e17eb;");
@@ -99,16 +88,14 @@ public class DashboardClientGUIView extends DashboardGUIView {
         searchContainer.getChildren().addAll(searchIcon, searchField);
         nav.setCenter(searchContainer);
 
-        // 3. DESTRA: Icone + Logout
         HBox rightBox = new HBox(15);
         rightBox.setAlignment(Pos.CENTER_RIGHT);
 
         profileBtn = createIconButton("/icons/profileButton.png");
-    // 🌟 COLLEGIAMO DIRETTAMENTE IL CLIC QUI DENTRO!
         profileBtn.setOnAction(e -> onProfile.run());
 
         homeBtn = createIconButton("/icons/homeButton.png");
-    // ... (tasto logout)
+
         logoutBtn.setText("Log out");
         logoutBtn.setPrefWidth(100);
         logoutBtn.setMinWidth(100);
@@ -140,7 +127,6 @@ public class DashboardClientGUIView extends DashboardGUIView {
         return btn;
     }
 
-
     public void updateEventList(List<EventBean> events, Consumer<EventBean> onBookClick) {
         leftColumn.getChildren().clear();
         rightColumn.getChildren().clear();
@@ -149,7 +135,6 @@ public class DashboardClientGUIView extends DashboardGUIView {
 
         boolean isLeft = true;
         for (EventBean event : events) {
-            // Passiamo l'azione alla card
             VBox card = createEventCard(event, dayFmt, monthFmt, onBookClick);
             if (isLeft) leftColumn.getChildren().add(card);
             else rightColumn.getChildren().add(card);
@@ -174,7 +159,9 @@ public class DashboardClientGUIView extends DashboardGUIView {
                 imgView.setPreserveRatio(false);
                 imageContainer.getChildren().add(imgView);
             }
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) {
+            // Nessun printStackTrace, l'immagine non viene caricata ma l'app non crasha
+        }
 
         Rectangle clip = new Rectangle(350, 160);
         clip.setArcWidth(40); clip.setArcHeight(40);
@@ -185,32 +172,53 @@ public class DashboardClientGUIView extends DashboardGUIView {
 
         VBox dateBox = new VBox(0);
         dateBox.setAlignment(Pos.CENTER);
-        dateBox.getChildren().addAll(
-                new Label(event.getDateTime().format(dayFmt)) {{ setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: black;"); }},
-                new Label(event.getDateTime().format(monthFmt).toUpperCase()) {{ setStyle("-fx-font-size: 18px; -fx-text-fill: black;"); }}
-        );
+
+        // CORREZIONE 1: Etichette data senza doppie graffe
+        Label dayLabel = new Label(event.getDateTime().format(dayFmt));
+        dayLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: black;");
+
+        Label monthLabel = new Label(event.getDateTime().format(monthFmt).toUpperCase());
+        monthLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: black;");
+
+        dateBox.getChildren().addAll(dayLabel, monthLabel);
 
         VBox detailsBox = new VBox(5);
         detailsBox.setAlignment(Pos.CENTER_LEFT);
-        detailsBox.getChildren().addAll(
-                new Label(event.getName()) {{ setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: black;"); }},
-                new Label(event.getLocation()) {{ setStyle("-fx-font-size: 12px; -fx-text-fill: #333333;"); setWrapText(true); setMaxWidth(180); }}
-        );
 
-        infoRow.getChildren().addAll(dateBox, new Region() {{ setPrefWidth(2); setMinHeight(50); setStyle("-fx-background-color: black;"); }}, detailsBox);
+        // CORREZIONE 2: Etichette dettagli senza doppie graffe
+        Label nameLabel = new Label(event.getName());
+        nameLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: black;");
+
+        Label locationLabel = new Label(event.getLocation());
+        locationLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #333333;");
+        locationLabel.setWrapText(true);
+        locationLabel.setMaxWidth(180);
+
+        detailsBox.getChildren().addAll(nameLabel, locationLabel);
+
+        // CORREZIONE 3: Region separatore senza doppie graffe
+        Region separator = new Region();
+        separator.setPrefWidth(2);
+        separator.setMinHeight(50);
+        separator.setStyle("-fx-background-color: black;");
+
+        infoRow.getChildren().addAll(dateBox, separator, detailsBox);
 
         Button bookBtn = new Button("PRENOTA BIGLIETTO");
         bookBtn.setPrefWidth(250);
         bookBtn.setStyle("-fx-background-color: #651fff; -fx-text-fill: white; -fx-background-radius: 20; -fx-cursor: hand;");
 
-        // 🌟 ECCO IL COLLEGAMENTO: Quando clicco, chiamo la funzione passata dal Controller!
         bookBtn.setOnAction(e -> onBookClick.accept(event));
 
         Button editBtn = new Button("MODIFICA PRENOTAZIONE");
         editBtn.setPrefWidth(250);
         editBtn.setStyle("-fx-background-color: #651fff; -fx-text-fill: white; -fx-background-radius: 20; -fx-cursor: hand;");
 
-        card.getChildren().addAll(imageContainer, infoRow, new Label("Ingresso in lista") {{ setStyle("-fx-text-fill: black;"); }}, bookBtn, editBtn);
+        // CORREZIONE 4: Etichetta lista senza doppie graffe
+        Label listLabel = new Label("Ingresso in lista");
+        listLabel.setStyle("-fx-text-fill: black;");
+
+        card.getChildren().addAll(imageContainer, infoRow, listLabel, bookBtn, editBtn);
         return card;
     }
 
