@@ -59,7 +59,6 @@ public class ViewEventsGUI {
         stage.show();
     }
 
-    // 🌟 Rimosso 'organizerId' inutilizzato dalla firma del metodo
     private void confirmDelete(EventBean eventBean) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Conferma Eliminazione");
@@ -82,5 +81,6 @@ public class ViewEventsGUI {
             }
         });
     }
+
 
 }

@@ -10,15 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EventDAODB implements EventDAO {
-
     private static final String FIND_BY_ID =
-            "SELECT * FROM events WHERE id = ?";
+            "SELECT id, organizer_id, name, description, date_time, location, local_name, total_capacity, available_tickets, price FROM events WHERE id = ?";
 
     private static final String GET_ALL_UPCOMING =
-            "SELECT * FROM events WHERE date_time > NOW() ORDER BY date_time ASC";
+            "SELECT id, organizer_id, name, description, date_time, location, local_name, total_capacity, available_tickets, price FROM events WHERE date_time > NOW() ORDER BY date_time ASC";
 
     private static final String FIND_BY_ORGANIZER =
-            "SELECT * FROM events WHERE organizer_id = ? ORDER BY date_time DESC";
+            "SELECT id, organizer_id, name, description, date_time, location, local_name, total_capacity, available_tickets, price FROM events WHERE organizer_id = ? ORDER BY date_time DESC";
 
     private static final String INSERT_EVENT =
             "INSERT INTO events (organizer_id, name, description, date_time, location, total_capacity, available_tickets, price) " +
@@ -165,9 +164,9 @@ public class EventDAODB implements EventDAO {
 
     @Override
     public List<Event> findByLocalName(String localName) throws DAOException {
-        // Implementazione necessaria perché presente nell'interfaccia
         List<Event> result = new ArrayList<>();
-        String sql = "SELECT * FROM events WHERE local_name = ?";
+        String sql = "SELECT id, organizer_id, name, description, date_time, location, local_name, total_capacity, available_tickets, price FROM events WHERE local_name = ?";
+
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, localName);

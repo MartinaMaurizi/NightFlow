@@ -76,39 +76,43 @@ public class BookingDAOFile extends AbstractBookingDAO {
 
     @Override
     public List<Booking> findUpcomingByClient(int clientId) throws DAOException {
+        LocalDateTime now = LocalDateTime.now(Clock.systemDefaultZone());
         return identityMap.stream()
                 .filter(b -> b.getClient() != null && b.getClient().getId() == clientId
                         && b.getStatus() == BookingStatus.CONFIRMED
-                        && b.getEvent().getDateTime().isAfter(LocalDateTime.now()))
+                        && b.getEvent().getDateTime().isAfter(now))
                 .toList();
     }
 
     @Override
     public List<Booking> findPastByClient(int clientId) throws DAOException {
+        LocalDateTime now = LocalDateTime.now(Clock.systemDefaultZone());
         return identityMap.stream()
                 .filter(b -> b.getClient() != null && b.getClient().getId() == clientId
                         && b.getStatus() == BookingStatus.CONFIRMED
-                        && b.getEvent().getDateTime().isBefore(LocalDateTime.now()))
+                        && b.getEvent().getDateTime().isBefore(now))
                 .toList();
     }
 
     @Override
     public List<Booking> findCompletedByClientAndOrganizer(int clientId, int organizerId) throws DAOException {
+        LocalDateTime now = LocalDateTime.now(Clock.systemDefaultZone());
         return identityMap.stream()
                 .filter(b -> b.getClient() != null && b.getClient().getId() == clientId
                         && b.getEvent() != null && b.getEvent().getOrganizerId() == organizerId
                         && b.getStatus() == BookingStatus.CONFIRMED
-                        && b.getEvent().getDateTime().isBefore(LocalDateTime.now()))
+                        && b.getEvent().getDateTime().isBefore(now))
                 .toList();
     }
 
     @Override
     public List<Booking> findUpcomingByClientAndOrganizer(int clientId, int organizerId) throws DAOException {
+        LocalDateTime now = LocalDateTime.now(Clock.systemDefaultZone());
         return identityMap.stream()
                 .filter(b -> b.getClient() != null && b.getClient().getId() == clientId
                         && b.getEvent() != null && b.getEvent().getOrganizerId() == organizerId
                         && b.getStatus() == BookingStatus.CONFIRMED
-                        && b.getEvent().getDateTime().isAfter(LocalDateTime.now()))
+                        && b.getEvent().getDateTime().isAfter(now))
                 .toList();
     }
 
@@ -135,13 +139,18 @@ public class BookingDAOFile extends AbstractBookingDAO {
             Type listType = new TypeToken<List<Booking>>() {}.getType();
             List<Booking> loaded = gson.fromJson(reader, listType);
             return loaded != null ? loaded : new ArrayList<>();
-        } catch (IOException e) { return new ArrayList<>(); }
+        } catch (IOException e) {
+            AppLogger.logError("Errore lettura file JSON: " + e.getMessage());
+            return new ArrayList<>();
+        }
     }
 
     private void saveToFile() {
         try (Writer writer = new FileWriter(FILE_PATH)) {
             gson.toJson(identityMap, writer);
-        } catch (IOException e) { AppLogger.logError("Errore scrittura file JSON: " + e.getMessage()); }
+        } catch (IOException e) {
+            AppLogger.logError("Errore scrittura file JSON: " + e.getMessage());
+        }
     }
 
     private void updateEventTickets(int eventId, boolean increment) {
@@ -154,6 +163,8 @@ public class BookingDAOFile extends AbstractBookingDAO {
             events.stream().filter(e -> e.getId() == eventId).findFirst()
                     .ifPresent(e -> e.setAvailableTickets(e.getAvailableTickets() + (increment ? 1 : -1)));
             try (Writer writer = new FileWriter(file)) { gson.toJson(events, writer); }
-        } catch (IOException e) { AppLogger.logError("Errore aggiornamento eventi JSON: " + e.getMessage()); }
+        } catch (IOException e) {
+            AppLogger.logError("Errore aggiornamento eventi JSON: " + e.getMessage());
+        }
     }
 }

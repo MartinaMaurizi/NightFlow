@@ -11,11 +11,9 @@ import java.util.List;
 
 public class ClientDAODB implements ClientDAO {
 
-    // Assumiamo che la tabella degli utenti si chiami "users" e il ruolo sia "CLIENT"
     private static final String FIND_BY_ID =
             "SELECT id, name, surname, email FROM users WHERE id = ? AND role = 'CLIENT'";
 
-    // Recupera tutti i clienti che hanno prenotato un evento gestito da uno specifico organizzatore
     private static final String GET_BY_ORGANIZER =
             "SELECT DISTINCT u.id, u.name, u.surname, u.email " +
                     "FROM users u " +
@@ -23,16 +21,6 @@ public class ClientDAODB implements ClientDAO {
                     "JOIN events e ON b.event_id = e.id " +
                     "WHERE e.organizer_id = ? " +
                     "ORDER BY u.name";
-
-    // Tabella ponte per salvare gli eventi preferiti del cliente
-    private static final String ADD_FAVOURITE_EVENT =
-            "INSERT IGNORE INTO client_favourite_event (client_id, event_id) VALUES (?, ?)";
-
-    private static final String REMOVE_FAVOURITE_EVENT =
-            "DELETE FROM client_favourite_event WHERE client_id = ? AND event_id = ?";
-
-    private static final String IS_FAVOURITE_EVENT =
-            "SELECT COUNT(*) FROM client_favourite_event WHERE client_id = ? AND event_id = ?";
 
     @Override
     public Client findById(int id) throws DAOException {
@@ -68,7 +56,6 @@ public class ClientDAODB implements ClientDAO {
     }
 
     private Client mapToClient(ResultSet rs) throws SQLException {
-        // La password non serve per le operazioni ordinarie, viene messa a null
         return new Client(
                 rs.getInt("id"),
                 rs.getString("name"),
