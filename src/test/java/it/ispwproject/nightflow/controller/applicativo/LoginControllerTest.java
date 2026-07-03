@@ -24,7 +24,7 @@ class LoginControllerTest {
     void setup() {
         // Possiamo testare il controller in modalità DEMO (InMemory)
         // per isolare la logica di business dal database reale
-        DAOFactory.setPersistence(DAOFactory.DEMO);
+        DAOFactory.setPersistence(DAOFactory.MEMORY);
         loginController = new LoginController();
     }
 
