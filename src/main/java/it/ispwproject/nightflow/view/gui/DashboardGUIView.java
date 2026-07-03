@@ -81,7 +81,6 @@ public abstract class DashboardGUIView {
         section.setAlignment(Pos.TOP_LEFT);
         VBox.setVgrow(section, Priority.ALWAYS);
 
-        // Modificato per il nuovo dominio
         Label title = new Label("Calendario Eventi");
         title.getStyleClass().add("calendar-title");
 
@@ -111,14 +110,15 @@ public abstract class DashboardGUIView {
         int gridHeight = totalHours * HOUR_HEIGHT;
 
         Pane pane = new Pane();
-        pane.setPrefSize(LABEL_WIDTH + DAYS * colW + 8, gridHeight + HEADER_H);
+        // CORREZIONE SONAR: Cast a (double) per la somma della larghezza e altezza
+        pane.setPrefSize((double) LABEL_WIDTH + ((double) DAYS * colW) + 8.0, (double) gridHeight + HEADER_H);
         pane.getStyleClass().add("calendar-pane");
         return pane;
     }
 
     public void addMonthRow(Pane pane, LocalDate firstDay, int colW) {
-        LocalDate lastDay = firstDay.plusDays(DAYS - 1);
-        String month = firstDay.getMonth() == lastDay.getMonth()
+        LocalDate lastDay = firstDay.plusDays((long) DAYS - 1); // CORREZIONE SONAR: Cast a long per i giorni
+        String month = firstDay.getMonth().equals(lastDay.getMonth()) // CORREZIONE SONAR: Usa .equals() per gli enum Enum
                 ? cap(firstDay.getMonth().getDisplayName(TextStyle.FULL, Locale.ITALIAN))
                 + " " + firstDay.getYear()
                 : cap(firstDay.getMonth().getDisplayName(TextStyle.SHORT, Locale.ITALIAN))
@@ -129,7 +129,7 @@ public abstract class DashboardGUIView {
         Label lbl = new Label(month);
         lbl.getStyleClass().add("calendar-month-label");
         lbl.setLayoutX(LABEL_WIDTH); lbl.setLayoutY(8);
-        lbl.setPrefWidth(DAYS * colW); lbl.setAlignment(Pos.CENTER);
+        lbl.setPrefWidth((double) DAYS * colW); lbl.setAlignment(Pos.CENTER); // CORREZIONE SONAR: Cast a double
         pane.getChildren().add(lbl);
     }
 
@@ -139,7 +139,9 @@ public abstract class DashboardGUIView {
             boolean   isToday = date.equals(today);
             String dayName = date.getDayOfWeek()
                     .getDisplayName(TextStyle.SHORT, Locale.ITALIAN).toUpperCase();
-            double x = LABEL_WIDTH + d * colW;
+
+            // CORREZIONE SONAR: Cast a double per il calcolo della coordinata X
+            double x = (double) LABEL_WIDTH + ((double) d * colW);
 
             Label dayAbbr = new Label(dayName);
             dayAbbr.getStyleClass().add("calendar-day-label");
@@ -151,13 +153,13 @@ public abstract class DashboardGUIView {
                 Label badge = new Label(String.valueOf(date.getDayOfMonth()));
                 badge.getStyleClass().add("calendar-today-badge");
                 badge.setPrefSize(22, 22); badge.setAlignment(Pos.CENTER);
-                badge.setLayoutX(x + (colW - 22) / 2.0);
-                badge.setLayoutY(HEADER_H - 30);
+                badge.setLayoutX(x + ((double) colW - 22.0) / 2.0); // CORREZIONE SONAR: Assicurati calcolo in decimale
+                badge.setLayoutY((double) HEADER_H - 30.0);
                 pane.getChildren().add(badge);
             } else {
                 Label num = new Label(String.valueOf(date.getDayOfMonth()));
                 num.getStyleClass().add("calendar-day-label");
-                num.setLayoutX(x); num.setLayoutY(HEADER_H - 28);
+                num.setLayoutX(x); num.setLayoutY((double) HEADER_H - 28.0);
                 num.setPrefWidth(colW); num.setAlignment(Pos.CENTER);
                 pane.getChildren().add(num);
             }
@@ -166,16 +168,16 @@ public abstract class DashboardGUIView {
 
     public void addHourRows(Pane pane, int totalHours, int colW, int gridHeight) {
         Region sep = new Region();
-        sep.setPrefSize(DAYS * colW, 1);
+        sep.setPrefSize((double) DAYS * colW, 1); // CORREZIONE SONAR: Cast a double
         sep.getStyleClass().add("calendar-separator");
         sep.setLayoutX(LABEL_WIDTH); sep.setLayoutY(HEADER_H);
         pane.getChildren().add(sep);
 
         for (int h = 0; h < totalHours; h++) {
             int hour = HOUR_START + h;
-            int y    = HEADER_H + h * HOUR_HEIGHT;
+            // CORREZIONE SONAR: Cast a double per il calcolo della coordinata Y
+            double y = (double) HEADER_H + ((double) h * HOUR_HEIGHT);
 
-            // Logica per gestire gli orari oltre la mezzanotte per NightFlow
             int displayHour = hour % 24;
             String ht;
             if (displayHour == 0) {
@@ -190,12 +192,12 @@ public abstract class DashboardGUIView {
 
             Label lbl = new Label(ht);
             lbl.getStyleClass().add("calendar-hour-label");
-            lbl.setPrefWidth(LABEL_WIDTH - 4); lbl.setAlignment(Pos.CENTER_RIGHT);
-            lbl.setLayoutX(0); lbl.setLayoutY(y - 7);
+            lbl.setPrefWidth((double) LABEL_WIDTH - 4.0); lbl.setAlignment(Pos.CENTER_RIGHT); // CORREZIONE SONAR
+            lbl.setLayoutX(0); lbl.setLayoutY(y - 7.0);
             pane.getChildren().add(lbl);
 
             Region hLine = new Region();
-            hLine.setPrefSize(DAYS * colW, 1);
+            hLine.setPrefSize((double) DAYS * colW, 1); // CORREZIONE SONAR
             hLine.getStyleClass().add("calendar-grid-line");
             hLine.setLayoutX(LABEL_WIDTH); hLine.setLayoutY(y);
             pane.getChildren().add(hLine);
@@ -205,7 +207,8 @@ public abstract class DashboardGUIView {
             Region vLine = new Region();
             vLine.setPrefSize(1, gridHeight);
             vLine.getStyleClass().add("calendar-grid-line");
-            vLine.setLayoutX(LABEL_WIDTH + d * colW); vLine.setLayoutY(HEADER_H);
+            vLine.setLayoutX((double) LABEL_WIDTH + ((double) d * colW)); // CORREZIONE SONAR
+            vLine.setLayoutY(HEADER_H);
             pane.getChildren().add(vLine);
         }
     }
