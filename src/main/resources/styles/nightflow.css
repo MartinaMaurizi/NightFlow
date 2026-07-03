@@ -1,0 +1,216 @@
+/* 1. Sfondo e Font Globale */
+.root {
+    -fx-background-color: linear-gradient(to right, #004aad, #cb6ce6);
+    -fx-font-family: 'Poppins';
+}
+
+/* TITOLO: Effetto Neon */
+#NightFlow-Neon {
+    -fx-font-size: 60px;
+    -fx-font-family: "Brush Script MT", cursive;
+    -fx-text-fill: white;
+    /* Ho cambiato #e040fb con #c77dff (Lilla) */
+    -fx-effect: dropshadow(gaussian, #b39eff, 20, 0.6, 0, 0);
+    -fx-padding: 0 0 15 0; /* Ridotto un po' il padding per salvare spazio verticale */
+}
+
+/* 3. CAMPI */
+.text-field, .password-field {
+    -fx-background-color: transparent;
+    -fx-border-color: #651fff;
+    -fx-border-width: 0 0 2 0;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255, 255, 255, 0.6);
+    -fx-max-width: 350px;
+}
+
+/* 4. CHECKBOX */
+.check-box {
+    -fx-text-fill: white;
+}
+.check-box .box {
+    -fx-background-color: transparent;
+    -fx-border-color: #651fff;
+    -fx-border-radius: 3px;
+}
+.check-box:selected .box {
+    -fx-background-color: #651fff;
+}
+
+/* 5. BOTTONE LOGIN */
+.button {
+    -fx-background-color: #651fff;
+    -fx-text-fill: white;
+    -fx-background-radius: 8px;
+    -fx-pref-width: 180px;
+    -fx-cursor: hand;
+    -fx-font-weight: bold; /* Poppins in grassetto sul bottone */
+}
+
+/* 6. LABEL E TESTO */
+.label {
+    -fx-text-fill: white;
+}
+
+/* 7. LINK */
+.hyperlink {
+    -fx-text-fill: #651fff;
+    -fx-underline: true;
+}
+
+/* =========================================
+   STILI SPECIFICI PER LA REGISTRAZIONE
+   ========================================= */
+
+#Registration-Root {
+    /* Sfondo lilla chiaro */
+    -fx-background-color: #f3e8ff;
+}
+
+/* Forziamo i campi della registrazione ad avere testo scuro */
+#Registration-Root .text-field,
+#Registration-Root .password-field,
+#Registration-Root .date-picker,
+#Registration-Root .combo-box {
+    -fx-text-fill: black;
+    -fx-prompt-text-fill: #757575; /* Grigio per i placeholder */
+    -fx-background-color: transparent;
+    -fx-border-color: #651fff;
+    -fx-border-width: 0 0 2 0;
+}
+
+/* Rimuoviamo il bordo interno di default da DatePicker e ComboBox */
+#Registration-Root .date-picker > .text-field,
+#Registration-Root .combo-box > .text-field,
+#Registration-Root .combo-box > .list-cell {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-text-fill: black;
+}
+
+/* Stile per la Checkbox nella pagina di registrazione */
+#Registration-Root .check-box {
+    -fx-text-fill: black;
+    -fx-underline: true; /* Lo fa sembrare un link come da foto */
+}
+
+/* =========================================
+   FIX PER IL CALENDARIO (DATEPICKER POPUP)
+   ========================================= */
+
+/* Colore del testo dei mesi e dei giorni */
+.date-picker-popup .label {
+    -fx-text-fill: black;
+}
+
+/* Ripristina le freccette del mese disabilitando l'effetto neon e le misure del tasto login */
+.date-picker-popup .button {
+    -fx-background-color: transparent;
+    -fx-text-fill: black;
+    -fx-pref-width: -1;
+    -fx-pref-height: -1;
+    -fx-effect: none;
+}
+
+.date-picker-popup .button:hover {
+    -fx-background-color: #d1c4e9;
+    -fx-effect: none;
+}
+
+/* Colore del giorno selezionato (Viola stile NightFlow) */
+.date-picker-popup .day-cell:selected {
+    -fx-background-color: #651fff;
+    -fx-text-fill: white;
+}
+
+/* Colore del giorno quando ci passi sopra con il mouse */
+.date-picker-popup .day-cell:hover {
+    -fx-background-color: #e040fb;
+    -fx-text-fill: white;
+}
+
+/* Nasconde completamente e permanentemente la colonna delle settimane */
+.date-picker-popup .week-number-cell {
+    -fx-padding: 0;
+    -fx-pref-width: 0;
+    -fx-max-width: 0;
+    -fx-min-width: 0;
+    -fx-visibility: hidden;
+}
+
+/* Rende trasparenti i pulsanti grigi di default di tendine e calendario */
+#Registration-Root .combo-box .arrow-button,
+#Registration-Root .date-picker .arrow-button {
+    -fx-background-color: transparent;
+}
+
+/* Colora le freccette dello stesso viola delle linee (#651fff) */
+#Registration-Root .combo-box .arrow,
+#Registration-Root .date-picker .arrow {
+    -fx-background-color: #651fff;
+}
+
+/* Sposta leggermente le freccette per allinearle meglio alla linea inferiore */
+#Registration-Root .combo-box,
+#Registration-Root .date-picker {
+    -fx-padding: 0 0 5 0;
+}
+
+/* =========================================
+   DASHBOARD CLIENT E SCROLLBAR
+   ========================================= */
+
+/* Stile base Dashboard */
+#Dashboard-Root {
+    -fx-background-color: #ede7f6; /* Lilla chiaro del tuo mockup */
+}
+
+/* Togliamo lo sfondo di default della ScrollPane */
+.scroll-pane, .scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* -- ScrollBar personalizzata viola chiaro e ben visibile -- */
+.scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 12px; /* Spessore della barra per renderla evidente */
+}
+
+.scroll-bar:vertical .thumb {
+    -fx-background-color: #651fff;
+    -fx-background-radius: 10px;
+}
+
+/* Colore leggermente più scuro quando ci passi il mouse sopra */
+.scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #cb6ce6;
+}
+
+.scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* Nasconde le orribili freccette di default di JavaFX in alto e in basso */
+.scroll-bar:vertical .increment-button,
+.scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+    -fx-pref-height: 0;
+}
+.scroll-bar:vertical .increment-arrow,
+.scroll-bar:vertical .decrement-arrow {
+    -fx-shape: " ";
+}
+
+/* =========================================
+   BOTTONI AZIONE PROFILO (Modifica, Prenotazioni...)
+   ========================================= */
+.profile-action-button {
+    -fx-background-color: #bbaaf2;
+    -fx-text-fill: #5e17eb;
+    -fx-background-radius: 20;
+    -fx-padding: 8 20;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-font-weight: normal; /* Disattiva il grassetto del bottone Login */
+}
