@@ -35,11 +35,30 @@ public class DashboardClientGUI {
             System.err.println("CSS non trovato");
         }
 
-        // Caricamento Dati
+// Caricamento Dati a prova di SonarCloud
         List<EventBean> eventi = new ArrayList<>();
-        eventi.add(new EventBean(1, "Jolie Club", "Desc", LocalDateTime.now(), "Via Velletri, 13, Roma", "Jolie Club", 50, 15.0));
-        eventi.add(new EventBean(2, "Jerò restaurant", "Desc", LocalDateTime.now(), "Via Torrita Tiberina, 22, Roma", "Jerò", 30, 20.0));
 
+        EventBean e1 = new EventBean();
+        e1.setId(1);
+        e1.setName("Jolie Club");
+        e1.setDescription("Desc");
+        e1.setDateTime(LocalDateTime.now());
+        e1.setLocation("Via Velletri, 13, Roma");
+        e1.setLocalName("Jolie Club");
+        e1.setAvailableTickets(50);
+        e1.setPrice(15.0);
+        eventi.add(e1);
+
+        EventBean e2 = new EventBean();
+        e2.setId(2);
+        e2.setName("Jerò restaurant");
+        e2.setDescription("Desc");
+        e2.setDateTime(LocalDateTime.now());
+        e2.setLocation("Via Torrita Tiberina, 22, Roma");
+        e2.setLocalName("Jerò");
+        e2.setAvailableTickets(30);
+        e2.setPrice(20.0);
+        eventi.add(e2);
         view.updateEventList(eventi, (EventBean event) -> {
             new BookTicketGUI(stage, event).show();
         });

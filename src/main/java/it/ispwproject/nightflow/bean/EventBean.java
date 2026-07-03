@@ -8,25 +8,14 @@ public class EventBean {
     private String description;
     private LocalDateTime dateTime;
     private String location;
-    private String localName; // Aggiunto per collegare subito il locale
+    private String localName;
     private int availableTickets;
     private double price;
 
+    // Lasciamo SOLO il costruttore vuoto, come vuole lo standard dei Bean
     public EventBean() {}
 
-    public EventBean(int id, String name, String description, LocalDateTime dateTime,
-                     String location, String localName, int availableTickets, double price) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.dateTime = dateTime;
-        this.location = location;
-        this.localName = localName;
-        this.availableTickets = availableTickets;
-        this.price = price;
-    }
-
-    // Getters e Setters
+    // --- Da qui in poi ci sono solo Getters e Setters (uguali a prima) ---
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

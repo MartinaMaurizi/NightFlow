@@ -9,7 +9,9 @@ public class TicketBean {
     private Integer minimumAge;
     private String description;
 
-    public TicketBean() {}
+    public TicketBean() {
+        // Costruttore vuoto di default, necessario per lo standard JavaBean
+    }
 
     // ─── Setters con validazione ──────────────────────────────────────────
 
