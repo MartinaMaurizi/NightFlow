@@ -52,14 +52,10 @@ public class UserController {
         if (user == null) return null;
 
         if (user instanceof Organizer org) {
-            List<String> localNames = org.getLocalNames();
-            String locale = (localNames != null && !localNames.isEmpty())
-                    ? localNames.get(0)
-                    : "Nessun locale associato";
-
             return new OrganizerBean(user.getId(), user.getName(), user.getSurname(),
-                    user.getEmail(), localNames);
+                    user.getEmail(), org.getLocalNames());
         }
+
 
         return new ClientBean(user.getId(), user.getName(), user.getSurname(), user.getEmail());
     }

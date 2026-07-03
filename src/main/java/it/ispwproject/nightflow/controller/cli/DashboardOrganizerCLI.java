@@ -6,7 +6,7 @@ import it.ispwproject.nightflow.pattern.state.CLIStateMachine;
 import it.ispwproject.nightflow.dao.ConnectionFactory;
 import it.ispwproject.nightflow.pattern.singleton.SessionManager;
 import it.ispwproject.nightflow.view.cli.DashboardOrganizerView;
-import it.ispwproject.nightflow.controller.cli.ManageParticipantsCLI;
+
 
 public class DashboardOrganizerCLI extends AbstractCLIState {
 

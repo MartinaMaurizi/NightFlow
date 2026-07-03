@@ -13,8 +13,9 @@ public class EventBean {
     private double price;
 
     // Lasciamo SOLO il costruttore vuoto, come vuole lo standard dei Bean
-    public EventBean() {}
-
+    public EventBean() {
+        // Justification: Default constructor required by JavaBean standard.
+    }
     // --- Da qui in poi ci sono solo Getters e Setters (uguali a prima) ---
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }

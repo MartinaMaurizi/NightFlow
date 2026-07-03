@@ -40,9 +40,6 @@ public class InitialCLI extends AbstractCLIState {
                     context.setState(null);
                     inputValido = true;
                 }
-                default -> {
-                    view.mostraErrore("Opzione non riconosciuta, per favore riprova.");
-                }
             }
         }
     }

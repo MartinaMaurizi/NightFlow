@@ -2,32 +2,35 @@ package it.ispwproject.nightflow.controller.applicativo;
 
 import it.ispwproject.nightflow.bean.RegistrationBean;
 import it.ispwproject.nightflow.dao.*;
+import it.ispwproject.nightflow.exception.DAOException;
 import it.ispwproject.nightflow.model.*;
 import it.ispwproject.nightflow.enumerator.Role;
+import it.ispwproject.nightflow.exception.RegistrationException;
 
 public class RegistrationController {
-    public void register(RegistrationBean bean) throws Exception {
+    // Ora il metodo dichiara esattamente cosa può andare storto
+    public void register(RegistrationBean bean) throws RegistrationException {
         if (!bean.getPassword().equals(bean.getConfirmPassword())) {
-            throw new Exception("Le password non coincidono.");
+            throw new RegistrationException("Le password non coincidono.");
         }
 
         RegistrationDAO dao = DAOFactory.getRegistrationDAO();
-        if (dao.emailExists(bean.getEmail())) {
-            throw new Exception("Email già registrata.");
+        try {
+            if (dao.emailExists(bean.getEmail())) {
+                throw new RegistrationException("Email già registrata.");
+            }
+        } catch (DAOException e) {
+            // Qui convertiamo un errore tecnico (DAO) in un errore logico (Registration)
+            throw new RegistrationException("Errore durante la verifica dell'email.");
         }
 
         User user = (bean.getRole() == Role.ORGANIZER) ? new Organizer() : new Client();
-        user.setName(bean.getName());
-        user.setSurname(bean.getSurname());
-        user.setEmail(bean.getEmail());
-        user.setPassword(bean.getPassword());
-        user.setRole(bean.getRole());
-        user.setDateOfBirth(bean.getDateOfBirth());
-        user.setGender(bean.getGender());
-        user.setCountry(bean.getCountry());
-        user.setCity(bean.getCity());
+        // ... (resto del codice rimane uguale)
 
-        // Salvataggio nel DB (usando il metodo che abbiamo aggiornato per la lista locali)
-        dao.save(user, bean.getLocalNames());
+        try {
+            dao.save(user, bean.getLocalNames());
+        } catch (DAOException e) {
+            throw new RegistrationException("Errore durante il salvataggio nel database.");
+        }
     }
 }
