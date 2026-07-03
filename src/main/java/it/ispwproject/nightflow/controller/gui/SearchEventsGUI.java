@@ -25,18 +25,16 @@ public class SearchEventsGUI {
                 (String nomeLocaleSelezionato) -> {
                     System.out.println("Hai cliccato su: " + nomeLocaleSelezionato);
 
-                    // 🌟 RISOLTO: Creiamo un evento "finto" per il locale cercato
-                    // Così la pagina BookTicket sa cosa mostrare!
-                    EventBean fintoEvento = new EventBean(
-                            99,
-                            "Serata a " + nomeLocaleSelezionato, // Nome dell'evento inventato
-                            "Descrizione evento",
-                            LocalDateTime.now().plusDays(2), // Data inventata (tra 2 giorni)
-                            "Roma",
-                            nomeLocaleSelezionato, // Nome del locale cliccato
-                            100,
-                            15.0
-                    );
+                    // 🌟 RISOLTO: Creiamo un evento "finto" usando i setter
+                    EventBean fintoEvento = new EventBean();
+                    fintoEvento.setId(99);
+                    fintoEvento.setName("Serata a " + nomeLocaleSelezionato);
+                    fintoEvento.setDescription("Descrizione evento");
+                    fintoEvento.setDateTime(LocalDateTime.now().plusDays(2));
+                    fintoEvento.setLocation("Roma");
+                    fintoEvento.setLocalName(nomeLocaleSelezionato);
+                    fintoEvento.setAvailableTickets(100);
+                    fintoEvento.setPrice(15.0);
 
                     // Ora passiamo l'evento correttamente alla schermata dei biglietti!
                     new BookTicketGUI(stage, fintoEvento).show();

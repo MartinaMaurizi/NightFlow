@@ -41,19 +41,17 @@ public class BookingCancellationObserver implements Observer {
                 booking.getClient().getEmail()
         );
 
-        // Aggiungi localName come parametro!
-        EventBean eventBean = new EventBean(
-                booking.getEvent().getId(),
-                booking.getEvent().getName(),
-                booking.getEvent().getDescription(),
-                booking.getEvent().getDateTime(),
-                booking.getEvent().getLocation(),
-                booking.getEvent().getLocalName(),
-                booking.getEvent().getAvailableTickets(),
-                booking.getEvent().getPrice()
-        );
+        // Creazione dell'EventBean a prova di SonarCloud (usando i setter)
+        EventBean eventBean = new EventBean();
+        eventBean.setId(booking.getEvent().getId());
+        eventBean.setName(booking.getEvent().getName());
+        eventBean.setDescription(booking.getEvent().getDescription());
+        eventBean.setDateTime(booking.getEvent().getDateTime());
+        eventBean.setLocation(booking.getEvent().getLocation());
+        eventBean.setLocalName(booking.getEvent().getLocalName());
+        eventBean.setAvailableTickets(booking.getEvent().getAvailableTickets());
+        eventBean.setPrice(booking.getEvent().getPrice());
 
-        // Aggiungi anche il ticketType qui, per avere 6 parametri
         return new BookingResponseBean(
                 booking.getId(),
                 booking.getStatus(),

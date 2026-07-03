@@ -25,7 +25,7 @@ public class CreateEventGUI {
                 () -> { // Azione: CREA EVENTO
                     System.out.println("Creazione evento in corso...");
 
-                    // Raccogliamo i dati (con valori di default se l'utente lascia vuoto)
+                    // Raccogliamo i dati
                     String nome = view.nameFld.getText().isEmpty() ? "Nuovo Evento" : view.nameFld.getText();
                     String locale = view.venueFld.getText().isEmpty() ? "Jolie Club" : view.venueFld.getText();
                     String desc = view.descArea.getText().isEmpty() ? "Nessuna descrizione" : view.descArea.getText();
@@ -36,29 +36,21 @@ public class CreateEventGUI {
                     int capacity = 100;
                     try { capacity = Integer.parseInt(view.capacityFld.getText()); } catch(Exception ex) {}
 
-                    // Creiamo il nuovo EventBean simulato
-                    EventBean nuovoEvento = new EventBean(
-                            999, // ID fittizio
-                            nome,
-                            desc,
-                            LocalDateTime.now().plusDays(7), // Simuliamo una data tra 7 giorni
-                            "Roma",
-                            locale,
-                            capacity,
-                            price
-                    );
+                    // 🌟 CREAZIONE A PROVA DI SONARCLOUD
+                    EventBean nuovoEvento = new EventBean();
+                    nuovoEvento.setId(999);
+                    nuovoEvento.setName(nome);
+                    nuovoEvento.setDescription(desc);
+                    nuovoEvento.setDateTime(LocalDateTime.now().plusDays(7));
+                    nuovoEvento.setLocation("Roma");
+                    nuovoEvento.setLocalName(locale);
+                    nuovoEvento.setAvailableTickets(capacity);
+                    nuovoEvento.setPrice(price);
 
                     System.out.println("✅ Evento creato con successo: " + nuovoEvento.getName());
 
-                    // Invece di tornare alla dashboard dell'organizzatore, ti porto
-                    // direttamente alla Dashboard Cliente per vedere il risultato!
                     DashboardClientGUI clientDashboard = new DashboardClientGUI(stage);
                     clientDashboard.show();
-
-                    // Opzionale: Se avessimo un database, l'evento apparirebbe da solo.
-                    // In assenza di DB, il trucco è che la DashboardClient crea sempre i
-                    // suoi eventi base nel metodo show(), quindi se volessimo aggiungerlo
-                    // dinamicamente dovremmo passarlo al controller. Per ora va benissimo così!
                 }
         ), MainGUI.WINDOW_WIDTH, MainGUI.WINDOW_HEIGHT);
 

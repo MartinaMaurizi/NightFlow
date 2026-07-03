@@ -19,27 +19,32 @@ public class BookingController {
 
     private final BookingDAO bookingDAO;
     private final EventDAO   eventDAO;
-    private final ClientDAO  clientDAO;
 
     public BookingController() {
         this.bookingDAO = DAOFactory.getBookingDAO();
         this.eventDAO   = DAOFactory.getEventDAO();
-        this.clientDAO  = DAOFactory.getClientDAO();
+    }
+
+    // --- METODO AIUTANTE: Evita il codice duplicato e usa i setter di EventBean ---
+    private EventBean createEventBean(Event event) {
+        if (event == null) return null;
+        EventBean bean = new EventBean();
+        bean.setId(event.getId());
+        bean.setName(event.getName());
+        bean.setDescription(event.getDescription());
+        bean.setDateTime(event.getDateTime());
+        bean.setLocation(event.getLocation());
+        bean.setLocalName(event.getLocalName());
+        bean.setAvailableTickets(event.getAvailableTickets());
+        bean.setPrice(event.getPrice());
+        return bean;
     }
 
     public List<EventBean> getAvailableEvents() throws DAOException {
         List<EventBean> result = new ArrayList<>();
         for (Event event : eventDAO.getAllUpcomingEvents()) {
-            result.add(new EventBean(
-                    event.getId(),
-                    event.getName(),
-                    event.getDescription(),
-                    event.getDateTime(),
-                    event.getLocation(),
-                    event.getLocalName(),
-                    event.getAvailableTickets(),
-                    event.getPrice()
-            ));
+            // Usa il metodo aiutante!
+            result.add(createEventBean(event));
         }
         return result;
     }
@@ -54,27 +59,18 @@ public class BookingController {
             throw new BookingException("Mi dispiace, i biglietti per questo evento sono esauriti!");
         }
 
-        // Recuperiamo l'utente loggato in modo sicuro
         User loggedUser = SessionManager.getInstance().getLoggedUser();
 
-        // Verifichiamo se esistono già prenotazioni per questo evento
         for (Booking b : bookingDAO.findAll()) {
-            // Se la prenotazione riguarda lo stesso evento E non è cancellata...
-            if (b.getEvent().getId() == event.getId() && b.getStatus() != BookingStatus.CANCELLED) {
-
-                // ...MA verifichiamo che non sia la prenotazione dello stesso utente (che è già in corso)
-                // Se l'ID utente è diverso, allora c'è un conflitto con un altro cliente!
-                if (loggedUser != null && b.getClient().getId() != loggedUser.getId()) {
-                    throw new BookingException("Biglietto già in fase di prenotazione o occupato!");
-                }
+            if (b.getEvent().getId() == event.getId() && b.getStatus() != BookingStatus.CANCELLED
+                    && loggedUser != null && b.getClient().getId() != loggedUser.getId()) {
+                throw new BookingException("Biglietto già in fase di prenotazione o occupato!");
             }
         }
 
         return new BookingResponseBean(
                 0, BookingStatus.PENDING, null, null,
-                new EventBean(event.getId(), event.getName(), event.getDescription(),
-                        event.getDateTime(), event.getLocation(), event.getLocalName(),
-                        event.getAvailableTickets(), event.getPrice()),
+                createEventBean(event), // Usa il metodo aiutante!
                 request.getTicketType()
         );
     }
@@ -94,7 +90,6 @@ public class BookingController {
             throw new BookingException("Mi dispiace, i biglietti per questo evento sono esauriti!");
         }
 
-        // Verifica prenotazione duplicata
         for (Booking b : bookingDAO.findByClient(client.getId())) {
             if (b.getStatus() == BookingStatus.CANCELLED) continue;
             if (b.getEvent().getId() == event.getId()) {
@@ -104,7 +99,7 @@ public class BookingController {
 
         Booking booking = new Booking(client, event);
         booking.setPaymentMethod(method);
-        booking.setTicketType(request.getTicketType()); // Salvataggio del tipo scelto
+        booking.setTicketType(request.getTicketType());
         booking.setTicketCode(TicketCodeService.generate());
 
         bookingDAO.save(booking);
@@ -115,9 +110,7 @@ public class BookingController {
         return new BookingResponseBean(
                 booking.getId(), booking.getStatus(), booking.getTicketCode(),
                 new ClientBean(client.getId(), client.getName(), client.getSurname(), client.getEmail()),
-                new EventBean(event.getId(), event.getName(), event.getDescription(),
-                        event.getDateTime(), event.getLocation(), event.getLocalName(),
-                        event.getAvailableTickets(), event.getPrice()),
+                createEventBean(event), // Usa il metodo aiutante!
                 booking.getTicketType()
         );
     }
@@ -131,7 +124,7 @@ public class BookingController {
             result.add(new BookingResponseBean(
                     booking.getId(), booking.getStatus(), booking.getTicketCode(),
                     new ClientBean(booking.getClient().getId(), booking.getClient().getName(), booking.getClient().getSurname(), booking.getClient().getEmail()),
-                    new EventBean(event.getId(), event.getName(), event.getDescription(), event.getDateTime(), event.getLocation(), event.getLocalName(), event.getAvailableTickets(), event.getPrice()),
+                    createEventBean(event), // Usa il metodo aiutante!
                     booking.getTicketType()
             ));
         }
@@ -147,7 +140,7 @@ public class BookingController {
             result.add(new BookingResponseBean(
                     booking.getId(), booking.getStatus(), booking.getTicketCode(),
                     new ClientBean(booking.getClient().getId(), booking.getClient().getName(), booking.getClient().getSurname(), booking.getClient().getEmail()),
-                    new EventBean(event.getId(), event.getName(), event.getDescription(), event.getDateTime(), event.getLocation(), event.getLocalName(), event.getAvailableTickets(), event.getPrice()),
+                    createEventBean(event), // Usa il metodo aiutante!
                     booking.getTicketType()
             ));
         }
@@ -172,13 +165,8 @@ public class BookingController {
         List<ClientBean> result = new ArrayList<>();
         List<Integer> addedClientIds = new ArrayList<>();
 
-        // Recupera tutte le prenotazioni
         for (Booking booking : bookingDAO.findAll()) {
-
-            // CAMBIO QUI: Usiamo User al posto di Client, oppure var se usi Java 10+
             User client = booking.getClient();
-
-            // Se il cliente esiste e non è ancora stato aggiunto alla lista
             if (client != null && !addedClientIds.contains(client.getId())) {
                 result.add(new ClientBean(
                         client.getId(),
@@ -186,7 +174,7 @@ public class BookingController {
                         client.getSurname(),
                         client.getEmail()
                 ));
-                addedClientIds.add(client.getId()); // Memorizziamo l'ID per non metterlo due volte
+                addedClientIds.add(client.getId());
             }
         }
         return result;
@@ -201,7 +189,7 @@ public class BookingController {
             result.add(new BookingResponseBean(
                     booking.getId(), booking.getStatus(), booking.getTicketCode(),
                     new ClientBean(booking.getClient().getId(), booking.getClient().getName(), booking.getClient().getSurname(), booking.getClient().getEmail()),
-                    new EventBean(event.getId(), event.getName(), event.getDescription(), event.getDateTime(), event.getLocation(), event.getLocalName(), event.getAvailableTickets(), event.getPrice()),
+                    createEventBean(event), // Usa il metodo aiutante!
                     booking.getTicketType()
             ));
         }

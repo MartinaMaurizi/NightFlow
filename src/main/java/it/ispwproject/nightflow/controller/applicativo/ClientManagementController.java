@@ -52,11 +52,16 @@ public class ClientManagementController {
             Event event = booking.getEvent();
             if (event == null) continue;
 
-            EventBean eventBean = new EventBean(
-                    event.getId(), event.getName(), event.getDescription(),
-                    event.getDateTime(), event.getLocation(), event.getLocalName(),
-                    event.getAvailableTickets(), event.getPrice()
-            );
+            // SOSTITUITO IL COSTRUTTORE GIGANTE CON I SETTER
+            EventBean eventBean = new EventBean();
+            eventBean.setId(event.getId());
+            eventBean.setName(event.getName());
+            eventBean.setDescription(event.getDescription());
+            eventBean.setDateTime(event.getDateTime());
+            eventBean.setLocation(event.getLocation());
+            eventBean.setLocalName(event.getLocalName());
+            eventBean.setAvailableTickets(event.getAvailableTickets());
+            eventBean.setPrice(event.getPrice());
 
             BookingResponseBean bean = new BookingResponseBean();
             bean.setId(booking.getId());

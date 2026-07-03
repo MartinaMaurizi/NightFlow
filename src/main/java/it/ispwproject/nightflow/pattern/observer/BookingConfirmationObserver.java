@@ -48,17 +48,16 @@ public class BookingConfirmationObserver implements Observer {
                 booking.getClient().getEmail()
         );
 
-        // Assicurati che EventBean sia costruito correttamente con tutti i parametri necessari
-        EventBean eventBean = new EventBean(
-                booking.getEvent().getId(),
-                booking.getEvent().getName(),
-                booking.getEvent().getDescription(),
-                booking.getEvent().getDateTime(),
-                booking.getEvent().getLocation(),
-                booking.getEvent().getLocalName(),
-                booking.getEvent().getAvailableTickets(),
-                booking.getEvent().getPrice()
-        );
+        // Creazione dell'EventBean a prova di SonarCloud (usando i setter)
+        EventBean eventBean = new EventBean();
+        eventBean.setId(booking.getEvent().getId());
+        eventBean.setName(booking.getEvent().getName());
+        eventBean.setDescription(booking.getEvent().getDescription());
+        eventBean.setDateTime(booking.getEvent().getDateTime());
+        eventBean.setLocation(booking.getEvent().getLocation());
+        eventBean.setLocalName(booking.getEvent().getLocalName());
+        eventBean.setAvailableTickets(booking.getEvent().getAvailableTickets());
+        eventBean.setPrice(booking.getEvent().getPrice());
 
         // Assicurati di passare anche il ticketType (6° parametro)
         return new BookingResponseBean(

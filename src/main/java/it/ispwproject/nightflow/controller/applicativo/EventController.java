@@ -51,10 +51,18 @@ public class EventController {
 
         List<EventBean> eventBeans = new ArrayList<>();
         for (Event e : events) {
-            eventBeans.add(new EventBean(
-                    e.getId(), e.getName(), e.getDescription(), e.getDateTime(),
-                    e.getLocation(), e.getLocalName(), e.getAvailableTickets(), e.getPrice()
-            ));
+            // 🌟 Sostituito il costruttore gigante con i metodi Set
+            EventBean bean = new EventBean();
+            bean.setId(e.getId());
+            bean.setName(e.getName());
+            bean.setDescription(e.getDescription());
+            bean.setDateTime(e.getDateTime());
+            bean.setLocation(e.getLocation());
+            bean.setLocalName(e.getLocalName());
+            bean.setAvailableTickets(e.getAvailableTickets());
+            bean.setPrice(e.getPrice());
+
+            eventBeans.add(bean);
         }
         return eventBeans;
     }

@@ -50,7 +50,6 @@ public class ManageEventsView {
         String nome = CLIRenderer.chiediCampo("Nome dell'evento: ");
         String descrizione = CLIRenderer.chiediCampo("Descrizione: ");
 
-        // Gestione inserimento data con validazione sintattica immediata
         LocalDateTime dataOra = null;
         while (dataOra == null) {
             String dataStr = CLIRenderer.chiediCampo("Data e Ora (formato GG/MM/AAAA HH:MM): ");
@@ -88,8 +87,18 @@ public class ManageEventsView {
             }
         }
 
-        // Ritorniamo l'EventBean popolato (l'ID iniziale è 0 perché verrà generato dal DB/Memory)
-        return new EventBean(0, nome, descrizione, dataOra, indirizzo, locale, biglietti, prezzo);
+        // 🌟 CREAZIONE A PROVA DI SONARCLOUD
+        EventBean newEvent = new EventBean();
+        newEvent.setId(0); // ID generato successivamente
+        newEvent.setName(nome);
+        newEvent.setDescription(descrizione);
+        newEvent.setDateTime(dataOra);
+        newEvent.setLocation(indirizzo);
+        newEvent.setLocalName(locale);
+        newEvent.setAvailableTickets(biglietti);
+        newEvent.setPrice(prezzo);
+
+        return newEvent;
     }
 
     public void mostraSuccesso(String messaggio) {
