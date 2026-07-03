@@ -26,19 +26,21 @@ public class InitialCLI extends AbstractCLIState {
 
             switch (scelta) {
                 case "1" -> {
-                    // Transizione verso Login
                     goNext(context, new LoginCLI());
                     inputValido = true;
                 }
                 case "2" -> {
-                    // Transizione verso Registrazione
                     goNext(context, new RegistrationCLI());
                     inputValido = true;
                 }
                 case "0" -> {
-                    // Uscita dall'applicazione
                     context.setState(null);
                     inputValido = true;
+                }
+                // Il default gestisce tutto ciò che non è 0, 1 o 2
+                default -> {
+                    view.mostraErrore("Scelta non valida, riprova!");
+                    // inputValido rimane false, quindi il ciclo while ricomincia
                 }
             }
         }

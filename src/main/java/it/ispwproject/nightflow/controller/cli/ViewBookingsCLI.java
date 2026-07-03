@@ -12,6 +12,7 @@ import it.ispwproject.nightflow.view.cli.ViewBookingsView;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import it.ispwproject.nightflow.util.logger.AppLogger;
 
 public class ViewBookingsCLI extends AbstractCLIState {
 
@@ -25,9 +26,14 @@ public class ViewBookingsCLI extends AbstractCLIState {
 
     @Override
     public void action(CLIStateMachine context) {
+        // Controllo di sicurezza: se utente nullo, torniamo indietro subito
+        if (SessionManager.getInstance().getLoggedUser() == null) {
+            goBack(context);
+            return;
+        }
+
         int clientId = SessionManager.getInstance().getLoggedUser().getId();
         try {
-            // Usa i Bean e i metodi del tuo Controller
             List<BookingResponseBean> all  = bookingController.getAllClientBookings(clientId);
             List<BookingResponseBean> past = bookingController.getClientPastBookings(clientId);
 
@@ -46,15 +52,19 @@ public class ViewBookingsCLI extends AbstractCLIState {
             while (running) {
                 view.mostraTab(confirmed.size(), cancelled.size(), past.size());
                 int scelta = view.chiediScelta("Scelta", 0, 3);
+
                 switch (scelta) {
                     case 1 -> view.mostraConfermate(confirmed);
                     case 2 -> view.mostraCancellate(cancelled);
                     case 3 -> view.mostraScadute(past);
-                    case 0 -> { running = false; }
+                    case 0 -> running = false;
+                    default -> view.mostraErrore("Scelta non valida."); // 🌟 Default aggiunto
                 }
             }
         } catch (DAOException e) {
-            view.mostraErrore(e.getMessage());
+            // 🌟 Logging aggiunto per soddisfare SonarCloud
+            AppLogger.logError("Errore nel recupero prenotazioni: " + e.getMessage());
+            view.mostraErrore("Impossibile caricare le prenotazioni.");
         }
         goBack(context);
     }

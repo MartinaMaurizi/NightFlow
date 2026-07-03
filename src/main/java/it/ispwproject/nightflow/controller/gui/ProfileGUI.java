@@ -2,6 +2,7 @@ package it.ispwproject.nightflow.controller.gui;
 
 import it.ispwproject.nightflow.pattern.singleton.SessionManager;
 import it.ispwproject.nightflow.view.gui.ProfileGUIView;
+import it.ispwproject.nightflow.util.logger.AppLogger;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -15,37 +16,31 @@ public class ProfileGUI {
 
     public void show() {
         Scene scene = new Scene(view.buildRoot(
-                () -> new DashboardClientGUI(stage).show(), // Back (<)
-                () -> { // Logout
+                () -> new DashboardClientGUI(stage).show(),
+                () -> {
                     SessionManager.getInstance().setLoggedUser(null);
                     MainGUI.showLogin();
                 },
-                () -> {
-                    System.out.println("Sei già nel profilo!"); // Clic sull'omino del profilo
-                }
+                // 🌟 Rimosse graffe inutili (avviso riga 23)
+                () -> AppLogger.logInfo("Sei già nel profilo!")
         ), MainGUI.WINDOW_WIDTH, MainGUI.WINDOW_HEIGHT);
 
         try {
             scene.getStylesheets().add(getClass().getResource("/styles/nightflow.css").toExternalForm());
         } catch (Exception e) {
-            System.err.println("CSS non trovato");
+            // 🌟 Logger invece di System.err (avviso riga 31)
+            AppLogger.logWarning("CSS non trovato: " + e.getMessage());
         }
 
-        // =================================================================
-        // 🌟 AZIONI SPECIFICHE DEL PROFILO 🌟
-        // =================================================================
-        // Collega il bottone "Le mie prenotazioni" alla nuova View!
+        // Azioni specifiche
         if (view.myBookingsBtn != null) {
             view.myBookingsBtn.setOnAction(e -> new ViewBookingsGUI(stage).show());
         }
 
-        // (Aggiungi qui altri tasti del profilo se ne hai, es. "Modifica Dati")
-
-        // =================================================================
-        // --- AZIONI DI NAVIGAZIONE GLOBALI (Navbar) ---
-        // =================================================================
+        // Azioni globali
         if (view.profileBtn != null) {
-            view.profileBtn.setOnAction(e -> System.out.println("Sei già nel profilo!"));
+            // 🌟 Logger invece di System.out (avviso riga 24)
+            view.profileBtn.setOnAction(e -> AppLogger.logInfo("Sei già nel profilo!"));
         }
         if (view.homeBtn != null) {
             view.homeBtn.setOnAction(e -> new DashboardClientGUI(stage).show());

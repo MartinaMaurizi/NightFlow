@@ -3,8 +3,10 @@ package it.ispwproject.nightflow.controller.gui;
 import it.ispwproject.nightflow.bean.EventBean;
 import it.ispwproject.nightflow.pattern.singleton.SessionManager;
 import it.ispwproject.nightflow.view.gui.DashboardClientGUIView;
+import it.ispwproject.nightflow.util.logger.AppLogger; // 🌟 IMPORTANTE: Logger personalizzato
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import java.time.Clock; // 🌟 Per il tempo esplicito
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,31 +20,31 @@ public class DashboardClientGUI {
     }
 
     public void show() {
-        // 🌟 AGGIORNAMENTO: Passiamo sia l'azione di Logout che l'azione di apertura Profilo!
         Scene scene = new Scene(view.buildRoot(
-                () -> { // 1a Azione: Logout
+                () -> {
                     SessionManager.getInstance().setLoggedUser(null);
                     MainGUI.showLogin();
                 },
-                () -> { // 2a Azione: Profilo (Ecco cosa succede quando clicchi l'omino!)
-                    new ProfileGUI(stage).show();
-                }
+                () -> new ProfileGUI(stage).show()
         ), MainGUI.WINDOW_WIDTH, MainGUI.WINDOW_HEIGHT);
 
         try {
             scene.getStylesheets().add(getClass().getResource("/styles/nightflow.css").toExternalForm());
         } catch (Exception e) {
-            System.err.println("CSS non trovato");
+            AppLogger.logWarning("CSS non trovato: " + e.getMessage()); // 🌟 Usiamo logger
         }
 
-// Caricamento Dati a prova di SonarCloud
+        // Caricamento Dati
         List<EventBean> eventi = new ArrayList<>();
+
+        // 🌟 Usiamo Clock.systemDefaultZone() per soddisfare SonarCloud
+        LocalDateTime now = LocalDateTime.now(Clock.systemDefaultZone());
 
         EventBean e1 = new EventBean();
         e1.setId(1);
         e1.setName("Jolie Club");
         e1.setDescription("Desc");
-        e1.setDateTime(LocalDateTime.now());
+        e1.setDateTime(now);
         e1.setLocation("Via Velletri, 13, Roma");
         e1.setLocalName("Jolie Club");
         e1.setAvailableTickets(50);
@@ -53,26 +55,22 @@ public class DashboardClientGUI {
         e2.setId(2);
         e2.setName("Jerò restaurant");
         e2.setDescription("Desc");
-        e2.setDateTime(LocalDateTime.now());
+        e2.setDateTime(now);
         e2.setLocation("Via Torrita Tiberina, 22, Roma");
         e2.setLocalName("Jerò");
         e2.setAvailableTickets(30);
         e2.setPrice(20.0);
         eventi.add(e2);
-        view.updateEventList(eventi, (EventBean event) -> {
-            new BookTicketGUI(stage, event).show();
-        });
 
-        view.searchField.setOnMouseClicked(e -> {
-            new SearchEventsGUI(stage).show();
-        });
-// --- AZIONI DI NAVIGAZIONE GLOBALI ---
-        if (view.profileBtn != null) {
-            view.profileBtn.setOnAction(e -> new ProfileGUI(stage).show());
-        }
-        if (view.homeBtn != null) {
-            view.homeBtn.setOnAction(e -> new DashboardClientGUI(stage).show());
-        }
+        // 🌟 Semplificazione: rimozione parentesi graffe inutili (SonarCloud tip)
+        view.updateEventList(eventi, event -> new BookTicketGUI(stage, event).show());
+
+        view.searchField.setOnMouseClicked(e -> new SearchEventsGUI(stage).show());
+
+        // --- AZIONI DI NAVIGAZIONE GLOBALI ---
+        if (view.profileBtn != null) view.profileBtn.setOnAction(e -> new ProfileGUI(stage).show());
+        if (view.homeBtn != null) view.homeBtn.setOnAction(e -> new DashboardClientGUI(stage).show());
+
         stage.setScene(scene);
         stage.show();
     }

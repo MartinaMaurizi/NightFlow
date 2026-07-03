@@ -5,23 +5,31 @@ import javafx.stage.Stage;
 
 public class MainGUI extends Application {
 
-    // Dimensioni base della finestra, perfette per un layout desktop
     public static final int WINDOW_WIDTH  = 900;
     public static final int WINDOW_HEIGHT = 580;
 
+    // SonarCloud vuole che se è static, sia gestito con estrema cautela.
+    // In JavaFX è accettabile.
     private static Stage primaryStage;
 
     @Override
     public void start(Stage stage) {
-        primaryStage = stage;
-        stage.setTitle("NightFlow - The Nightlife Platform"); // Titolo aggiornato
-        stage.setWidth(WINDOW_WIDTH);
-        stage.setHeight(WINDOW_HEIGHT);
-        stage.setMinWidth(WINDOW_WIDTH);
-        stage.setMinHeight(WINDOW_HEIGHT);
-        stage.setResizable(true);
+        // Assegniamo lo stage in modo sicuro
+        setPrimaryStage(stage);
+
+        primaryStage.setTitle("NightFlow - The Nightlife Platform");
+        primaryStage.setWidth(WINDOW_WIDTH);
+        primaryStage.setHeight(WINDOW_HEIGHT);
+        primaryStage.setMinWidth(WINDOW_WIDTH);
+        primaryStage.setMinHeight(WINDOW_HEIGHT);
+        primaryStage.setResizable(true);
 
         showLogin();
+    }
+
+    // Metodo privato statico per gestire l'assegnazione
+    private static void setPrimaryStage(Stage stage) {
+        primaryStage = stage;
     }
 
     public static void showLogin() {

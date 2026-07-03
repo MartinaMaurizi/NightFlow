@@ -47,7 +47,7 @@ public class ManageParticipantsGUI {
             List<BookingResponseBean> bookings = clientManagementController.getClientBookings(client.getId());
 
             view.buildParticipantCard(card, client, bookings,
-                    booking -> handleCheckIn(booking, client, card));
+                    booking -> handleCheckIn(booking, client));
 
         } catch (DAOException e) {
             view.errorLabel.setText("Errore: " + e.getMessage());
@@ -55,13 +55,13 @@ public class ManageParticipantsGUI {
     }
 
     // ─── Azioni ─────────────────────────────────────────────────────────────
-    private void handleCheckIn(BookingResponseBean booking, ClientBean client, VBox card) {
+// 1. Modifica la firma del metodo
+    private void handleCheckIn(BookingResponseBean booking, ClientBean client) {
         try {
-            // Chiamata al controller applicativo per segnare l'ingresso
             clientManagementController.performCheckIn(booking.getId());
             showInfo("Check-in effettuato con successo!");
 
-            // Ricarichiamo la card per aggiornare lo stato
+            // Ricarichiamo la card (il metodo la rigenera da zero, quindi non serve passargli quella vecchia)
             loadParticipantCard(client);
         } catch (DAOException e) {
             view.errorLabel.setText("Errore durante il check-in: " + e.getMessage());
