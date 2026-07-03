@@ -9,6 +9,8 @@ import it.ispwproject.nightflow.pattern.singleton.SessionManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -29,10 +31,27 @@ class BookingControllerTest {
     }
 
     @Test
-
     void testPrenotazioneSuEventoGiaRiservato() throws DAOException, BookingException {
-        // Evento di prova (es. concerto con posti limitati)
-        EventBean event = new EventBean(1, "Jolie Club Night", "Serata techno", null, "Milano", "Jolie", 1, 20.0);
+        // 1. Definiamo i valori di test
+        int id = 1;
+        String nome = "Concerto Rock";
+        String desc = "Evento test";
+        LocalDateTime data = LocalDateTime.now().plusDays(1);
+        String loc = "Roma";
+        String localName = "Jolie Club";
+        int cap = 10;
+        double prezzo = 20.0;
+
+        // 2. Creiamo l'evento usando i setter come abbiamo stabilito
+        EventBean event = new EventBean();
+        event.setId(id);
+        event.setName(nome);
+        event.setDescription(desc);
+        event.setDateTime(data);
+        event.setLocation(loc);
+        event.setLocalName(localName);
+        event.setAvailableTickets(cap);
+        event.setPrice(prezzo);
 
         // --- Studente 1 riserva il biglietto ---
         Client c1 = new Client(1, "Marco", "Verdi", "marco@nightflow.it", null);
