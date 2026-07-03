@@ -4,8 +4,6 @@ import it.ispwproject.nightflow.dao.EventDAO;
 import it.ispwproject.nightflow.demo.DemoDataStore;
 import it.ispwproject.nightflow.exception.DAOException;
 import it.ispwproject.nightflow.model.Event;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class EventDAOMemory implements EventDAO {

@@ -9,7 +9,6 @@ import it.ispwproject.nightflow.dao.AbstractBookingDAO;
 import it.ispwproject.nightflow.enumerator.BookingStatus;
 import it.ispwproject.nightflow.exception.DAOException;
 import it.ispwproject.nightflow.model.Booking;
-import it.ispwproject.nightflow.model.Client;
 import it.ispwproject.nightflow.model.Event;
 import it.ispwproject.nightflow.util.logger.AppLogger;
 

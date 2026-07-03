@@ -5,7 +5,6 @@ import it.ispwproject.nightflow.pattern.state.CLIStateMachine;
 import it.ispwproject.nightflow.bean.RegistrationBean;
 import it.ispwproject.nightflow.controller.applicativo.RegistrationController;
 import it.ispwproject.nightflow.enumerator.Role;
-import it.ispwproject.nightflow.exception.DAOException;
 import it.ispwproject.nightflow.exception.RegistrationException;
 import it.ispwproject.nightflow.view.cli.RegistrationView;
 

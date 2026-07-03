@@ -10,7 +10,6 @@ import it.ispwproject.nightflow.model.User;
 import it.ispwproject.nightflow.pattern.singleton.SessionManager;
 import it.ispwproject.nightflow.util.ValidationUtils;
 
-import java.util.List;
 
 /**
  * Controller applicativo per la gestione del profilo utente e delle impostazioni.

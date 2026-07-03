@@ -7,7 +7,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
-import java.util.function.Consumer;
 
 public class BookTicketGUIView {
 

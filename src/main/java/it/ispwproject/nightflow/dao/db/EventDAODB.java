@@ -4,7 +4,6 @@ import it.ispwproject.nightflow.dao.ConnectionFactory;
 import it.ispwproject.nightflow.dao.EventDAO;
 import it.ispwproject.nightflow.exception.DAOException;
 import it.ispwproject.nightflow.model.Event;
-import it.ispwproject.nightflow.model.Organizer;
 
 import java.sql.*;
 import java.util.ArrayList;

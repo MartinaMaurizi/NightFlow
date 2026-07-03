@@ -2,7 +2,7 @@ package it.ispwproject.nightflow.dao;
 
 import it.ispwproject.nightflow.exception.DAOException;
 import it.ispwproject.nightflow.model.User;
-import java.util.List; // Assicurati di importare List
+import java.util.List;
 
 public interface RegistrationDAO {
 
