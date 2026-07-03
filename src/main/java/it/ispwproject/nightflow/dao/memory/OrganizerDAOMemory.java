@@ -7,31 +7,33 @@ import it.ispwproject.nightflow.model.Organizer;
 import it.ispwproject.nightflow.model.User;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class OrganizerDAOMemory implements OrganizerDAO {
 
     private final DemoDataStore dataStore = DemoDataStore.getInstance();
 
     @Override
-    public Organizer findById(int id) throws DAOException {
+    public Organizer findById(int id) {
+        // 🌟 Usiamo il method reference come richiesto da SonarCloud
         return dataStore.getUsers().stream()
-                .filter(u -> u instanceof Organizer && u.getId() == id)
-                .map(u -> (Organizer) u)
+                .filter(Organizer.class::isInstance)
+                .map(Organizer.class::cast)
+                .filter(u -> u.getId() == id)
                 .findFirst()
                 .orElse(null);
     }
 
     @Override
-    public List<Organizer> findAll() throws DAOException {
+    public List<Organizer> findAll() {
+        // 🌟 Usiamo .toList() (Java 16+) invece di Collectors.toList()
         return dataStore.getUsers().stream()
-                .filter(u -> u instanceof Organizer)
-                .map(u -> (Organizer) u)
-                .collect(Collectors.toList());
+                .filter(Organizer.class::isInstance)
+                .map(Organizer.class::cast)
+                .toList();
     }
 
     @Override
-    public void save(Organizer organizer) throws DAOException {
+    public void save(Organizer organizer) {
         if (organizer.getId() == 0) {
             organizer.setId(dataStore.nextUserId());
         }

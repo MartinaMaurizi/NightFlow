@@ -4,6 +4,9 @@ import it.ispwproject.nightflow.dao.EventDAO;
 import it.ispwproject.nightflow.demo.DemoDataStore;
 import it.ispwproject.nightflow.exception.DAOException;
 import it.ispwproject.nightflow.model.Event;
+
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class EventDAOMemory implements EventDAO {
@@ -11,7 +14,7 @@ public class EventDAOMemory implements EventDAO {
     private final DemoDataStore dataStore = DemoDataStore.getInstance();
 
     @Override
-    public Event findById(int id) throws DAOException {
+    public Event findById(int id) {
         return dataStore.getEvents().stream()
                 .filter(e -> e.getId() == id)
                 .findFirst()
@@ -19,35 +22,35 @@ public class EventDAOMemory implements EventDAO {
     }
 
     @Override
-    public List<Event> getAllUpcomingEvents() throws DAOException {
-        // Filtra gli eventi con data futura (DateTime > NOW)
+    public List<Event> getAllUpcomingEvents() {
+        // 🌟 Risolto: Timezone esplicita con Clock
+        LocalDateTime now = LocalDateTime.now(Clock.systemDefaultZone());
         return dataStore.getEvents().stream()
-                .filter(e -> e.getDateTime().isAfter(java.time.LocalDateTime.now()))
+                .filter(e -> e.getDateTime().isAfter(now))
                 .toList();
     }
 
     @Override
-    public List<Event> findByOrganizer(int organizerId) throws DAOException {
+    public List<Event> findByOrganizer(int organizerId) {
         return dataStore.getEvents().stream()
                 .filter(e -> e.getOrganizerId() == organizerId)
                 .toList();
     }
 
     @Override
-    public List<Event> findByOrganizerId(int organizerId) throws DAOException {
-        // Alias per coerenza con il controller
+    public List<Event> findByOrganizerId(int organizerId) {
         return findByOrganizer(organizerId);
     }
 
     @Override
-    public List<Event> findByLocalName(String localName) throws DAOException {
+    public List<Event> findByLocalName(String localName) {
         return dataStore.getEvents().stream()
                 .filter(e -> e.getLocalName() != null && e.getLocalName().equalsIgnoreCase(localName))
                 .toList();
     }
 
     @Override
-    public void save(Event event) throws DAOException {
+    public void save(Event event) {
         if (event.getId() == 0) {
             event.setId(dataStore.nextEventId());
         }
@@ -67,13 +70,12 @@ public class EventDAOMemory implements EventDAO {
     }
 
     @Override
-    public void delete(int eventId) throws DAOException {
+    public void delete(int eventId) {
         dataStore.getEvents().removeIf(e -> e.getId() == eventId);
     }
 
     @Override
     public void delete(int eventId, int organizerId) throws DAOException {
-        // Rimozione sicura: elimina solo se l'ID evento e l'ID organizzatore coincidono
         boolean removed = dataStore.getEvents().removeIf(e ->
                 e.getId() == eventId && e.getOrganizerId() == organizerId
         );

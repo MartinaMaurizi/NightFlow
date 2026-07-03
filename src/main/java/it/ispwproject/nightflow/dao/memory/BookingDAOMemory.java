@@ -9,7 +9,7 @@ import it.ispwproject.nightflow.model.Event;
 import it.ispwproject.nightflow.model.User;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -19,18 +19,16 @@ public class BookingDAOMemory implements BookingDAO {
     private final DemoDataStore store = DemoDataStore.getInstance();
 
     @Override
-    public void save(Booking booking) throws DAOException {
+    public void save(Booking booking) {
         booking.setId(store.nextBookingId());
         booking.setStatus(BookingStatus.CONFIRMED);
 
-        // Genera un codice biglietto univoco se non presente
         if (booking.getTicketCode() == null) {
             booking.setTicketCode("TKT-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
         }
 
         store.getBookings().add(booking);
 
-        // Decrementa i biglietti disponibili nell'evento in memoria
         Event event = booking.getEvent();
         if (event != null) {
             event.setAvailableTickets(Math.max(0, event.getAvailableTickets() - 1));
@@ -38,14 +36,13 @@ public class BookingDAOMemory implements BookingDAO {
     }
 
     @Override
-    public List<Booking> findByClient(int clientId) throws DAOException {
+    public List<Booking> findByClient(int clientId) {
         return store.getBookings().stream()
                 .filter(b -> b.getClient() != null && b.getClient().getId() == clientId)
                 .toList();
     }
 
-    // Adattato per cercare i biglietti di un singolo evento
-    public List<Booking> findByEvent(int eventId) throws DAOException {
+    public List<Booking> findByEvent(int eventId) {
         return store.getBookings().stream()
                 .filter(b -> b.getEvent() != null && b.getEvent().getId() == eventId
                         && b.getStatus() == BookingStatus.CONFIRMED)
@@ -53,49 +50,51 @@ public class BookingDAOMemory implements BookingDAO {
     }
 
     @Override
-    public List<Booking> findAll() throws DAOException {
+    public List<Booking> findAll() {
         return new ArrayList<>(store.getBookings());
     }
 
     @Override
-    public List<Booking> findCompletedByClientAndOrganizer(int clientId, int organizerId) throws DAOException {
+    public List<Booking> findCompletedByClientAndOrganizer(int clientId, int organizerId) {
+        LocalDateTime now = LocalDateTime.now(Clock.systemDefaultZone());
         return store.getBookings().stream()
                 .filter(b -> b.getClient() != null && b.getClient().getId() == clientId
                         && b.getEvent() != null && b.getEvent().getOrganizerId() == organizerId
                         && b.getStatus() == BookingStatus.CONFIRMED
-                        && b.getEvent() != null
-                        && !b.getEvent().getDateTime().isAfter(LocalDateTime.now(ZoneId.systemDefault())))
+                        && b.getEvent().getDateTime().isBefore(now))
                 .toList();
     }
 
     @Override
-    public List<Booking> findUpcomingByClientAndOrganizer(int clientId, int organizerId) throws DAOException {
+    public List<Booking> findUpcomingByClientAndOrganizer(int clientId, int organizerId) {
+        LocalDateTime now = LocalDateTime.now(Clock.systemDefaultZone());
         return store.getBookings().stream()
                 .filter(b -> b.getClient() != null && b.getClient().getId() == clientId
                         && b.getEvent() != null && b.getEvent().getOrganizerId() == organizerId
                         && b.getStatus() == BookingStatus.CONFIRMED
-                        && b.getEvent() != null
-                        && b.getEvent().getDateTime().isAfter(LocalDateTime.now(ZoneId.systemDefault())))
+                        && b.getEvent().getDateTime().isAfter(now))
                 .toList();
     }
 
     @Override
-    public List<Booking> findPastByClient(int clientId) throws DAOException {
+    public List<Booking> findPastByClient(int clientId) {
+        LocalDateTime now = LocalDateTime.now(Clock.systemDefaultZone());
         return store.getBookings().stream()
                 .filter(b -> b.getClient() != null && b.getClient().getId() == clientId
                         && b.getStatus() == BookingStatus.CONFIRMED
                         && b.getEvent() != null
-                        && b.getEvent().getDateTime().isBefore(LocalDateTime.now(ZoneId.systemDefault())))
+                        && b.getEvent().getDateTime().isBefore(now))
                 .toList();
     }
 
     @Override
-    public List<Booking> findUpcomingByClient(int clientId) throws DAOException {
+    public List<Booking> findUpcomingByClient(int clientId) {
+        LocalDateTime now = LocalDateTime.now(Clock.systemDefaultZone());
         return store.getBookings().stream()
                 .filter(b -> b.getClient() != null && b.getClient().getId() == clientId
                         && b.getStatus() == BookingStatus.CONFIRMED
                         && b.getEvent() != null
-                        && b.getEvent().getDateTime().isAfter(LocalDateTime.now(ZoneId.systemDefault())))
+                        && b.getEvent().getDateTime().isAfter(now))
                 .toList();
     }
 
@@ -120,7 +119,6 @@ public class BookingDAOMemory implements BookingDAO {
                 .findFirst()
                 .orElseThrow(() -> new DAOException("Biglietto non trovato (ID: " + bookingId + ")"));
 
-        // CAMBIO QUI: Usiamo User al posto di Client
         User client = booking.getClient();
 
         if (client == null || client.getId() != clientId) {
@@ -129,7 +127,6 @@ public class BookingDAOMemory implements BookingDAO {
 
         booking.cancel();
 
-        // Rimette a disposizione il biglietto annullato nell'evento
         Event event = booking.getEvent();
         if (event != null) {
             event.setAvailableTickets(event.getAvailableTickets() + 1);
