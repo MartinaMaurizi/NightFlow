@@ -1,12 +1,15 @@
 package it.ispwproject.nightflow.view.cli;
 
+import it.ispwproject.nightflow.util.logger.AppLogger;
+
 public class InitialView {
 
     public void mostraBenvenuto() {
         CLIRenderer.vuota();
-        System.out.println(CLIRenderer.LINE_DECO);
-        System.out.println(CLIRenderer.centra("N I G H T F L O W"));
-        System.out.println(CLIRenderer.LINE_DECO);
+        // Richiamo le costanti con il prefisso della classe CLIRenderer
+        AppLogger.logInfo(CLIRenderer.LINE_DECO);
+        AppLogger.logInfo(CLIRenderer.centra("N I G H T F L O W"));
+        AppLogger.logInfo(CLIRenderer.LINE_DECO);
     }
 
     public void mostraMenu() {
@@ -26,9 +29,9 @@ public class InitialView {
 
     public void mostraArrivederci() {
         CLIRenderer.vuota();
-        System.out.println(CLIRenderer.LINE_DECO);
-        System.out.println(CLIRenderer.centra("Arrivederci!  –  NightFlow"));
-        System.out.println(CLIRenderer.LINE_DECO);
+        AppLogger.logInfo(CLIRenderer.LINE_DECO);
+        AppLogger.logInfo(CLIRenderer.centra("Arrivederci!  –  NightFlow"));
+        AppLogger.logInfo(CLIRenderer.LINE_DECO);
         CLIRenderer.vuota();
     }
 }

@@ -2,6 +2,7 @@ package it.ispwproject.nightflow.view.cli;
 
 import it.ispwproject.nightflow.bean.BookingResponseBean;
 import it.ispwproject.nightflow.bean.ClientBean;
+import it.ispwproject.nightflow.util.logger.AppLogger;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -23,27 +24,28 @@ public class ManageParticipantsView {
         CLIRenderer.sezione("I tuoi clienti");
         for (int i = 0; i < clients.size(); i++) {
             ClientBean c = clients.get(i);
-            System.out.printf("  [%d] %-24s  %s%n",
-                    i + 1, c.getName() + " " + c.getSurname(), c.getEmail());
+            // 🌟 Usiamo AppLogger
+            AppLogger.logInfo(String.format("  [%d] %-24s  %s",
+                    i + 1, c.getName() + " " + c.getSurname(), c.getEmail()));
         }
         CLIRenderer.voceMenuZero("Indietro");
     }
 
     public void mostraSchedaPartecipante(ClientBean client, List<BookingResponseBean> upcomingEvents) {
         CLIRenderer.vuota();
-        System.out.println(CLIRenderer.LINE_DECO);
-        System.out.printf("  Cliente: %s %s%n", client.getName(), client.getSurname());
+        AppLogger.logInfo(CLIRenderer.LINE_DECO);
+        AppLogger.logInfo(String.format("  Cliente: %s %s", client.getName(), client.getSurname()));
 
         // Prossimo evento in evidenza
         if (!upcomingEvents.isEmpty()) {
             BookingResponseBean next = upcomingEvents.get(0);
-            System.out.printf("  %s Prossima serata: %s  –  %s @ %s%n",
+            AppLogger.logInfo(String.format("  %s Prossima serata: %s  –  %s @ %s",
                     CLIRenderer.TICKET,
                     next.getEvent().getDateTime().toLocalDate().toString(),
                     next.getEvent().getName(),
-                    next.getEvent().getLocalName());
+                    next.getEvent().getLocalName()));
         }
-        System.out.println(CLIRenderer.LINE_DECO);
+        AppLogger.logInfo(CLIRenderer.LINE_DECO);
     }
 
     public void mostraMenuPartecipante() {
@@ -59,11 +61,12 @@ public class ManageParticipantsView {
             return;
         }
         for (BookingResponseBean b : completed) {
-            System.out.printf("  %s  %s  %s @ %s%n",
+            // 🌟 Usiamo AppLogger
+            AppLogger.logInfo(String.format("  %s  %s  %s @ %s",
                     CLIRenderer.PARTY,
                     b.getEvent().getDateTime().toLocalDate().toString(),
                     b.getEvent().getName(),
-                    b.getEvent().getLocalName());
+                    b.getEvent().getLocalName()));
         }
     }
 

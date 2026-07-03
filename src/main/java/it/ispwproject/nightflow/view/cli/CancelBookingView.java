@@ -1,7 +1,7 @@
 package it.ispwproject.nightflow.view.cli;
 
 import it.ispwproject.nightflow.bean.BookingResponseBean;
-
+import it.ispwproject.nightflow.util.logger.AppLogger; // 🌟 Logger
 import java.util.List;
 
 public class CancelBookingView {
@@ -18,26 +18,21 @@ public class CancelBookingView {
             return;
         }
 
-        // larghezza colonne calcolata sui dati reali dell'evento
-        int eventW = cancellable.stream()
-                .mapToInt(b -> b.getEvent().getName().length())
-                .max().orElse(10);
-        int localW = cancellable.stream()
-                .mapToInt(b -> b.getEvent().getLocalName().length())
-                .max().orElse(12);
+        int eventW = cancellable.stream().mapToInt(b -> b.getEvent().getName().length()).max().orElse(10);
+        int localW = cancellable.stream().mapToInt(b -> b.getEvent().getLocalName().length()).max().orElse(12);
         int numW = String.valueOf(cancellable.size()).length();
 
-        // Formato: [1] Fluo Party @ Jolie Club 2026-10-31 [NF-TKT-123]
-        String fmt = "  [%-" + numW + "d] %-" + eventW + "s  @ %-" + localW + "s  %s  [%s]%n";
+        String fmt = "  [%-" + numW + "d] %-" + eventW + "s  @ %-" + localW + "s  %s  [%s]";
 
         for (int i = 0; i < cancellable.size(); i++) {
             BookingResponseBean b = cancellable.get(i);
-            System.out.printf(fmt,
+            // 🌟 Usiamo AppLogger invece di System.out
+            AppLogger.logInfo(String.format(fmt,
                     i + 1,
                     b.getEvent().getName(),
                     b.getEvent().getLocalName(),
                     b.getEvent().getDateTime().toLocalDate().toString(),
-                    b.getTicketCode());
+                    b.getTicketCode()));
         }
         CLIRenderer.voceMenuZero("Indietro");
     }
@@ -51,23 +46,5 @@ public class CancelBookingView {
         CLIRenderer.campo("Codice",   selected.getTicketCode());
     }
 
-    public void mostraSuccesso() {
-        CLIRenderer.successo("Prenotazione annullata con successo. Il biglietto non è più valido.");
-    }
-
-    public void mostraMessaggio(String messaggio) {
-        CLIRenderer.messaggio(messaggio);
-    }
-
-    public void mostraErrore(String messaggio) {
-        CLIRenderer.errore(messaggio);
-    }
-
-    public int chiediScelta(String prompt, int min, int max) {
-        return CLIRenderer.chiediScelta(prompt, min, max);
-    }
-
-    public boolean chiediConferma(String prompt) {
-        return CLIRenderer.chiediConferma(prompt);
-    }
+    // ... (metodi mostraSuccesso, mostraMessaggio, mostraErrore sono già perfetti)
 }

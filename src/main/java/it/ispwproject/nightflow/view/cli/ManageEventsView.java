@@ -1,6 +1,7 @@
 package it.ispwproject.nightflow.view.cli;
 
 import it.ispwproject.nightflow.bean.EventBean;
+import it.ispwproject.nightflow.util.logger.AppLogger; // 🌟 Logger
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -30,17 +31,12 @@ public class ManageEventsView {
             EventBean e = eventi.get(i);
             String dataFormattata = e.getDateTime() != null ? e.getDateTime().format(DT_FMT) : "Data n.d.";
 
-            System.out.printf("  [%d] %-24s | %s | %s%n",
-                    i + 1,
-                    e.getName(),
-                    dataFormattata,
-                    e.getLocalName()
-            );
-            System.out.printf("      Prezzo: %.2f€  |  Biglietti Rimasti: %d%n",
-                    e.getPrice(),
-                    e.getAvailableTickets()
-            );
-            System.out.println("  " + "-".repeat(50));
+            // 🌟 Sostituiti System.out con AppLogger
+            AppLogger.logInfo(String.format("  [%d] %-24s | %s | %s",
+                    i + 1, e.getName(), dataFormattata, e.getLocalName()));
+            AppLogger.logInfo(String.format("      Prezzo: %.2f€  |  Biglietti Rimasti: %d",
+                    e.getPrice(), e.getAvailableTickets()));
+            CLIRenderer.separatore(); // Usa il metodo già presente nel renderer
         }
     }
 
@@ -56,7 +52,7 @@ public class ManageEventsView {
             try {
                 dataOra = LocalDateTime.parse(dataStr, DT_FMT);
             } catch (DateTimeParseException e) {
-                CLIRenderer.errore("Formato data non valido! Usa il formato richiesto (es. 22/11/2026 22:30).");
+                CLIRenderer.errore("Formato data non valido! (es. 22/11/2026 22:30).");
             }
         }
 
@@ -87,9 +83,7 @@ public class ManageEventsView {
             }
         }
 
-        // 🌟 CREAZIONE A PROVA DI SONARCLOUD
         EventBean newEvent = new EventBean();
-        newEvent.setId(0); // ID generato successivamente
         newEvent.setName(nome);
         newEvent.setDescription(descrizione);
         newEvent.setDateTime(dataOra);
