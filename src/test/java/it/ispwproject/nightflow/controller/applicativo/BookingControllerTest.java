@@ -1,5 +1,4 @@
 package it.ispwproject.nightflow.controller.applicativo;
-import org.junit.jupiter.api.Disabled;
 import it.ispwproject.nightflow.bean.*;
 import it.ispwproject.nightflow.dao.DAOFactory;
 import it.ispwproject.nightflow.demo.DemoDataStore;
@@ -30,7 +29,6 @@ class BookingControllerTest {
     }
 
     @Test
-    @Disabled("Da sistemare: il DB in memoria non lancia l'eccezione")
 
     void testPrenotazioneSuEventoGiaRiservato() throws DAOException, BookingException {
         // Evento di prova (es. concerto con posti limitati)

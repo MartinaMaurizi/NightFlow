@@ -11,26 +11,29 @@ class RegistrationControllerTest {
 
     @Test
     void testRegisterIntegration() {
-        // 1. Setup: Imposta il DAO su JDBC o MEMORY
-        System.setProperty("DAO_TYPE", "MEMORY"); // O "JDBC" se hai il DB collegato
-
+        // 1. Setup
+        System.setProperty("DAO_TYPE", "MEMORY");
         RegistrationController controller = new RegistrationController();
 
-        // 2. Creazione Bean
+        // 2. Creazione Bean COMPLETO
         RegistrationBean bean = new RegistrationBean();
         bean.setName("Mario");
         bean.setSurname("Rossi");
-        bean.setEmail("mario.rossi@test.it");
+        String uniqueEmail = "mario." + System.currentTimeMillis() + "@test.it";
+        bean.setEmail(uniqueEmail);
         bean.setPassword("password123");
         bean.setConfirmPassword("password123");
         bean.setRole(Role.CLIENT);
         bean.setDateOfBirth(LocalDate.of(1995, 5, 20));
 
+        // AGGIUNGIAMO TUTTO CIÒ CHE IL CONTROLLER SI ASPETTA
+        bean.setGender("Uomo");
+        bean.setCountry("Italy");
+        bean.setCity("Milano");
+
         // 3. Esecuzione
         assertDoesNotThrow(() -> {
             controller.register(bean);
         });
-
-        // 4. Verifica (opzionale: controlla se l'utente esiste nel DB)
     }
 }

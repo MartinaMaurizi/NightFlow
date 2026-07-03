@@ -48,10 +48,26 @@ public class BookingController {
             throws DAOException, BookingException {
 
         Event event = eventDAO.findById(request.getEvent().getId());
-
         if (event == null) throw new DAOException("Evento non trovato nel sistema.");
+
         if (event.getAvailableTickets() <= 0) {
             throw new BookingException("Mi dispiace, i biglietti per questo evento sono esauriti!");
+        }
+
+        // Recuperiamo l'utente loggato in modo sicuro
+        User loggedUser = SessionManager.getInstance().getLoggedUser();
+
+        // Verifichiamo se esistono già prenotazioni per questo evento
+        for (Booking b : bookingDAO.findAll()) {
+            // Se la prenotazione riguarda lo stesso evento E non è cancellata...
+            if (b.getEvent().getId() == event.getId() && b.getStatus() != BookingStatus.CANCELLED) {
+
+                // ...MA verifichiamo che non sia la prenotazione dello stesso utente (che è già in corso)
+                // Se l'ID utente è diverso, allora c'è un conflitto con un altro cliente!
+                if (loggedUser != null && b.getClient().getId() != loggedUser.getId()) {
+                    throw new BookingException("Biglietto già in fase di prenotazione o occupato!");
+                }
+            }
         }
 
         return new BookingResponseBean(
