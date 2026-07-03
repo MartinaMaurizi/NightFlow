@@ -2,17 +2,17 @@ package it.ispwproject.nightflow.controller.cli;
 
 import it.ispwproject.nightflow.pattern.state.AbstractCLIState;
 import it.ispwproject.nightflow.pattern.state.CLIStateMachine;
-
 import it.ispwproject.nightflow.bean.BookingResponseBean;
 import it.ispwproject.nightflow.controller.applicativo.BookingController;
 import it.ispwproject.nightflow.enumerator.BookingStatus;
 import it.ispwproject.nightflow.exception.DAOException;
 import it.ispwproject.nightflow.pattern.singleton.SessionManager;
 import it.ispwproject.nightflow.view.cli.ViewBookingsView;
+import it.ispwproject.nightflow.util.logger.AppLogger;
 
 import java.time.LocalDateTime;
+import java.time.Clock; // 🌟 Aggiungi questo import
 import java.util.List;
-import it.ispwproject.nightflow.util.logger.AppLogger;
 
 public class ViewBookingsCLI extends AbstractCLIState {
 
@@ -26,7 +26,6 @@ public class ViewBookingsCLI extends AbstractCLIState {
 
     @Override
     public void action(CLIStateMachine context) {
-        // Controllo di sicurezza: se utente nullo, torniamo indietro subito
         if (SessionManager.getInstance().getLoggedUser() == null) {
             goBack(context);
             return;
@@ -37,9 +36,10 @@ public class ViewBookingsCLI extends AbstractCLIState {
             List<BookingResponseBean> all  = bookingController.getAllClientBookings(clientId);
             List<BookingResponseBean> past = bookingController.getClientPastBookings(clientId);
 
+            // 🌟 MODIFICA QUI: Passiamo Clock.systemDefaultZone()
             List<BookingResponseBean> confirmed = all.stream()
                     .filter(b -> b.getStatus() == BookingStatus.CONFIRMED)
-                    .filter(b -> b.getEvent().getDateTime().isAfter(LocalDateTime.now()))
+                    .filter(b -> b.getEvent().getDateTime().isAfter(LocalDateTime.now(Clock.systemDefaultZone())))
                     .sorted((a, b) -> a.getEvent().getDateTime().compareTo(b.getEvent().getDateTime()))
                     .toList();
 

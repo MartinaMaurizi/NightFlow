@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.time.Clock;
 
 public class ViewEventsGUI {
 
@@ -31,24 +32,23 @@ public class ViewEventsGUI {
         view.clearError();
 
         try {
-            // Assicurati che questo metodo nel tuo EventController restituisca List<EventBean>
-            // (e non i Model crudi, proprio come abbiamo fatto per i Booking!)
             List<EventBean> allEvents = eventController.getOrganizerEvents();
 
-            // Filtra e ordina gli eventi futuri
+            // 🌟 Correzione Timezone (Clock.systemDefaultZone())
+            LocalDateTime now = LocalDateTime.now(Clock.systemDefaultZone());
+
             List<EventBean> upcoming = allEvents.stream()
-                    .filter(e -> e.getDateTime().isAfter(LocalDateTime.now()))
+                    .filter(e -> e.getDateTime().isAfter(now))
                     .sorted((a, b) -> a.getDateTime().compareTo(b.getDateTime()))
                     .toList();
 
-            // Filtra e ordina gli eventi passati (storico)
             List<EventBean> past = allEvents.stream()
-                    .filter(e -> e.getDateTime().isBefore(LocalDateTime.now()) || e.getDateTime().isEqual(LocalDateTime.now()))
-                    .sorted((a, b) -> b.getDateTime().compareTo(a.getDateTime())) // Ordine decrescente per i passati
+                    .filter(e -> e.getDateTime().isBefore(now) || e.getDateTime().isEqual(now))
+                    .sorted((a, b) -> b.getDateTime().compareTo(a.getDateTime()))
                     .toList();
 
-            // Usiamo la lambda per catturare l'id dell'organizer senza passarlo alla View
-            view.buildContent(root, upcoming, past, eventBean -> confirmDelete(eventBean, organizerId));
+            // 🌟 Rimosso 'organizerId' dalla lambda perché non serve nell'eliminazione
+            view.buildContent(root, upcoming, past, eventBean -> confirmDelete(eventBean));
 
         } catch (DAOException e) {
             view.setError("Errore durante il caricamento: " + e.getMessage());
@@ -59,7 +59,8 @@ public class ViewEventsGUI {
         stage.show();
     }
 
-    private void confirmDelete(EventBean eventBean, int organizerId) {
+    // 🌟 Rimosso 'organizerId' inutilizzato dalla firma del metodo
+    private void confirmDelete(EventBean eventBean) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Conferma Eliminazione");
         alert.setHeaderText(null);
@@ -74,11 +75,12 @@ public class ViewEventsGUI {
             if (result == ButtonType.OK) {
                 try {
                     eventController.deleteEvent(eventBean.getId());
-                    show(); // Ricarica la schermata per aggiornare la lista
+                    show();
                 } catch (DAOException e) {
                     view.setError("Errore durante l'eliminazione: " + e.getMessage());
                 }
             }
         });
     }
+
 }

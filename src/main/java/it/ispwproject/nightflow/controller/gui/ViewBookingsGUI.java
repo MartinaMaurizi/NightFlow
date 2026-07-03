@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.time.Clock;
 
 public class ViewBookingsGUI {
 
@@ -38,10 +39,9 @@ public class ViewBookingsGUI {
             // Filtro e ordinamento semplificati grazie a LocalDateTime
             List<BookingResponseBean> confirmed = allBookings.stream()
                     .filter(b -> b.getStatus() == BookingStatus.CONFIRMED)
-                    .filter(b -> b.getEvent().getDateTime().isAfter(LocalDateTime.now()))
+                    .filter(b -> b.getEvent().getDateTime().isAfter(LocalDateTime.now(Clock.systemDefaultZone())))
                     .sorted((a, b) -> a.getEvent().getDateTime().compareTo(b.getEvent().getDateTime()))
                     .toList();
-
             List<BookingResponseBean> cancelled = allBookings.stream()
                     .filter(b -> b.getStatus() == BookingStatus.CANCELLED)
                     .sorted((a, b) -> a.getEvent().getDateTime().compareTo(b.getEvent().getDateTime()))

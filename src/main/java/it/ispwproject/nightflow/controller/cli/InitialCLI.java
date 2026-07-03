@@ -37,11 +37,6 @@ public class InitialCLI extends AbstractCLIState {
                     context.setState(null);
                     inputValido = true;
                 }
-                // Il default gestisce tutto ciò che non è 0, 1 o 2
-                default -> {
-                    view.mostraErrore("Scelta non valida, riprova!");
-                    // inputValido rimane false, quindi il ciclo while ricomincia
-                }
             }
         }
     }
