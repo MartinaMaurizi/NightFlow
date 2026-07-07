@@ -24,10 +24,12 @@ public class LoginDAOMemory implements LoginDAO {
                     return new LoginException("Credenziali non valide. Riprova.");
                 });
 
-        // 2. Controllo password
-        if (plainPassword == null || plainPassword.isBlank()) {
-            AppLogger.logWarning("Login fallito: password vuota per " + email);
-            throw new LoginException("Credenziali non valide. Riprova.");
+        // 2. Controllo password (IL VERO CONTROLLO! 🔒)
+        // Se la password è vuota OPPURE non corrisponde a quella salvata per questo utente...
+        if (plainPassword == null || plainPassword.isBlank() || !plainPassword.equals(user.getPassword())) {
+            AppLogger.logWarning("Login fallito: password errata per " + email);
+            // Lanciamo l'allarme!
+            throw new LoginException("Email o password errati.");
         }
 
         AppLogger.logInfo("Login riuscito per utente: " + email);

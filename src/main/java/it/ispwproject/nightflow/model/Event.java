@@ -29,11 +29,11 @@ public class Event {
         this.description = description;
         this.dateTime = dateTime;
         this.location = location;
-        this.localName = localName;          // Inizializzato
+        this.localName = localName;
         this.totalCapacity = totalCapacity;
         this.availableTickets = totalCapacity;
         this.price = price;
-        this.organizerId = organizerId;      // Inizializzato
+        this.organizerId = organizerId;
     }
 
     public boolean bookTickets(int quantity) {

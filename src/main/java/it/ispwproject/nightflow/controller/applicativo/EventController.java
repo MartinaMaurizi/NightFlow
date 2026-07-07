@@ -35,7 +35,7 @@ public class EventController {
             }
         }
 
-        // Creazione e salvataggio
+        // Creazione e salvataggio (Costruttore Event originale)
         Event newEvent = new Event(0, eventBean.getName(), eventBean.getDescription(),
                 eventBean.getDateTime(), eventBean.getLocation(),
                 eventBean.getLocalName(), eventBean.getAvailableTickets(),
@@ -45,13 +45,34 @@ public class EventController {
         eventBean.setId(newEvent.getId());
     }
 
+    // Recupero eventi dell'organizzatore loggato
     public List<EventBean> getOrganizerEvents() throws DAOException {
         Organizer organizer = (Organizer) SessionManager.getInstance().getLoggedUser();
         List<Event> events = eventDAO.findByOrganizerId(organizer.getId());
 
         List<EventBean> eventBeans = new ArrayList<>();
         for (Event e : events) {
-            // 🌟 Sostituito il costruttore gigante con i metodi Set
+            EventBean bean = new EventBean();
+            bean.setId(e.getId());
+            bean.setName(e.getName());
+            bean.setDescription(e.getDescription());
+            bean.setDateTime(e.getDateTime());
+            bean.setLocation(e.getLocation());
+            bean.setLocalName(e.getLocalName());
+            bean.setAvailableTickets(e.getAvailableTickets());
+            bean.setPrice(e.getPrice());
+
+            eventBeans.add(bean);
+        }
+        return eventBeans;
+    }
+
+    // 🌟 NUOVO METODO: Recupero di tutti gli eventi futuri per il Cliente
+    public List<EventBean> getAllUpcomingEvents() throws DAOException {
+        List<Event> events = eventDAO.getAllUpcomingEvents();
+        List<EventBean> eventBeans = new ArrayList<>();
+
+        for (Event e : events) {
             EventBean bean = new EventBean();
             bean.setId(e.getId());
             bean.setName(e.getName());
@@ -70,5 +91,13 @@ public class EventController {
     public void deleteEvent(int eventId) throws DAOException {
         Organizer organizer = (Organizer) SessionManager.getInstance().getLoggedUser();
         eventDAO.delete(eventId, organizer.getId());
+    }
+
+    public void updateEventDate(EventBean eventBean) throws DAOException {
+        Event event = eventDAO.findById(eventBean.getId());
+        if (event != null) {
+            event.setDateTime(eventBean.getDateTime());
+            eventDAO.update(event);
+        }
     }
 }

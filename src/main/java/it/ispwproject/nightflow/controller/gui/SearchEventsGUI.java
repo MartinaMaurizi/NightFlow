@@ -18,8 +18,9 @@ public class SearchEventsGUI {
     }
 
     public void show() {
+// Nel metodo show() di SearchEventsGUI
         Scene scene = new Scene(view.buildRoot(
-                () -> new DashboardClientGUI(stage).show(),
+                () -> new DashboardClientGUI(stage).show(), // Torna indietro pulito
                 () -> {
                     SessionManager.getInstance().setLoggedUser(null);
                     MainGUI.showLogin();

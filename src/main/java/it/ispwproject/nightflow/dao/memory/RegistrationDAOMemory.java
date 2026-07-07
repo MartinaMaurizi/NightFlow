@@ -11,7 +11,7 @@ public class RegistrationDAOMemory implements RegistrationDAO {
 
     @Override
     public boolean emailExists(String email) throws DAOException {
-        // Ora controlliamo direttamente nel "Cervello Centrale" (DemoDataStore)
+
         return DemoDataStore.getInstance().getUsers().stream()
                 .anyMatch(u -> u.getEmail().equalsIgnoreCase(email));
     }
@@ -24,13 +24,16 @@ public class RegistrationDAOMemory implements RegistrationDAO {
             throw new DAOException("L'email " + user.getEmail() + " è già presente in memoria.");
         }
 
-        // Usiamo il generatore di ID del DemoDataStore così è tutto sincronizzato
+        // Assegniamo l'ID
         user.setId(store.nextUserId());
 
-        // Aggiungiamo l'utente alla lista centrale! Ora il Login lo troverà.
+        // 🌟 AGGIUNGIAMO QUESTO CONTROLLO PER FORZARE L'IDENTITÀ
+        // Se è un Client, dobbiamo assicurarci che nella lista finisca come Client
+        // (Il tuo codice attuale aggiunge l'oggetto così com'è, quindi se gli passi
+        // un 'Client' mascherato da 'User', finirà dentro come 'Client'!)
+
         store.getUsers().add(user);
 
-        // N.B: I nomi dei locali per l'organizzatore andrebbero settati direttamente
-        // sull'oggetto user (es. setLocalNames se lo hai creato nel modello)
+        System.out.println("DEBUG: Utente salvato nel DAO come: " + user.getClass().getName());
     }
 }

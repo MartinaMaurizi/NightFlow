@@ -3,20 +3,23 @@ package it.ispwproject.nightflow.bean;
 import java.time.LocalDateTime;
 
 public class EventBean {
+
     private int id;
     private String name;
     private String description;
     private LocalDateTime dateTime;
     private String location;
+
+    // 🌟 I NUOVI CAMPI MANCANTI DA AGGIUNGERE:
     private String localName;
+    private int organizerId;
+    private int totalCapacity;
     private int availableTickets;
     private double price;
 
-    // Lasciamo SOLO il costruttore vuoto, come vuole lo standard dei Bean
-    public EventBean() {
-        // Justification: Default constructor required by JavaBean standard.
-    }
-    // --- Da qui in poi ci sono solo Getters e Setters (uguali a prima) ---
+    public EventBean() {}
+
+    // ─── Getters & Setters originali ────────────────────────
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -32,8 +35,15 @@ public class EventBean {
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
 
+    // ─── NUOVI Getters & Setters per risolvere gli errori ───
     public String getLocalName() { return localName; }
     public void setLocalName(String localName) { this.localName = localName; }
+
+    public int getOrganizerId() { return organizerId; }
+    public void setOrganizerId(int organizerId) { this.organizerId = organizerId; }
+
+    public int getTotalCapacity() { return totalCapacity; }
+    public void setTotalCapacity(int totalCapacity) { this.totalCapacity = totalCapacity; }
 
     public int getAvailableTickets() { return availableTickets; }
     public void setAvailableTickets(int availableTickets) { this.availableTickets = availableTickets; }

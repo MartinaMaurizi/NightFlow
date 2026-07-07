@@ -1,26 +1,23 @@
 package it.ispwproject.nightflow.demo;
 
+import it.ispwproject.nightflow.enumerator.PaymentMethod; // 🌟 IMPORTANTE PER IL PAGAMENTO
 import it.ispwproject.nightflow.model.*;
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 public class DemoDataStore {
 
-    // 🌟 COSTANTI PER EVITARE DUPLICAZIONI (Soddisfa SonarCloud)
     private static final String DEFAULT_PASSWORD = "password";
-    private static final String JOLIE_CLUB = "Jolie Club";
 
     private static DemoDataStore instance;
 
     private final List<User>    users    = new ArrayList<>();
     private final List<Event>   events   = new ArrayList<>();
     private final List<Booking> bookings = new ArrayList<>();
-
-    private final Map<Integer, List<Integer>> favoriteLocals = new HashMap<>();
 
     private int nextUserId    = 10;
     private int nextEventId   = 5;
@@ -39,48 +36,77 @@ public class DemoDataStore {
 
     private void initData() {
         // ── Utenti ───────────────────────────────────────────────
-        Client    c1    = new Client(1, "Demo",     "Client", "client@demo",  DEFAULT_PASSWORD);
-        Client    c2    = new Client(2, "Anna",     "Bianchi",  "anna@demo",    DEFAULT_PASSWORD);
 
-        Organizer o1 = new Organizer(3, "Demo", "Organizer", "org@demo", DEFAULT_PASSWORD, null, "M", "Italy", "Milano",
-                new ArrayList<>(List.of(JOLIE_CLUB)));
-        Organizer o2 = new Organizer(4, "Marco", "Bianchi", "marco@demo", DEFAULT_PASSWORD, null, "M", "Italy", "Milano",
+        Client c1 = new Client(1, "Demo", "Client", "client@demo", DEFAULT_PASSWORD);
+        c1.setDateOfBirth(LocalDate.of(2001, 1, 13));
+
+        Client c2 = new Client(2, "Anna", "Bianchi", "anna@demo", DEFAULT_PASSWORD);
+        c2.setDateOfBirth(LocalDate.of(1998, 8, 5));
+
+        Organizer o1 = new Organizer(3, "Demo", "Organizer", "org@demo", DEFAULT_PASSWORD, null, "M", "Italy", "Roma",
+                new ArrayList<>(List.of("Jolie Club")));
+        Organizer o2 = new Organizer(4, "Marco", "Bianchi", "marco@demo", DEFAULT_PASSWORD, null, "M", "Italy", "Roma",
                 new ArrayList<>(List.of("Magazzini Generali")));
 
         users.add(c1); users.add(c2); users.add(o1); users.add(o2);
 
-        favoriteLocals.put(1, new ArrayList<>(List.of(3)));
 
         // ── Eventi ───────────────────────────────────────────────
-        // 🌟 Clock.systemDefaultZone() per SonarCloud
+
         LocalDateTime now = LocalDateTime.now(Clock.systemDefaultZone());
 
-        Event e1 = new Event(1, "Techno Night", "Ospite speciale DJ Carl Cox.",
+        Event e1 = new Event(1, "Latin Night", "Ospite speciale DJ Carl Cox.",
                 now.plusDays(1).withHour(23),
-                "Milano, Via Navigli", JOLIE_CLUB, 100, 20.0, o1.getId());
+                "Via Velletri 13, Roma", "Jolie Club", 100, 20.0, o1.getId());
 
         Event e2 = new Event(2, "Aperitivo in Terrazza", "Buffet e spritz.",
                 now.plusDays(2).withHour(19),
-                "Milano, Via Navigli", JOLIE_CLUB, 50, 15.0, o1.getId());
+                "Via del Santuario, Roma", "Amazonia night", 50, 15.0, o1.getId());
 
         Event e3 = new Event(3, "Indie Rock Live", "Musica dal vivo.",
                 now.plusDays(1).withHour(21),
-                "Milano, Via Pietrasanta", "Magazzini Generali", 200, 25.0, o2.getId());
+                "Via Pietrasanta 16,Roma", "Magazzini Generali", 200, 25.0, o2.getId());
+
+        Event e4 = new Event(4, "The sanctuary eco retreat techno", "Ingresso in lista",
+                now.plusDays(5), "Via delle Terme di Traiano", "Sanctuary", 150, 30.0, o1.getId());
+
+        Event e5 = new Event(5, "Amazonia night", "Descrizione Amazonia",
+                now.plusDays(7), "Via del Santuario, Roma", "Amazonia", 100, 25.0, o1.getId());
+
+        Event e6 = new Event(6, "Magazzini Generali", "Serata Magazzini",
+                now.plusDays(10), "Via Pietrasanta 16, Roma", "Magazzini Generali", 200, 20.0, o2.getId());
+
+        // 🌟 EVENTO PASSATO PER TESTARE LO STORICO PRENOTAZIONI
+        Event ePassato = new Event(99, "Festa Passata", "Un evento di test nel passato",
+                LocalDateTime.of(2025, 5, 20, 22, 30), "Via Tribale 3, Roma", "Sanctuary", 100, 15.0, o1.getId());
 
         events.add(e1); events.add(e2); events.add(e3);
+        events.add(e4); events.add(e5); events.add(e6);
+        events.add(ePassato);
 
         // ── Prenotazioni ─────────────────────────────────────────
         Booking b1 = new Booking(c1, e1);
         b1.setId(1);
+        b1.setTicketType("Tavolo VIP");
+        b1.setTicketCode("TKT-NEW-125");
+        b1.setPaymentMethod(PaymentMethod.PAY_ON_SITE);
         b1.confirm();
         e1.setAvailableTickets(e1.getAvailableTickets() - 1);
         bookings.add(b1);
+
+        // 🌟 PRENOTAZIONE EVENTO PASSATO PER IL CLIENTE DEMO (c1)
+        Booking bPassata = new Booking(c1, ePassato);
+        bPassata.setId(999);
+        bPassata.setTicketType("Ingresso VIP");
+        bPassata.setTicketCode("TKT-OLD-123");
+        bPassata.setPaymentMethod(PaymentMethod.PAYPAL); // Finta come già pagata
+        bPassata.confirm();
+        bookings.add(bPassata);
     }
 
     public List<User>       getUsers()       { return users; }
     public List<Event>      getEvents()      { return events; }
     public List<Booking>    getBookings()    { return bookings; }
-    public Map<Integer, List<Integer>> getFavoriteLocals() { return favoriteLocals; }
 
     public int nextUserId()    { return nextUserId++; }
     public int nextEventId()   { return nextEventId++; }

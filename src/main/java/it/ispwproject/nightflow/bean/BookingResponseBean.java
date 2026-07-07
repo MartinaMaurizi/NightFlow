@@ -1,29 +1,27 @@
 package it.ispwproject.nightflow.bean;
 
 import it.ispwproject.nightflow.enumerator.BookingStatus;
+import it.ispwproject.nightflow.enumerator.PaymentMethod;
 
 public class BookingResponseBean {
-
     private int id;
     private BookingStatus status;
-    private String ticketCode; // Il codice generato (es. NF-TKT-XXXX)
+    private String ticketCode;
     private ClientBean client;
     private EventBean event;
     private String ticketType;
+    private PaymentMethod paymentMethod;
 
-    public BookingResponseBean() {}
-
-    public BookingResponseBean(int id, BookingStatus status, String ticketCode,
-                               ClientBean client, EventBean event, String ticketType) {
+    public BookingResponseBean(int id, BookingStatus status, String ticketCode, ClientBean client, EventBean event, String ticketType, PaymentMethod paymentMethod) {
         this.id = id;
         this.status = status;
         this.ticketCode = ticketCode;
         this.client = client;
         this.event = event;
         this.ticketType = ticketType;
+        this.paymentMethod = paymentMethod;
     }
 
-    // Getter e Setter
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -42,5 +40,6 @@ public class BookingResponseBean {
     public String getTicketType() { return ticketType; }
     public void setTicketType(String ticketType) { this.ticketType = ticketType; }
 
-
+    public PaymentMethod getPaymentMethod() { return paymentMethod; }
+    public void setPaymentMethod(PaymentMethod paymentMethod) { this.paymentMethod = paymentMethod; }
 }

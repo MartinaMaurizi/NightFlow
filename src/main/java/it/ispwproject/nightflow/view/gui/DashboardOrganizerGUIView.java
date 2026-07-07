@@ -4,13 +4,19 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.image.Image; // 🌟 Aggiunto import
+import javafx.scene.image.ImageView; // 🌟 Aggiunto import
 
-public class DashboardOrganizerGUIView {
+public class DashboardOrganizerGUIView extends PageGUIView{
 
     public final Button logoutBtn = new Button("Log out");
     public final Button createEventBtn = new Button("➕ Crea Evento");
     public final Button modifyEventBtn = new Button("✏️ Modifica Evento");
     public final Button manageListBtn = new Button("📋 Gestisci Lista");
+
+    // 🌟 1. Aggiunti i bottoni del profilo e della home
+    public Button profileBtn = new Button();
+    public Button homeBtn = new Button();
 
     public BorderPane buildRoot(Runnable onLogout, Runnable onCreate, Runnable onModify, Runnable onManage) {
         BorderPane root = new BorderPane();
@@ -63,19 +69,32 @@ public class DashboardOrganizerGUIView {
         nav.setPadding(new Insets(15, 30, 15, 30));
         nav.setStyle("-fx-background-color: white; -fx-border-color: #651fff; -fx-border-width: 0 0 2 0;");
 
-        // Logo leggermente diverso per far capire che siamo nell'area business
+        // Logo
         Label logo = new Label("NightFlow - Area Organizer");
         logo.setStyle("-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #b39eff; -fx-font-family: 'Brush Script MT', cursive;");
         nav.setLeft(logo);
         BorderPane.setAlignment(logo, Pos.CENTER_LEFT);
 
+        // 🌟 2. Creiamo un contenitore orizzontale (HBox) per raggruppare i 3 bottoni a destra
+        HBox rightBox = new HBox(15);
+        rightBox.setAlignment(Pos.CENTER_RIGHT);
+
+        // Creiamo i due bottoni icona
+        profileBtn = createIconButton("/icons/profileButton.png");
+        homeBtn = createIconButton("/icons/homeButton.png");
+
+        // Impostiamo il bottone di logout
         logoutBtn.setPrefWidth(100);
-        logoutBtn.setStyle("-fx-background-color: black; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 5 15; -fx-font-size: 12px; -fx-font-weight: bold; -fx-cursor: hand;");
+        logoutBtn.getStyleClass().add("logout-btn");
         logoutBtn.setOnAction(e -> onLogout.run());
 
-        nav.setRight(logoutBtn);
-        BorderPane.setAlignment(logoutBtn, Pos.CENTER_RIGHT);
+        // Aggiungiamo i 3 bottoni alla scatola di destra
+        rightBox.getChildren().addAll(profileBtn, homeBtn, logoutBtn);
+
+        // Inseriamo la scatola nella parte destra della Navbar
+        nav.setRight(rightBox);
 
         return nav;
     }
+
 }

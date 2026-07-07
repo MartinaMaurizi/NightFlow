@@ -10,6 +10,7 @@ public interface BookingDAO {
     // Salva una nuova prenotazione (e aggiorna i biglietti disponibili)
     void save(Booking booking) throws DAOException;
 
+    void update(Booking booking) throws DAOException;
     // Trova tutte le prenotazioni di un cliente
     List<Booking> findByClient(int clientId) throws DAOException;
 

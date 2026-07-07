@@ -23,7 +23,8 @@ public class SearchEventsGUIView {
             new String[]{"Jerò restaurant", "/locali/jerorestaurant.png"},
             new String[]{"Satyrus", "/locali/satyrus.png"},
             new String[]{"The sanctuary eco retreat", "/locali/sanctuary.png"},
-            new String[]{"Amazonia", "/locali/amazonia.png"}
+            new String[]{"Amazonia", "/locali/amazonia.png"},
+            new String[]{"Magazzini", "/locali/magazzini.png"}
     );
 
     private VBox historyList;
@@ -43,9 +44,6 @@ public class SearchEventsGUIView {
         Label title = new Label("Trova Eventi");
         title.setStyle("-fx-font-size: 18px; -fx-text-fill: #5e17eb; -fx-font-weight: bold;");
 
-        Label subtitle = new Label("Ultime Ricerche");
-        subtitle.setStyle("-fx-font-size: 14px; -fx-text-fill: black;");
-
         historyList = new VBox(10);
         populateList("", onVenueClick);
 
@@ -53,7 +51,7 @@ public class SearchEventsGUIView {
             populateList(newValue, onVenueClick);
         });
 
-        whiteSheet.getChildren().addAll(title, subtitle, historyList);
+        whiteSheet.getChildren().addAll(title, historyList);
 
         // 3. TRUCCO PER LO SCROLL A DESTRA
         // Invece di ingabbiare lo scroll, creiamo un VBox che fa da "sfondo lilla" e centra il foglio bianco
@@ -84,20 +82,21 @@ public class SearchEventsGUIView {
 
     private BorderPane buildPurpleNavbar(Runnable onBack, Runnable onLogout) {
         BorderPane nav = new BorderPane();
-        // Ho ridotto il margine sinistro (ultimo numero a 15) per avvicinarlo al bordo
-        nav.setPadding(new Insets(15, 30, 15, 15));
-        nav.setStyle("-fx-background-color: #651fff;");
+        nav.setPadding(new Insets(15, 30, 15, 0));
+        nav.setStyle("-fx-background-color: #ede7f6; -fx-border-color: #651fff; -fx-border-width: 0 0 2 0;");
 
-        // BLOCCO SINISTRA: Spaziatura ridotta tra freccia e logo (5px)
-        HBox leftBox = new HBox(5);
+        HBox leftBox = new HBox(5); // Spazio ridotto tra bottone e logo
         leftBox.setAlignment(Pos.CENTER_LEFT);
+        leftBox.setPrefWidth(180); // Fissiamo una larghezza massima per il blocco sinistro
 
-        backBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 0;");
+        backBtn.setText("< Indietro");
+        backBtn.getStyleClass().clear();
+        backBtn.getStyleClass().add("back-btn");
         backBtn.setOnAction(e -> onBack.run());
 
         Label logo = new Label("NightFlow");
         // Aggiunto il font corsivo elegante, dimensione leggermente aumentata per proporzione
-        logo.setStyle("-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: white; -fx-font-family: 'Brush Script MT', cursive;");
+        logo.setStyle("-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #651fff; -fx-font-family: 'Brush Script MT', cursive;");
         logo.setMinWidth(Region.USE_PREF_SIZE);
 
         leftBox.getChildren().addAll(backBtn, logo);
@@ -109,7 +108,9 @@ public class SearchEventsGUIView {
         searchContainer.setAlignment(Pos.CENTER_LEFT);
         searchContainer.setPrefWidth(350);
         searchContainer.setMaxWidth(350);
-        searchContainer.setStyle("-fx-background-color: white; -fx-background-radius: 20; -fx-border-radius: 20; -fx-border-color: white; -fx-padding: 4 15;");
+
+        // 🌟 APPLICA LA CLASSE CSS DEFINITA IN PRECEDENZA
+        searchContainer.getStyleClass().add("search-field");
 
         try {
             ImageView searchIcon = new ImageView(new Image(getClass().getResourceAsStream("/icons/cerca.png")));
@@ -118,12 +119,18 @@ public class SearchEventsGUIView {
         } catch (Exception e) {}
 
         searchField.setPromptText("Cerca");
-        searchField.setStyle("-fx-background-color: transparent; -fx-border-color: transparent; -fx-prompt-text-fill: #5e17eb; -fx-text-fill: #5e17eb;");
+        // Rimuovi eventuali stili che forzano il colore, lasciamo che sia il CSS a gestire il focus
+        searchField.setStyle("-fx-background-color: transparent; -fx-prompt-text-fill: #5e17eb; -fx-text-fill: #5e17eb;");
         HBox.setHgrow(searchField, Priority.ALWAYS);
         searchContainer.getChildren().add(searchField);
 
-        nav.setCenter(searchContainer);
+        // 🌟 EVENTO CLICK: Anche se siamo già in Search, cliccare qui
+        // può ad esempio resettare la ricerca o dare feedback visivo
+        searchContainer.setOnMouseClicked(e -> {
+            searchField.requestFocus(); // Assicura che il campo diventi attivo
+        });
 
+        nav.setCenter(searchContainer);
         // BLOCCO DESTRA
         HBox rightBox = new HBox(15);
         rightBox.setAlignment(Pos.CENTER_RIGHT);
@@ -135,7 +142,7 @@ public class SearchEventsGUIView {
         logoutBtn.setPrefWidth(100);
         logoutBtn.setMinWidth(100);
         logoutBtn.setMaxWidth(100);
-        logoutBtn.setStyle("-fx-background-color: black; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 5 15; -fx-font-size: 12px; -fx-font-weight: bold; -fx-cursor: hand;");
+        logoutBtn.getStyleClass().add("logout-btn");
         logoutBtn.setOnAction(e -> onLogout.run());
 
         rightBox.getChildren().addAll(profileBtn, homeBtn, logoutBtn);
@@ -182,11 +189,18 @@ public class SearchEventsGUIView {
             ImageView icon = new ImageView(new Image(getClass().getResourceAsStream(path)));
             icon.setFitHeight(20); icon.setFitWidth(20);
             btn.setGraphic(icon);
-        } catch (Exception e) { btn.setText("?"); }
+        } catch (Exception e) {
+            btn.setText("?");
+        }
+
         btn.setPrefWidth(35);
         btn.setMinWidth(35);
         btn.setMaxWidth(35);
-        btn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0;");
+
+        // 🌟 IL SEGRETO È QUI:
+        // Abbiamo cancellato il vecchio btn.setStyle(...) e messo la classe CSS!
+        btn.getStyleClass().add("icon-btn");
+
         return btn;
     }
 }

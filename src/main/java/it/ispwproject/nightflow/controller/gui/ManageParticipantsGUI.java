@@ -3,10 +3,9 @@ package it.ispwproject.nightflow.controller.gui;
 import it.ispwproject.nightflow.bean.*;
 import it.ispwproject.nightflow.controller.applicativo.ClientManagementController;
 import it.ispwproject.nightflow.exception.DAOException;
+import it.ispwproject.nightflow.pattern.singleton.SessionManager; // 🌟 Aggiunto import
 import it.ispwproject.nightflow.view.gui.ManageParticipantsGUIView;
-import javafx.scene.control.Alert;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.List;
@@ -17,62 +16,47 @@ public class ManageParticipantsGUI {
     private final ClientManagementController clientManagementController = new ClientManagementController();
     private final ManageParticipantsGUIView view = new ManageParticipantsGUIView();
 
-    public ManageParticipantsGUI(Stage stage) { this.stage = stage; }
+    public ManageParticipantsGUI(Stage stage) {
+        this.stage = stage;
+    }
 
     public void show() {
-        BorderPane root = view.buildRoot(MainGUI::showDashboardOrganizer);
+        // 🌟 Assegniamo le azioni a Indietro, Logout, Profilo e Home
+        BorderPane root = view.buildRoot(
+                () -> new DashboardOrganizerGUI(stage).show(), // Azione Tasto Indietro
+                () -> {                                        // Azione Logout
+                    SessionManager.getInstance().setLoggedUser(null);
+                    MainGUI.showLogin();
+                },
+                () -> new ProfileGUI(stage).show(),            // Azione Profilo
+                () -> new DashboardOrganizerGUI(stage).show()  // Azione Home
+        );
+
+        view.clearList();
 
         try {
-            // Assicurati che nel tuo controller applicativo il metodo si chiami getClients()
-            view.participantCombo.getItems().setAll(clientManagementController.getClients());
-        } catch (DAOException e) {
-            view.errorLabel.setText("Errore: " + e.getMessage());
-        }
+            List<ClientBean> allClients = clientManagementController.getClients();
+            boolean hasParticipants = false;
 
-        view.participantCombo.setOnAction(e -> {
-            ClientBean selected = view.participantCombo.getValue();
-            if (selected == null) return;
-            loadParticipantCard(selected);
-        });
+            for (ClientBean client : allClients) {
+                List<BookingResponseBean> bookings = clientManagementController.getClientBookings(client.getId());
+
+                if (bookings != null && !bookings.isEmpty()) {
+                    hasParticipants = true;
+                    // Chiamiamo la View senza passargli l'azione del Check-in (rimossa)
+                    view.addParticipantCard(client, bookings);
+                }
+            }
+
+            if (!hasParticipants) {
+                view.showEmptyMessage();
+            }
+
+        } catch (DAOException e) {
+            view.errorLabel.setText("Errore di caricamento: " + e.getMessage());
+        }
 
         stage.setScene(GUIUtils.createScene(root));
         stage.show();
-    }
-
-    // ─── Caricamento card partecipante ──────────────────────────────────────
-    private void loadParticipantCard(ClientBean client) {
-        VBox card = view.getParticipantCard();
-        try {
-            // Recuperiamo le prenotazioni del cliente per gli eventi gestiti dall'organizzatore
-            List<BookingResponseBean> bookings = clientManagementController.getClientBookings(client.getId());
-
-            view.buildParticipantCard(card, client, bookings,
-                    booking -> handleCheckIn(booking, client));
-
-        } catch (DAOException e) {
-            view.errorLabel.setText("Errore: " + e.getMessage());
-        }
-    }
-
-    // ─── Azioni ─────────────────────────────────────────────────────────────
-// 1. Modifica la firma del metodo
-    private void handleCheckIn(BookingResponseBean booking, ClientBean client) {
-        try {
-            clientManagementController.performCheckIn(booking.getId());
-            showInfo("Check-in effettuato con successo!");
-
-            // Ricarichiamo la card (il metodo la rigenera da zero, quindi non serve passargli quella vecchia)
-            loadParticipantCard(client);
-        } catch (DAOException e) {
-            view.errorLabel.setText("Errore durante il check-in: " + e.getMessage());
-        }
-    }
-
-    private void showInfo(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Operazione completata");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }

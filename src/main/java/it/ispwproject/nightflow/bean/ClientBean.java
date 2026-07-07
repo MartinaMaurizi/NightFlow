@@ -6,6 +6,7 @@ public class ClientBean {
     private String surname;
     private String email;
 
+
     public ClientBean() {}
 
     public ClientBean(int id, String name, String surname, String email) {
@@ -25,4 +26,6 @@ public class ClientBean {
     public void setSurname(String surname) { this.surname = surname; }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+
 }

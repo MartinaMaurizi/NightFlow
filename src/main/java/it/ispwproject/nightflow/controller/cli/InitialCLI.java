@@ -25,6 +25,7 @@ public class InitialCLI extends AbstractCLIState {
             String scelta = view.chiediScelta();
 
             switch (scelta) {
+
                 case "1" -> {
                     goNext(context, new LoginCLI());
                     inputValido = true;
@@ -37,6 +38,7 @@ public class InitialCLI extends AbstractCLIState {
                     context.setState(null);
                     inputValido = true;
                 }
+                default -> view.mostraErrore("Scelta non valida. Inserisci 0, 1 o 2.");
             }
         }
     }

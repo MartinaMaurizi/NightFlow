@@ -3,6 +3,7 @@ package it.ispwproject.nightflow.dao.db;
 import it.ispwproject.nightflow.dao.AbstractBookingDAO;
 import it.ispwproject.nightflow.dao.ConnectionFactory;
 import it.ispwproject.nightflow.enumerator.BookingStatus;
+import it.ispwproject.nightflow.enumerator.PaymentMethod;
 import it.ispwproject.nightflow.exception.DAOException;
 import it.ispwproject.nightflow.model.*;
 
@@ -12,29 +13,34 @@ import java.util.List;
 
 public class BookingDAODB extends AbstractBookingDAO {
 
+    // 🌟 INSERIMENTO CON TUTTI I CAMPI: ticket_type, payment_method, ticket_code
     private static final String INSERT_BOOKING =
-            "INSERT INTO bookings (client_id, event_id, status, ticket_code, created_at, reserved_until) " +
-                    "VALUES (?, ?, 'CONFIRMED', ?, ?, ?)";
+            "INSERT INTO booking (client_id, event_id, ticket_type, price_paid, payment_method, ticket_code, status, created_at) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, 'CONFIRMED', ?)";
 
     private static final String CANCEL_BOOKING =
-            "UPDATE bookings SET status = 'CANCELLED' WHERE id = ? AND client_id = ?";
+            "UPDATE booking SET status = 'CANCELLED' WHERE id = ? AND client_id = ?";
+
+    private static final String UPDATE_BOOKING =
+            "UPDATE booking SET status = ?, payment_method = ? WHERE id = ?";
 
     private static final String RESTORE_TICKET =
-            "UPDATE events SET available_tickets = available_tickets + 1 " +
-                    "WHERE id = (SELECT event_id FROM bookings WHERE id = ? AND client_id = ?)";
+            "UPDATE event SET available_tickets = available_tickets + 1 " +
+                    "WHERE id = (SELECT event_id FROM booking WHERE id = ? AND client_id = ?)";
 
     private static final String REDUCE_TICKET_AVAILABILITY =
-            "UPDATE events SET available_tickets = available_tickets - 1 WHERE id = ?";
+            "UPDATE event SET available_tickets = available_tickets - 1 WHERE id = ?";
 
+    // 🌟 SELEZIONE CON TUTTI I CAMPI: b.payment_method, b.ticket_code
     private static final String SELECT_BOOKINGS =
-            "SELECT b.id, b.status, b.ticket_code, b.created_at, b.reserved_until, " +
+            "SELECT b.id, b.status, b.ticket_type, b.price_paid, b.payment_method, b.ticket_code, b.created_at, " +
                     "       u_c.id c_id, u_c.name c_name, u_c.surname c_surname, u_c.email c_email, " +
                     "       e.id e_id, e.name e_name, e.description e_desc, e.date_time e_date, " +
-                    "       e.location e_loc, e.local_name e_localname, e.total_capacity e_cap, " +
-                    "       e.available_tickets e_avail, e.price e_price, e.organizer_id e_orgid " +
-                    "FROM bookings b " +
-                    "JOIN users u_c ON b.client_id = u_c.id " +
-                    "JOIN events e ON b.event_id = e.id ";
+                    "       e.location e_loc, e.club_name e_localname, e.total_tickets e_cap, " +
+                    "       e.available_tickets e_avail, e.base_price e_price, e.organizer_id e_orgid " +
+                    "FROM booking b " +
+                    "JOIN user u_c ON b.client_id = u_c.id " +
+                    "JOIN event e ON b.event_id = e.id ";
 
     private static final String FIND_BY_CLIENT = SELECT_BOOKINGS + "WHERE b.client_id = ? ORDER BY b.created_at DESC";
     private static final String FIND_ALL = SELECT_BOOKINGS + "ORDER BY b.created_at DESC";
@@ -47,17 +53,46 @@ public class BookingDAODB extends AbstractBookingDAO {
     public void save(Booking booking) throws DAOException {
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(INSERT_BOOKING, Statement.RETURN_GENERATED_KEYS)) {
+
             ps.setInt(1, booking.getClient().getId());
             ps.setInt(2, booking.getEvent().getId());
-            ps.setString(3, booking.getTicketCode());
-            ps.setTimestamp(4, Timestamp.valueOf(booking.getCreatedAt()));
-            ps.setTimestamp(5, booking.getReservedUntil() != null ? Timestamp.valueOf(booking.getReservedUntil()) : null);
+
+            ps.setString(3, booking.getTicketType() != null ? booking.getTicketType() : "Ingresso Base");
+            ps.setDouble(4, booking.getEvent().getPrice());
+
+            ps.setString(5, booking.getPaymentMethod() != null ? booking.getPaymentMethod().name() : null);
+            ps.setString(6, booking.getTicketCode());
+
+            ps.setTimestamp(7, Timestamp.valueOf(booking.getCreatedAt()));
+
             ps.executeUpdate();
-            try (ResultSet keys = ps.getGeneratedKeys()) { if (keys.next()) booking.setId(keys.getInt(1)); }
+
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next()) booking.setId(keys.getInt(1));
+            }
+
             booking.setStatus(BookingStatus.CONFIRMED);
             updateTicketAvailability(conn, booking.getEvent().getId());
             addToCache(booking);
-        } catch (SQLException e) { throw new DAOException("Errore salvataggio: " + e.getMessage(), e); }
+
+        } catch (SQLException e) {
+            throw new DAOException("Errore salvataggio prenotazione nel DB: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void update(Booking booking) throws DAOException {
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(UPDATE_BOOKING)) {
+
+            ps.setString(1, booking.getStatus().name());
+            ps.setString(2, booking.getPaymentMethod() != null ? booking.getPaymentMethod().name() : null);
+            ps.setInt(3, booking.getId());
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DAOException("Errore durante l'aggiornamento della prenotazione: " + e.getMessage(), e);
+        }
     }
 
     @Override
@@ -138,7 +173,7 @@ public class BookingDAODB extends AbstractBookingDAO {
 
     @Override
     public void updateStatus(int bookingId, String status) throws DAOException {
-        try (Connection conn = ConnectionFactory.getConnection(); PreparedStatement ps = conn.prepareStatement("UPDATE bookings SET status = ? WHERE id = ?")) {
+        try (Connection conn = ConnectionFactory.getConnection(); PreparedStatement ps = conn.prepareStatement("UPDATE booking SET status = ? WHERE id = ?")) {
             ps.setString(1, status); ps.setInt(2, bookingId);
             ps.executeUpdate();
         } catch (SQLException e) { throw new DAOException("Errore aggiornamento stato: " + e.getMessage(), e); }
@@ -152,15 +187,28 @@ public class BookingDAODB extends AbstractBookingDAO {
 
     private Booking mapToBooking(ResultSet rs) throws SQLException {
         Client client = new Client(rs.getInt("c_id"), rs.getString("c_name"), rs.getString("c_surname"), rs.getString("c_email"), null);
+
         Event event = new Event(rs.getInt("e_id"), rs.getString("e_name"), rs.getString("e_desc"), rs.getTimestamp("e_date").toLocalDateTime(),
                 rs.getString("e_loc"), rs.getString("e_localname"), rs.getInt("e_cap"), rs.getDouble("e_price"), rs.getInt("e_orgid"));
         event.setAvailableTickets(rs.getInt("e_avail"));
+
         Booking booking = new Booking(client, event);
         booking.setId(rs.getInt("id"));
         booking.setStatus(BookingStatus.valueOf(rs.getString("status")));
+
+        // 🌟 ECCO I CAMPI CHE VENIVANO MANGIATI!
         booking.setTicketCode(rs.getString("ticket_code"));
-        if (rs.getTimestamp("created_at") != null) booking.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-        if (rs.getTimestamp("reserved_until") != null) booking.setReservedUntil(rs.getTimestamp("reserved_until").toLocalDateTime());
+        booking.setTicketType(rs.getString("ticket_type"));
+
+        String paymentStr = rs.getString("payment_method");
+        if (paymentStr != null && !paymentStr.isEmpty()) {
+            booking.setPaymentMethod(PaymentMethod.valueOf(paymentStr));
+        }
+
+        if (rs.getTimestamp("created_at") != null) {
+            booking.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+        }
+
         return booking;
     }
 }

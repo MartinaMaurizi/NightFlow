@@ -23,8 +23,15 @@ public class LoginController {
 
     public LoginResult login(String email, String password) throws LoginException {
 
+        // 🌟 1. COMMENTIAMO (O CANCELLIAMO) LA TRASFORMAZIONE IN HASH
         String hashedPassword = PasswordUtils.hash(password);
+
         Credentials credentials = DAOFactory.getLoginDAO().execute(email, hashedPassword);
+
+        // Il vigile del backend (che avevamo aggiunto prima, se lo hai messo)
+        if (credentials == null) {
+            throw new LoginException("Email o password errati.");
+        }
 
         if (!DAOFactory.MEMORY.equalsIgnoreCase(DAOFactory.getPersistence())) {
             try {

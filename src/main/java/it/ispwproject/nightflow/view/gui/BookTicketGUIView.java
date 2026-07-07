@@ -7,6 +7,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
+import java.time.format.DateTimeFormatter;
 
 public class BookTicketGUIView {
 
@@ -15,10 +16,9 @@ public class BookTicketGUIView {
     public final Button checkoutBtn = new Button("Check Out");
     public Button profileBtn = new Button();
     public Button homeBtn = new Button();
-    // Definiamo un gruppo logico per far selezionare un solo biglietto alla volta
     private final ToggleGroup ticketGroup = new ToggleGroup();
 
-    public BorderPane buildRoot(Runnable onBack, Runnable onLogout, java.util.function.Consumer<String> onCheckout, it.ispwproject.nightflow.bean.EventBean event) {
+    public BorderPane buildRoot(Runnable onBack, Runnable onLogout, java.util.function.BiConsumer<String, Double> onCheckout, it.ispwproject.nightflow.bean.EventBean event) {
         BorderPane root = new BorderPane();
         root.setStyle("-fx-background-color: #ede7f6;");
         root.setTop(buildWhiteNavbar(onBack, onLogout));
@@ -27,15 +27,16 @@ public class BookTicketGUIView {
         mainContent.setAlignment(Pos.TOP_CENTER);
         mainContent.setMaxWidth(700);
 
-        // 🌟 Titolo e Immagine presi dinamicamente dall'evento
         Label title = new Label(event.getName());
         title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: black;");
+
+        Label locationLabel = new Label("📍 " + event.getLocalName() + " - " + event.getLocation());
+        locationLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #555555;");
+
         StackPane imageContainer = new StackPane();
         imageContainer.setMaxSize(500, 250);
         try {
-            // ECCO LA RIGA MODIFICATA CHE GESTISCE LE LETTERE ACCENTATE:
             String imagePath = "/locali/" + event.getLocalName().toLowerCase().replace(" ", "").replace("ò", "o") + ".png";
-
             ImageView imgView = new ImageView(new Image(getClass().getResourceAsStream(imagePath)));
             imgView.setFitWidth(500); imgView.setFitHeight(250); imgView.setPreserveRatio(false);
             Rectangle clip = new Rectangle(500, 250); clip.setArcWidth(40); clip.setArcHeight(40);
@@ -52,24 +53,39 @@ public class BookTicketGUIView {
         Label ingressoLbl = new Label("Ingresso");
         ingressoLbl.setStyle("-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: black;");
 
+        String eventTime = event.getDateTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+        if (event.getDescription().contains("Orario:")) {
+            eventTime = event.getDescription().split("Orario:")[1].trim();
+        } else {
+            eventTime += " - Late";
+        }
+
+        // 🌟 2. CALCOLIAMO I PREZZI COME NUMERI VERI (DOUBLE)
+        double basePriceValue = event.getPrice();
+        double drinkPriceValue = event.getPrice() + 5.0;
+        double vipPriceValue = event.getPrice() + 85.0;
+
         ticketSection.getChildren().addAll(listeLbl, ingressoLbl,
-                createTicketRow("22:00-00:30", "Con drink", "20€"),
-                createTicketRow("22:00-00:30", "Senza drink", "15€"),
-                createTicketRow("22:00-00:30", "Tavolo VIP", "100€")
+                createTicketRow(eventTime, "Senza drink", basePriceValue), // 🌟 Passiamo il Double
+                createTicketRow(eventTime, "Con drink", drinkPriceValue),
+                createTicketRow(eventTime, "Tavolo VIP", vipPriceValue)
         );
 
-        checkoutBtn.setStyle("-fx-background-color: #651fff; -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 16px; -fx-padding: 10 40; -fx-cursor: hand;");
+        checkoutBtn.getStyleClass().add("btn-viola-large");
 
-        // 🌟 AZIONE CHECKOUT: Legge il biglietto selezionato e lo passa avanti!
         checkoutBtn.setOnAction(e -> {
             RadioButton selected = (RadioButton) ticketGroup.getSelectedToggle();
-            String ticketInfo = (selected != null) ? selected.getUserData().toString() : "Ingresso Base";
-            onCheckout.accept(ticketInfo);
+            if (selected != null) {
+                // 🌟 Estraggo la stringa descrittiva E il prezzo finale dall'UserData
+                Object[] data = (Object[]) selected.getUserData();
+                onCheckout.accept((String) data[0], (Double) data[1]);
+            } else {
+                onCheckout.accept("Ingresso Base", event.getPrice());
+            }
         });
 
-        mainContent.getChildren().addAll(title, imageContainer, ticketSection, checkoutBtn);
+        mainContent.getChildren().addAll(title, locationLabel, imageContainer, ticketSection, checkoutBtn);
 
-        // 3. TRUCCO PER LO SCROLL A DESTRA (Stessa logica della pagina Ricerca)
         VBox centerWrapper = new VBox(mainContent);
         centerWrapper.setAlignment(Pos.TOP_CENTER);
         centerWrapper.setPadding(new Insets(30, 0, 50, 0));
@@ -77,7 +93,7 @@ public class BookTicketGUIView {
         ScrollPane scrollPane = new ScrollPane(centerWrapper);
         scrollPane.setFitToWidth(true);
         scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
-        scrollPane.getStyleClass().add("transparent-scroll"); // Applica la barra viola
+        scrollPane.getStyleClass().add("transparent-scroll");
 
         root.setCenter(scrollPane);
         return root;
@@ -85,15 +101,15 @@ public class BookTicketGUIView {
 
     private BorderPane buildWhiteNavbar(Runnable onBack, Runnable onLogout) {
         BorderPane nav = new BorderPane();
-        // Stesse misure di SearchEventsGUIView
-        nav.setPadding(new Insets(15, 30, 15, 15));
-        nav.setStyle("-fx-background-color: white; -fx-border-color: #651fff; -fx-border-width: 0 0 2 0;");
+        nav.setPadding(new Insets(15, 30, 15, 0));
+        nav.setStyle("-fx-background-color: #ede7f6; -fx-border-color: #651fff; -fx-border-width: 0 0 2 0;");
 
-        // BLOCCO SINISTRA
-        HBox leftBox = new HBox(5);
-        leftBox.setAlignment(Pos.CENTER_LEFT);
+        HBox leftBox = new HBox(5); // Spazio ridotto tra bottone e logo
+        leftBox.setAlignment(Pos.CENTER_LEFT);// Fissiamo una larghezza massima per il blocco sinistro
 
-        backBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #651fff; -fx-font-size: 24px; -fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 0;");
+        backBtn.setText("< Indietro");
+        backBtn.getStyleClass().clear();
+        backBtn.getStyleClass().add("back-btn");
         backBtn.setOnAction(e -> onBack.run());
 
         Label logo = new Label("NightFlow");
@@ -103,7 +119,6 @@ public class BookTicketGUIView {
         leftBox.getChildren().addAll(backBtn, logo);
         nav.setLeft(leftBox);
 
-        // BLOCCO DESTRA (Icone e Logout sistemati)
         HBox rightBox = new HBox(15);
         rightBox.setAlignment(Pos.CENTER_RIGHT);
 
@@ -114,7 +129,7 @@ public class BookTicketGUIView {
         logoutBtn.setPrefWidth(100);
         logoutBtn.setMinWidth(100);
         logoutBtn.setMaxWidth(100);
-        logoutBtn.setStyle("-fx-background-color: black; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 5 15; -fx-font-size: 12px; -fx-font-weight: bold; -fx-cursor: hand;");
+        logoutBtn.getStyleClass().add("logout-btn");
         logoutBtn.setOnAction(e -> onLogout.run());
 
         rightBox.getChildren().addAll(profileBtn, homeBtn, logoutBtn);
@@ -123,19 +138,21 @@ public class BookTicketGUIView {
         return nav;
     }
 
-    private HBox createTicketRow(String time, String desc, String price) {
+    private HBox createTicketRow(String time, String desc, Double finalPrice) {
         HBox row = new HBox(20);
         row.setAlignment(Pos.CENTER_LEFT);
         row.setStyle("-fx-background-color: white; -fx-padding: 10 20;");
 
         Label timeLbl = new Label(time); timeLbl.setPrefWidth(100); timeLbl.setStyle("-fx-text-fill: black;");
         Label descLbl = new Label("| " + desc); HBox.setHgrow(descLbl, Priority.ALWAYS); descLbl.setMaxWidth(Double.MAX_VALUE); descLbl.setStyle("-fx-text-fill: black;");
-        Label priceLbl = new Label(price); priceLbl.setStyle("-fx-text-fill: black;");
 
-        // 🌟 Usiamo RadioButton così scegli un solo biglietto!
+        // Lo mostriamo a schermo con due decimali
+        Label priceLbl = new Label(String.format("%.2f €", finalPrice)); priceLbl.setStyle("-fx-text-fill: black;");
+
         RadioButton radio = new RadioButton();
         radio.setToggleGroup(ticketGroup);
-        radio.setUserData(desc + " (" + price + ")"); // Salviamo il testo da mandare al checkout!
+        // 🌟 Salviamo un ARRAY con la descrizione e il prezzo VERO
+        radio.setUserData(new Object[]{desc, finalPrice});
         radio.setStyle("-fx-cursor: hand;");
 
         row.getChildren().addAll(timeLbl, descLbl, priceLbl, radio);
@@ -148,11 +165,18 @@ public class BookTicketGUIView {
             ImageView icon = new ImageView(new Image(getClass().getResourceAsStream(path)));
             icon.setFitHeight(20); icon.setFitWidth(20);
             btn.setGraphic(icon);
-        } catch (Exception e) { btn.setText("?"); }
+        } catch (Exception e) {
+            btn.setText("?");
+        }
+
         btn.setPrefWidth(35);
         btn.setMinWidth(35);
         btn.setMaxWidth(35);
-        btn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0;");
+
+        // 🌟 IL SEGRETO È QUI:
+        // Abbiamo cancellato il vecchio btn.setStyle(...) e messo la classe CSS!
+        btn.getStyleClass().add("icon-btn");
+
         return btn;
     }
 }

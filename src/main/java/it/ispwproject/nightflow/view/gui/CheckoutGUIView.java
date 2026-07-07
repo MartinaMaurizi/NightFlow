@@ -1,6 +1,7 @@
 package it.ispwproject.nightflow.view.gui;
 
-import it.ispwproject.nightflow.enumerator.PaymentMethod; // 🌟 IMPORTANTE: Importa il tuo Enum
+import it.ispwproject.nightflow.model.User;
+import it.ispwproject.nightflow.enumerator.PaymentMethod;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -8,6 +9,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
+
+import java.time.format.DateTimeFormatter;
 
 public class CheckoutGUIView {
 
@@ -17,14 +20,16 @@ public class CheckoutGUIView {
     public Button profileBtn = new Button();
     public Button homeBtn = new Button();
 
-    // Campi pubblici per essere letti dal Controller
-    public final TextField nameFld = new TextField("Anna Bianchi");
-    public final TextField emailFld = new TextField("annabianchi@gmail.com");
+    public final TextField nameFld = new TextField();
+    public final TextField emailFld = new TextField();
+    public final TextField dateFld = new TextField();
 
-    // 🌟 VARIABILE PER SALVARE LA SCELTA (Inizialmente null)
+    // 🌟 RESO PUBBLICO PER I CONTROLLI NEL CONTROLLER
+    public final TextField phoneFld = new TextField();
+
     public PaymentMethod selectedPaymentMethod = null;
 
-    public BorderPane buildRoot(Runnable onBack, Runnable onLogout, Runnable onConfirm,
+    public BorderPane buildRoot(User loggedUser, Runnable onBack, Runnable onLogout, Runnable onConfirm,
                                 String eventTitle, String eventDate, String ticketDetails, String imagePath) {
 
         BorderPane root = new BorderPane();
@@ -78,13 +83,39 @@ public class CheckoutGUIView {
 
         nameFld.setStyle(fieldStyle);
         emailFld.setStyle(fieldStyle);
+        dateFld.setStyle(fieldStyle);
 
-        TextField dateFld = new TextField("13/01/2021"); dateFld.setStyle(fieldStyle);
-        TextField cityFld = new TextField("Roma,Italia"); cityFld.setStyle(fieldStyle);
-        TextField phoneFld = new TextField(); phoneFld.setPromptText("Telefono*"); phoneFld.setStyle(fieldStyle);
+        phoneFld.setPromptText("Telefono*");
+        phoneFld.setStyle(fieldStyle);
+
+        // 🌟 RIEMPIMENTO CON L'OGGETTO USER
+        if (loggedUser != null) {
+            nameFld.setText(loggedUser.getName() != null ? loggedUser.getName() : "");
+            emailFld.setText(loggedUser.getEmail() != null ? loggedUser.getEmail() : "");
+
+            if (loggedUser instanceof it.ispwproject.nightflow.model.Client) {
+                it.ispwproject.nightflow.model.Client clientUser = (it.ispwproject.nightflow.model.Client) loggedUser;
+
+                if (clientUser.getDateOfBirth() != null) {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    dateFld.setText(clientUser.getDateOfBirth().format(formatter));
+                } else {
+                    dateFld.setText("Data non inserita"); // 🌟 Se l'oggetto è vuoto
+                }
+            } else {
+                dateFld.setText("");
+            }
+        }
+
+        // Blocchiamo i campi anagrafici precompilati per impedire modifiche
+        nameFld.setEditable(false); nameFld.setFocusTraversable(false);
+        emailFld.setEditable(false); emailFld.setFocusTraversable(false);
+        dateFld.setEditable(false); dateFld.setFocusTraversable(false);
+
         Label reqLbl = new Label("*campi obbligatori"); reqLbl.setStyle("-fx-font-size: 12px; -fx-text-fill: black;");
 
-        leftCol.getChildren().addAll(datiTitle, nameFld, emailFld, dateFld, cityFld, phoneFld, reqLbl);
+        // 🌟 AGGIUNTI SOLO 3 CAMPI + TELEFONO (La Città è stata rimossa)
+        leftCol.getChildren().addAll(datiTitle, nameFld, emailFld, dateFld, phoneFld, reqLbl);
 
         // COLONNA DESTRA: METODO DI PAGAMENTO
         VBox rightCol = new VBox(15);
@@ -124,9 +155,7 @@ public class CheckoutGUIView {
         cashLbl.setStyle(defaultLabelStyle);
         cashLbl.setMaxWidth(Double.MAX_VALUE);
 
-        // =================================================================
-        // 🌟 GESTIONE CLICK SUI PAGAMENTI 🌟
-        // =================================================================
+        // GESTIONE CLICK SUI PAGAMENTI
         String selectedBoxStyle = "-fx-background-color: #651fff; -fx-background-radius: 15; -fx-padding: 15; -fx-cursor: hand;";
         String selectedLabelStyle = "-fx-background-color: #651fff; -fx-background-radius: 15; -fx-padding: 10 15; -fx-font-size: 16px; -fx-text-fill: white; -fx-cursor: hand;";
 
@@ -155,14 +184,12 @@ public class CheckoutGUIView {
             cashLbl.setStyle(selectedLabelStyle);
             selectedPaymentMethod = PaymentMethod.PAY_ON_SITE;
         });
-        // =================================================================
 
         rightCol.getChildren().addAll(payTitle, cardBox, paypalLbl, cashLbl);
-
         columns.getChildren().addAll(leftCol, rightCol);
 
         // --- BOTTONE CONFERMA ---
-        confirmBtn.setStyle("-fx-background-color: #651fff; -fx-text-fill: white; -fx-background-radius: 8px; -fx-cursor: hand; -fx-pref-width: 180px; -fx-font-weight: bold;");
+        confirmBtn.getStyleClass().add("danger-button");
         confirmBtn.setOnAction(e -> onConfirm.run());
 
         mainContent.getChildren().addAll(summaryCard, columns, confirmBtn);
@@ -180,10 +207,13 @@ public class CheckoutGUIView {
         nav.setPadding(new Insets(15, 30, 15, 0));
         nav.setStyle("-fx-background-color: #ede7f6; -fx-border-color: #651fff; -fx-border-width: 0 0 2 0;");
 
-        HBox leftBox = new HBox(0);
+        HBox leftBox = new HBox(5); // Spazio ridotto tra bottone e logo
         leftBox.setAlignment(Pos.CENTER_LEFT);
+        leftBox.setPrefWidth(180); // Fissiamo una larghezza massima per il blocco sinistro
 
-        backBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #651fff; -fx-font-size: 24px; -fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 0 4 0 10;");
+        backBtn.setText("< Indietro");
+        backBtn.getStyleClass().clear();
+        backBtn.getStyleClass().add("back-btn");
         backBtn.setOnAction(e -> onBack.run());
 
         Label logo = new Label("NightFlow");
@@ -202,8 +232,7 @@ public class CheckoutGUIView {
         logoutBtn.setText("Log out");
         logoutBtn.setPrefWidth(100);
         logoutBtn.setMinWidth(100);
-        logoutBtn.setMaxWidth(100);
-        logoutBtn.setStyle("-fx-background-color: black; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 5 15; -fx-font-size: 12px; -fx-font-weight: bold; -fx-cursor: hand;");
+        logoutBtn.getStyleClass().add("logout-btn");
         logoutBtn.setOnAction(e -> onLogout.run());
 
         rightBox.getChildren().addAll(profileBtn, homeBtn, logoutBtn);
@@ -218,9 +247,18 @@ public class CheckoutGUIView {
             ImageView icon = new ImageView(new Image(getClass().getResourceAsStream(path)));
             icon.setFitHeight(20); icon.setFitWidth(20);
             btn.setGraphic(icon);
-        } catch (Exception e) { btn.setText("?"); }
-        btn.setPrefWidth(35); btn.setMinWidth(35); btn.setMaxWidth(35);
-        btn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0;");
+        } catch (Exception e) {
+            btn.setText("?");
+        }
+
+        btn.setPrefWidth(35);
+        btn.setMinWidth(35);
+        btn.setMaxWidth(35);
+
+        // 🌟 IL SEGRETO È QUI:
+        // Abbiamo cancellato il vecchio btn.setStyle(...) e messo la classe CSS!
+        btn.getStyleClass().add("icon-btn");
+
         return btn;
     }
 }

@@ -37,7 +37,7 @@
     -fx-background-color: #651fff;
 }
 
-/* 5. BOTTONE LOGIN */
+/* 5. BOTTONE LOGIN E REGISTRAZIONE */
 .button {
     -fx-background-color: #651fff;
     -fx-text-fill: white;
@@ -47,17 +47,39 @@
     -fx-font-weight: bold; /* Poppins in grassetto sul bottone */
 }
 
+/* 🌟 Effetto passaggio del mouse */
+.button:hover {
+    -fx-background-color: #8452ff; /* Viola più chiaro */
+}
+
+/* 🌟 Effetto al click */
+.button:pressed {
+    -fx-background-color: #4a00e0; /* Viola più scuro */
+}
+
 /* 6. LABEL E TESTO */
 .label {
     -fx-text-fill: white;
 }
 
-/* 7. LINK */
+/* 7. LINK (es. Registrati qui) */
 .hyperlink {
-    -fx-text-fill: #651fff;
+    -fx-text-fill: #bbaaf2; /* Lilla chiaro di base per abbinarsi al tema */
     -fx-underline: true;
+    -fx-cursor: hand;
 }
 
+/* 🌟 Effetto passaggio del mouse (Leggero bagliore bianco/lilla) */
+.hyperlink:hover {
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, #b39eff, 10, 0.5, 0, 0);
+}
+
+/* 🌟 EFFETTO ILLUMINAZIONE AL CLICK (Forte bagliore rosa/neon!) */
+.hyperlink:pressed {
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, #cb6ce6, 25, 0.8, 0, 0);
+}
 /* =========================================
    STILI SPECIFICI PER LA REGISTRAZIONE
    ========================================= */
@@ -157,6 +179,27 @@
 }
 
 /* =========================================
+   EFFETTI ICONE TENDINE E CALENDARIO
+   ========================================= */
+
+/* 🌟 1. Fa comparire la manina quando passi sopra le icone */
+#Registration-Root .combo-box .arrow-button,
+#Registration-Root .date-picker .arrow-button {
+    -fx-cursor: hand;
+}
+
+/* 🌟 2. EFFETTO HOVER: L'icona diventa lilla/rosa quando ci passi il mouse */
+#Registration-Root .combo-box .arrow-button:hover .arrow,
+#Registration-Root .date-picker .arrow-button:hover .arrow {
+    -fx-background-color: #cb6ce6;
+}
+
+/* 🌟 3. EFFETTO CLICK: L'icona diventa viola scuro quando la clicchi */
+#Registration-Root .combo-box .arrow-button:pressed .arrow,
+#Registration-Root .date-picker .arrow-button:pressed .arrow {
+    -fx-background-color: #4a00e0;
+}
+/* =========================================
    DASHBOARD CLIENT E SCROLLBAR
    ========================================= */
 
@@ -202,15 +245,209 @@
     -fx-shape: " ";
 }
 
+.prenota-button {
+    -fx-background-color: #651fff;
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-cursor: hand;
+}
+
+.prenota-button:hover {
+    -fx-background-color: #8452ff; /* viola più chiaro quando ci passi sopra */
+}
+
+.prenota-button:pressed {
+    -fx-background-color: #4a00e0; /* viola scuro quando clicchi */
+}
+
+/* =========================================
+   NAVBAR BOTTONI (Log out e Icone)
+   ========================================= */
+
+/* 🌟 TASTO LOG OUT NERO */
+.logout-btn {
+    -fx-background-color: black;
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-padding: 5 15;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-alignment: center;
+}
+.logout-btn:hover {
+    -fx-background-color: #333333; /* Grigio scuro al passaggio */
+}
+.logout-btn:pressed {
+    -fx-background-color: white;
+    -fx-text-fill: black; /* Inverte i colori */
+    -fx-effect: dropshadow(gaussian, white, 15, 0.7, 0, 0); /* Bagliore bianco */
+}
+
+/* 🌟 TASTI ICONA (Home e Profilo) */
+.icon-btn {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-padding: 5;
+    -fx-background-radius: 50; /* Crea un cerchio perfetto attorno all'icona */
+}
+.icon-btn:hover {
+    -fx-background-color: #d1c4e9; /* Sfondo lilla chiaro al passaggio */
+}
+.icon-btn:pressed {
+    -fx-background-color: #b39eff; /* Viola più intenso al click */
+    -fx-effect: dropshadow(gaussian, #cb6ce6, 15, 0.6, 0, 0); /* Bagliore rosa */
+}
+
+/* 🌟 TASTO INDIETRO (Compatto ed elegante) */
+.back-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #651fff;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 3 12;         /* Un po' più di spazio ai lati */
+    -fx-background-radius: 8;
+    -fx-pref-width: -1; /* 🌟 Questa è la magia: si adatta al testo */
+    -fx-alignment: center;
+}
+
+.back-btn:hover {
+    -fx-background-color: #ede7f6; /* Lilla molto delicato */
+}
+
+.back-btn:pressed {
+    -fx-background-color: #d1c4e9;
+    -fx-effect: dropshadow(gaussian, #b39eff, 5, 0.3, 0, 0); /* Bagliore più discreto */
+}
 /* =========================================
    BOTTONI AZIONE PROFILO (Modifica, Prenotazioni...)
    ========================================= */
-.profile-action-button {
-    -fx-background-color: #bbaaf2;
-    -fx-text-fill: #5e17eb;
-    -fx-background-radius: 20;
-    -fx-padding: 8 20;
-    -fx-font-size: 14px;
+/* 🌟 BOTTONI VIOLA GRANDI (es. Check Out, Crea Evento) */
+.btn-viola-large {
+    -fx-background-color: #651fff;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-font-size: 16px;
+    -fx-padding: 10 20; /* 🌟 Ho ridotto il 40 a 20 per non farlo troppo largo */
     -fx-cursor: hand;
-    -fx-font-weight: normal; /* Disattiva il grassetto del bottone Login */
+    -fx-alignment: center; /* 🌟 QUESTA RIGA FORZA LA SCRITTA AL CENTRO */
+}
+
+.btn-viola-large:hover {
+    -fx-background-color: #8452ff;
+}
+
+.btn-viola-large:pressed {
+    -fx-background-color: #4a00e0;
+}
+
+/* 🌟 BOTTONI VIOLA PICCOLI (es. Modifica Pagamento) */
+.btn-viola-small {
+    -fx-background-color: #651fff;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-font-size: 12px;
+    -fx-padding: 5 15;
+    -fx-cursor: hand;
+    -fx-alignment: center;
+}
+.btn-viola-small:hover {
+    -fx-background-color: #8452ff;
+}
+.btn-viola-small:pressed {
+    -fx-background-color: #4a00e0;
+}
+
+/* 🌟 BOTTONE ROSSO PER ANNULLARE */
+.danger-button {
+    -fx-background-color: #651fff;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-padding: 5 15;
+    -fx-cursor: hand;
+    -fx-alignment: center;
+}
+
+.danger-button:hover {
+    -fx-background-color: #8452ff; /* viola più chiaro quando ci passi sopra */
+}
+
+.danger-button:pressed {
+    -fx-background-color: #4a00e0; /* viola scuro quando clicchi */
+}
+
+/* 🌟 BOTTONI DEL PROFILO (Bordi arrotondati, viola chiaro) */
+.profile-action-button {
+    -fx-background-color: #bbaaf2; /* Il viola chiaro NightFlow */
+    -fx-text-fill: black;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 20; /* Molto arrotondati, a pillola */
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+    -fx-alignment: center;
+}
+
+.profile-action-button:hover {
+    -fx-background-color: #9d88f5; /* Un viola un po' più intenso quando passi il mouse */
+}
+
+.profile-action-button:pressed {
+    -fx-background-color: #7b5aff; /* Viola NightFlow classico quando clicchi */
+}
+
+/* 🌟 LA SFERA DI CONTENIMENTO DELLE PRENOTAZIONI */
+.info-card {
+    -fx-background-color: white; /* Sfondo bianco per far leggere il testo */
+    -fx-background-radius: 10;   /* Bordi morbidi */
+    -fx-border-color: #bbaaf2;   /* Bordinio lilla */
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5); /* Leggera ombra */
+}
+
+/* Rettangolo di ricerca base */
+.search-field {
+    -fx-background-color: white;
+    -fx-border-color: #651fff;
+    -fx-border-width: 2;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-padding: 4 15;
+    -fx-cursor: hand; /* Indica che è cliccabile */
+    -fx-transition: 0.3s; /* Effetto fluido */
+}
+
+/* 🌟 Effetto ILLUMINAZIONE al passaggio del mouse */
+.search-field:hover {
+    -fx-border-color: #b39eff;
+    -fx-effect: dropshadow(gaussian, #b39eff, 10, 0.3, 0, 0);
+}
+
+/* 🌟 Effetto ACCENSIONE quando clicchi o quando è attivo */
+.search-field:focused, .search-field:pressed {
+    -fx-border-color: #cb6ce6;
+    -fx-effect: dropshadow(gaussian, #cb6ce6, 15, 0.5, 0, 0);
+    -fx-background-color: #f8f0ff; /* Cambia leggermente colore interno */
+}
+
+/* =========================================
+   TESTO NELLE CARD BIANCHE (Fix invisibilità)
+   ========================================= */
+
+.title-label {
+    -fx-text-fill: #333333; /* Grigio molto scuro/quasi nero */
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+}
+
+.info-text {
+    -fx-text-fill: #555555; /* Grigio medio elegante */
+}
+
+.small-label {
+    -fx-text-fill: #777777; /* Grigio più chiaro per le info secondarie */
+    -fx-font-style: italic;
 }

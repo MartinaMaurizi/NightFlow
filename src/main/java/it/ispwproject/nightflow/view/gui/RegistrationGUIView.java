@@ -65,18 +65,25 @@ public class RegistrationGUIView {
         });
 
         // 4. Tasto Indietro
-        backBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #651fff; -fx-font-weight: bold; -fx-cursor: hand;");
-        backBtn.setFocusTraversable(false); // AGGIUNGI QUESTA RIGA: Impedisce al bottone di confondersi col focus
+        // 🌟 RIMOSSO lo sfondo trasparente e AGGIUNTA la nostra classe CSS per i bottoni piccoli!
+        backBtn.getStyleClass().add("btn-viola-small");
+        backBtn.setFocusTraversable(false);
+
         HBox topBar = new HBox(backBtn);
-        topBar.setPadding(new Insets(10, 0, 0, 10));
+        topBar.setPadding(new Insets(15, 0, 0, 15)); // Un po' più di margine per farlo respirare
         topBar.setAlignment(Pos.CENTER_LEFT);
 
-        // 5. Titoli
+        // 5. Titoli (Li raggruppiamo per avvicinarli e risparmiare spazio)
         Label titleLabel = new Label("NightFlow");
         titleLabel.setId("NightFlow-Neon");
 
         Label subtitleLabel = new Label("Registrazione");
         subtitleLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: black;");
+
+        // Usiamo uno spazio negativo (-10) per incollare il sottotitolo al titolo neon
+        VBox titleBox = new VBox(-10, titleLabel, subtitleLabel);
+        titleBox.setAlignment(Pos.CENTER);
+        titleBox.setPadding(new Insets(0, 0, 10, 0)); // Piccolo margine sotto il titolo
 
         // 6. Simmetria dei campi
         nameField.setMaxWidth(Double.MAX_VALUE);
@@ -101,20 +108,23 @@ public class RegistrationGUIView {
         // 7. Testi di aiuto per le password
         Label passHelper = new Label("Scegli una password con almeno 8 caratteri");
         passHelper.setStyle("-fx-font-size: 11px; -fx-text-fill: #333333;");
-        VBox passBox = new VBox(2, passField, passHelper);
+        VBox passBox = new VBox(0, passField, passHelper); // Compattato
 
         Label confirmHelper = new Label("*campi obbligatori");
         confirmHelper.setStyle("-fx-font-size: 11px; -fx-text-fill: #651fff;");
-        VBox confirmBox = new VBox(2, confirmPassField, confirmHelper);
+        VBox confirmBox = new VBox(0, confirmPassField, confirmHelper); // Compattato
 
         // 8. Contenitore Form
-        VBox formGroup = new VBox(10);
+        // 🌟 RIDOTTO LO SPAZIO TRA I CAMPI da 10 a 6
+        VBox formGroup = new VBox(6);
         formGroup.setMaxWidth(400);
-        formGroup.setAlignment(Pos.CENTER);
+        formGroup.setAlignment(Pos.TOP_CENTER); // 🌟 ALLINEATO IN ALTO INVECE CHE AL CENTRO
+
+        errorLabel.setWrapText(true);
+        errorLabel.setAlignment(Pos.CENTER);
 
         formGroup.getChildren().addAll(
-                titleLabel,
-                subtitleLabel,
+                titleBox,      // 🌟 Il nuovo blocco titoli compatto
                 nameField,
                 surnameField,
                 row1,
@@ -122,13 +132,16 @@ public class RegistrationGUIView {
                 emailField,
                 passBox,
                 confirmBox,
-                registerBtn,
                 isOrganizerCheck,
-                errorLabel
+                errorLabel,
+                registerBtn
         );
 
         // 9. Centratura Form tramite StackPane
         StackPane centerWrapper = new StackPane(formGroup);
+        // 🌟 Spingiamo tutto il pacchetto in alto, lasciando un po' di respiro dal bordo
+        centerWrapper.setPadding(new Insets(10, 0, 0, 0));
+        StackPane.setAlignment(formGroup, Pos.TOP_CENTER);
         VBox.setVgrow(centerWrapper, Priority.ALWAYS);
 
         // 10. Root Principale
@@ -137,5 +150,34 @@ public class RegistrationGUIView {
         root.getChildren().addAll(topBar, centerWrapper);
 
         return root;
+    }
+    // 🌟 NUOVO METODO: Controlla che tutto sia compilato correttamente
+    public boolean checkMandatoryFields() {
+        // 1. Controlla se c'è almeno un campo vuoto
+        if (nameField.getText().trim().isEmpty() ||
+                surnameField.getText().trim().isEmpty() ||
+                dobPicker.getValue() == null ||
+                genderBox.getValue() == null ||
+                countryBox.getValue() == null ||
+                cityBox.getValue() == null ||
+                emailField.getText().trim().isEmpty() ||
+                passField.getText().trim().isEmpty() ||
+                confirmPassField.getText().trim().isEmpty()) {
+
+            errorLabel.setText("Errore: Compila tutti i campi obbligatori (*)");
+            errorLabel.setStyle("-fx-text-fill: #ff1744; -fx-font-weight: bold;");
+            return false; // Ferma tutto
+        }
+
+        // 2. Controlla se le due password sono uguali
+        if (!passField.getText().equals(confirmPassField.getText())) {
+            errorLabel.setText("Errore: Le password non coincidono!");
+            errorLabel.setStyle("-fx-text-fill: #ff1744; -fx-font-weight: bold;");
+            return false; // Ferma tutto
+        }
+
+        // Se è tutto ok, pulisce l'errore e dà il via libera
+        errorLabel.setText("");
+        return true;
     }
 }

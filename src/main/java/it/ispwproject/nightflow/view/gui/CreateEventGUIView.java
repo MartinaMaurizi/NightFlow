@@ -19,6 +19,7 @@ public class CreateEventGUIView {
     public final TextField priceFld = new TextField();
     public final TextField capacityFld = new TextField();
     public final TextArea descArea = new TextArea();
+    public final TextField locationFld = new TextField();
 
     public BorderPane buildRoot(Runnable onBack, Runnable onLogout, Runnable onCreate) {
         BorderPane root = new BorderPane();
@@ -45,17 +46,21 @@ public class CreateEventGUIView {
         venueFld.setPromptText("Nome del Locale (es. Jolie Club)");
         venueFld.setStyle(fieldStyle);
 
+        // 🌟 SPOSTATO QUI IN ALTO: Configuriamo l'indirizzo
+        locationFld.setPromptText("Indirizzo completo (es. Via Roma 1)");
+        locationFld.setStyle(fieldStyle);
+
         HBox dateTimeBox = new HBox(20);
         datePicker.setPromptText("Data Evento");
         datePicker.setStyle("-fx-font-size: 14px;");
-        timeFld.setPromptText("Ora (es. 22:30)");
+        timeFld.setPromptText("Ora (es. 22:30-00:30)");
         timeFld.setStyle(fieldStyle);
         dateTimeBox.getChildren().addAll(datePicker, timeFld);
 
         HBox numbersBox = new HBox(20);
         priceFld.setPromptText("Prezzo Base (€)");
         priceFld.setStyle(fieldStyle);
-        capacityFld.setPromptText("Capacità massima (es. 500)");
+        capacityFld.setPromptText("Capacità max (es. 50)");
         capacityFld.setStyle(fieldStyle);
         numbersBox.getChildren().addAll(priceFld, capacityFld);
 
@@ -63,10 +68,11 @@ public class CreateEventGUIView {
         descArea.setPrefRowCount(4);
         descArea.setStyle("-fx-control-inner-background: #bbaaf2; -fx-background-radius: 10; -fx-prompt-text-fill: #444444; -fx-text-fill: black; -fx-font-size: 14px;");
 
-        createBtn.setStyle("-fx-background-color: #651fff; -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 10 40; -fx-cursor: hand;");
+        createBtn.setStyle("-fx-background-color: #651fff; -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 16px; -fx-padding: 10 40; -fx-cursor: hand;");
         createBtn.setOnAction(e -> onCreate.run());
 
-        mainContent.getChildren().addAll(title, nameFld, venueFld, dateTimeBox, numbersBox, descArea, createBtn);
+        // 🌟 AGGIUNTO 'locationFld' QUI DENTRO PER FARLO COMPARIRE A SCHERMO
+        mainContent.getChildren().addAll(title, nameFld, venueFld, locationFld, dateTimeBox, numbersBox, descArea, createBtn);
 
         // ScrollPane per schermi più piccoli
         ScrollPane scrollPane = new ScrollPane(new StackPane(mainContent));
@@ -97,8 +103,8 @@ public class CreateEventGUIView {
         nav.setLeft(leftBox);
 
         logoutBtn.setText("Log out");
-        logoutBtn.setPrefWidth(100);
-        logoutBtn.setStyle("-fx-background-color: black; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 5 15; -fx-font-size: 12px; -fx-font-weight: bold; -fx-cursor: hand;");
+        logoutBtn.getStyleClass().clear(); // Pulisce lo stile grigio di default
+        logoutBtn.getStyleClass().add("logout-btn"); // Applica lo stile nero che abbiamo nel CSS
         logoutBtn.setOnAction(e -> onLogout.run());
 
         nav.setRight(logoutBtn);

@@ -3,6 +3,7 @@ package it.ispwproject.nightflow.controller.gui;
 import it.ispwproject.nightflow.bean.BookingResponseBean;
 import it.ispwproject.nightflow.controller.applicativo.BookingController;
 import it.ispwproject.nightflow.enumerator.BookingStatus;
+import it.ispwproject.nightflow.enumerator.PaymentMethod; // 🌟 Aggiunto import
 import it.ispwproject.nightflow.exception.DAOException;
 import it.ispwproject.nightflow.pattern.singleton.SessionManager;
 import it.ispwproject.nightflow.view.gui.ViewBookingsGUIView;
@@ -47,7 +48,8 @@ public class ViewBookingsGUI {
                     .sorted((a, b) -> a.getEvent().getDateTime().compareTo(b.getEvent().getDateTime()))
                     .toList();
 
-            view.buildContent(root, confirmed, cancelled, past, this::confirmCancel);
+            // 🌟 PASSIAMO ENTRAMBI I METODI (ANNULLA E MODIFICA)
+            view.buildContent(root, confirmed, cancelled, past, this::confirmCancel, this::handleEditBooking);
 
         } catch (DAOException e) {
             view.setError("Errore: " + e.getMessage());
@@ -57,6 +59,7 @@ public class ViewBookingsGUI {
         stage.setScene(GUIUtils.createScene(root));
         stage.show();
     }
+
     private void confirmCancel(BookingResponseBean b) {
         // Recuperiamo l'ID direttamente qui dentro!
         int clientId = SessionManager.getInstance().getLoggedUser().getId();
@@ -82,4 +85,9 @@ public class ViewBookingsGUI {
         });
     }
 
+    // GESTIONE DEL CLICK SU MODIFICA PRENOTAZIONE
+    private void handleEditBooking(BookingResponseBean b) {
+
+        new CheckoutGUI(stage, b.getEvent(), b.getTicketType(), true).show();
+    }
 }

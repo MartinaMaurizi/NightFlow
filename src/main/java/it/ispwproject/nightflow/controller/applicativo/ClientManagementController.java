@@ -63,13 +63,15 @@ public class ClientManagementController {
             eventBean.setAvailableTickets(event.getAvailableTickets());
             eventBean.setPrice(event.getPrice());
 
-            BookingResponseBean bean = new BookingResponseBean();
-            bean.setId(booking.getId());
-            bean.setStatus(booking.getStatus());
-            bean.setTicketCode(booking.getTicketCode());
-            bean.setEvent(eventBean);
-            bean.setTicketType(booking.getTicketType());
-
+            BookingResponseBean bean = new BookingResponseBean(
+                    booking.getId(),
+                    booking.getStatus(),
+                    booking.getTicketCode(),
+                    null,
+                    eventBean,
+                    booking.getTicketType(),
+                    booking.getPaymentMethod()
+            );
             result.add(bean);
         }
         return result;

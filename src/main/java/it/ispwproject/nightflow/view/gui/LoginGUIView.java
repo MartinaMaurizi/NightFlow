@@ -66,7 +66,12 @@ public class LoginGUIView {
 
         registerLink.setOnAction(e -> onRegisterClick.run());
 
-        // Aggiungiamo l'errorLabel nel layout
+        // 🌟 AGGIUNTO: Forziamo l'uso del nostro CSS per l'effetto hover e click!
+        // Rimuoviamo anche il bordo di focus (il fastidioso tratteggio di JavaFX)
+        registerLink.getStyleClass().add("hyperlink");
+        registerLink.setStyle("-fx-border-color: transparent; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
+
+
         inputGroup.getChildren().addAll(
                 emailField,
                 passwordContainer,

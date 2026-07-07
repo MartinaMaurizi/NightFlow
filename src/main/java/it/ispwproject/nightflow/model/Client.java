@@ -2,10 +2,15 @@ package it.ispwproject.nightflow.model;
 
 import it.ispwproject.nightflow.enumerator.Role;
 
+import java.time.LocalDate;
+
 /**
  * Rappresenta un utente di tipo Cliente (chi prenota gli eventi).
  */
 public class Client extends User {
+
+    // 🌟 1. Aggiungiamo la variabile
+    private LocalDate dateOfBirth;
 
     public Client() {
         super();
@@ -16,10 +21,12 @@ public class Client extends User {
         super(id, name, surname, email, password, Role.CLIENT);
     }
 
-    // Se hai bisogno di aggiungere i nuovi campi anagrafici (nascita, città, ecc.)
-    // che hai usato nel RegistrationController:
-    public Client(int id, String name, String surname, String email, String password,
-                  java.time.LocalDate dateOfBirth, String gender, String country, String city) {
-        super(id, name, surname, email, password, Role.CLIENT, dateOfBirth, gender, country, city);
+    // 🌟 2. Aggiungiamo Getter e Setter
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 }

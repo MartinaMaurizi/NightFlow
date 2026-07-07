@@ -4,6 +4,7 @@ import it.ispwproject.nightflow.enumerator.Role;
 import java.util.List;
 import java.util.ArrayList;
 
+
 public class Organizer extends User {
 
     private List<String> localNames; // Ora è una lista di locali
@@ -12,7 +13,6 @@ public class Organizer extends User {
         super();
         this.localNames = new ArrayList<>();
     }
-// Assicurati che l'import sia: import java.time.LocalDate;
 
     public Organizer(int id, String name, String surname, String email, String password,
                      java.time.LocalDate dateOfBirth, String gender, String country, String city,

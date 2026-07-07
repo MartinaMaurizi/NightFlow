@@ -35,6 +35,26 @@ public class BookingDAOMemory implements BookingDAO {
         }
     }
 
+    // 🌟 ECCO IL NUOVO METODO UPDATE PER IL DATABASE IN MEMORIA
+    @Override
+    public void update(Booking booking) throws DAOException {
+        boolean found = false;
+        List<Booking> bookings = store.getBookings();
+
+        for (int i = 0; i < bookings.size(); i++) {
+            if (bookings.get(i).getId() == booking.getId()) {
+                // Aggiorniamo la prenotazione esistente con quella nuova
+                bookings.set(i, booking);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            throw new DAOException("Prenotazione non trovata in memoria (ID: " + booking.getId() + ")");
+        }
+    }
+
     @Override
     public List<Booking> findByClient(int clientId) {
         return store.getBookings().stream()

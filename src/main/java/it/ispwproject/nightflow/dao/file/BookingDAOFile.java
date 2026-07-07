@@ -56,6 +56,28 @@ public class BookingDAOFile extends AbstractBookingDAO {
         updateEventTickets(booking.getEvent().getId(), false);
     }
 
+    // 🌟 ECCO IL NUOVO METODO UPDATE PER IL SALVATAGGIO SU FILE
+    @Override
+    public void update(Booking booking) throws DAOException {
+        boolean found = false;
+        // Cerchiamo la prenotazione nella cache
+        for (int i = 0; i < identityMap.size(); i++) {
+            if (identityMap.get(i).getId() == booking.getId()) {
+                // Sostituiamo il vecchio oggetto con quello aggiornato
+                identityMap.set(i, booking);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            throw new DAOException("Prenotazione " + booking.getId() + " non trovata nel file JSON.");
+        }
+
+        // Salviamo la lista aggiornata nel file
+        saveToFile();
+    }
+
     @Override
     public void updateStatus(int bookingId, String status) throws DAOException {
         Booking booking = findInCache(bookingId);

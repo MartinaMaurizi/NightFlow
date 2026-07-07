@@ -66,7 +66,8 @@ public class BookingConfirmationObserver implements Observer {
                 booking.getTicketCode(),
                 clientBean,
                 eventBean,
-                booking.getTicketType()
+                booking.getTicketType(),
+                booking.getPaymentMethod()
         );
     }
 }

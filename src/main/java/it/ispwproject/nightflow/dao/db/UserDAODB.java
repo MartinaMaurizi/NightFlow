@@ -14,16 +14,15 @@ import java.util.List;
 
 public class UserDAODB implements UserDAO {
 
+    // 🌟 ALLINEATO AL TUO DB: Tabella 'user', rimosso organizer_details
     private static final String FIND_BY_EMAIL =
-            "SELECT u.id, u.name, u.surname, u.email, u.role, u.city, od.local_name " +
-                    "FROM users u LEFT JOIN organizer_details od ON u.id = od.user_id WHERE u.email = ?";
+            "SELECT id, name, surname, email, role, city FROM user WHERE email = ?";
 
-    private static final String UPDATE_EMAIL = "UPDATE users SET email = ? WHERE id = ?";
-    private static final String UPDATE_CITY = "UPDATE users SET city = ? WHERE id = ?";
+    private static final String UPDATE_EMAIL = "UPDATE user SET email = ? WHERE id = ?";
+    private static final String UPDATE_CITY = "UPDATE user SET city = ? WHERE id = ?";
 
     private static final String GET_ALL =
-            "SELECT u.id, u.name, u.surname, u.email, u.role, u.city, od.local_name " +
-                    "FROM users u LEFT JOIN organizer_details od ON u.id = od.user_id";
+            "SELECT id, name, surname, email, role, city FROM user";
 
     @Override
     public void updateEmail(int id, String newEmail) throws DAOException {
@@ -73,7 +72,6 @@ public class UserDAODB implements UserDAO {
         String email = rs.getString("email");
         String city = rs.getString("city");
         Role role = Role.fromString(rs.getString("role"));
-        String localName = rs.getString("local_name");
 
         if (role == Role.CLIENT) {
             Client c = new Client(id, name, surname, email, null);
@@ -81,16 +79,7 @@ public class UserDAODB implements UserDAO {
             return c;
         } else {
             Organizer o = new Organizer(
-                    id,
-                    name,
-                    surname,
-                    email,
-                    null,       // password
-                    null,       // dateOfBirth (dovresti recuperarla dal DB se ti serve)
-                    null,       // gender
-                    null,       // country
-                    city,       // city (recuperata dalla query)
-                    localName != null ? new ArrayList<>(List.of(localName)) : new ArrayList<>()
+                    id, name, surname, email, null, null, null, null, city, new ArrayList<>()
             );
             o.setCity(city);
             return o;

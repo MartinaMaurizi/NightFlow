@@ -8,109 +8,91 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 public class ManageParticipantsGUIView extends PageGUIView {
 
-    public final ComboBox<ClientBean> participantCombo = new ComboBox<>();
-    public final Label                errorLabel       = buildErrorLabel();
+    public final Label errorLabel = buildErrorLabel();
+    private final VBox participantsContainer = new VBox(20);
 
-    public ManageParticipantsGUIView() {
-        participantCombo.getStyleClass().add("combo-box");
-        participantCombo.setPromptText("Cerca partecipante...");
-        participantCombo.setMaxWidth(Double.MAX_VALUE);
-        participantCombo.setButtonCell(participantCell());
-        participantCombo.setCellFactory(lv -> participantCell());
-    }
+    public BorderPane buildRoot(Runnable onBack, Runnable onLogout, Runnable onProfile, Runnable onHome) {
 
-    public BorderPane buildRoot(Runnable onBack) {
-        BorderPane root = buildShell("Gestione Partecipanti", onBack);
+        // 🌟 MAGIA: Una sola riga costruisce Sfondo, Navbar, Tasto Indietro e i 3 Bottoni a destra!
+        BorderPane root = buildShell("Gestione Partecipanti", onBack, onLogout, onProfile, onHome);
 
-        VBox content = new VBox(12);
-        content.setPadding(new Insets(28, 48, 28, 48));
-        content.setAlignment(Pos.TOP_CENTER);
+        // -- Contenuto Centrale --
+        participantsContainer.setPadding(new Insets(28, 48, 48, 48));
+        participantsContainer.setAlignment(Pos.TOP_CENTER);
 
-        VBox selectorCard = new VBox(10);
-        selectorCard.getStyleClass().add("info-card");
-        selectorCard.setMaxWidth(720);
-        selectorCard.setAlignment(Pos.CENTER_LEFT);
+        VBox wrapper = new VBox(10, participantsContainer, errorLabel);
+        wrapper.setAlignment(Pos.TOP_CENTER);
 
-        Label label = new Label("Seleziona partecipante");
-        label.getStyleClass().add("small-label");
-        selectorCard.getChildren().addAll(label, participantCombo);
-
-        VBox participantCard = new VBox(8);
-        participantCard.setMaxWidth(720);
-        participantCard.setVisible(false);
-        participantCard.setManaged(false);
-
-        participantCombo.setUserData(participantCard);
-        content.getChildren().addAll(selectorCard, participantCard, errorLabel);
-
-        ScrollPane scroll = new ScrollPane(content);
-        scroll.getStyleClass().add("transparent-scroll");
-        scroll.setFitToWidth(true);
+        // Usiamo il metodo transparentScroll del padre
+        ScrollPane scroll = transparentScroll(wrapper);
         root.setCenter(scroll);
+
         return root;
     }
 
-    public VBox getParticipantCard() {
-        return (VBox) participantCombo.getUserData();
+    public void clearList() {
+        participantsContainer.getChildren().clear();
     }
 
-    public void buildParticipantCard(VBox card, ClientBean client,
-                                     List<BookingResponseBean> bookings,
-                                     Consumer<BookingResponseBean> onCheckIn) {
-        card.getChildren().clear();
-        card.setVisible(true);
-        card.setManaged(true);
+    public void showEmptyMessage() {
+        Label emptyLabel = new Label("Nessun partecipante ha ancora prenotato le tue serate.");
+        emptyLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: white; -fx-font-style: italic;");
+        participantsContainer.getChildren().add(emptyLabel);
+    }
 
-        // Header Partecipante
-        HBox header = new HBox(12);
-        header.getStyleClass().add("info-card");
+    public void addParticipantCard(ClientBean client, List<BookingResponseBean> bookings) {
+        VBox card = new VBox(12);
+        card.getStyleClass().add("info-card");
+        card.setMaxWidth(720);
+        card.setPadding(new Insets(20));
+
+        HBox header = new HBox(15);
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(12));
 
         Label avatar = new Label(String.valueOf(client.getName().charAt(0)).toUpperCase());
-        avatar.setStyle("-fx-background-color: #9b59b6; -fx-text-fill: white; -fx-padding: 10; -fx-background-radius: 20; -fx-min-width: 40; -fx-alignment: center;");
+        avatar.setStyle("-fx-background-color: #651fff; -fx-text-fill: white; -fx-padding: 15; -fx-background-radius: 30; -fx-min-width: 50; -fx-min-height: 50; -fx-alignment: center; -fx-font-size: 18px; -fx-font-weight: bold;");
 
-        VBox info = new VBox(2, new Label(client.getFullName()), new Label(client.getEmail()));
+        VBox info = new VBox(3);
+        Label nameLabel = new Label(client.getFullName());
+        nameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333333;");
+
+        Label emailLabel = new Label("Email: " + client.getEmail());
+        emailLabel.setStyle("-fx-text-fill: #666666;");
+
+        info.getChildren().addAll(nameLabel, emailLabel);
         header.getChildren().addAll(avatar, info);
 
-        // Lista Prenotazioni
-        VBox bookingsBox = new VBox(8);
-        bookingsBox.getStyleClass().add("info-card");
-        bookingsBox.getChildren().add(new Label("Prenotazioni ai tuoi eventi"));
+        Separator sep = new Separator();
+        sep.setStyle("-fx-background-color: #e0e0e0;");
 
-        if (bookings.isEmpty()) {
-            bookingsBox.getChildren().add(new Label("Nessuna prenotazione trovata."));
-        } else {
-            for (BookingResponseBean b : bookings) {
-                HBox bRow = new HBox(10);
-                bRow.setAlignment(Pos.CENTER_LEFT);
-                Label bInfo = new Label(b.getEvent().getName() + " - " + b.getTicketType());
+        VBox bookingsBox = new VBox(10);
+        Label titleBookings = new Label("Prenotazioni Attive:");
+        titleBookings.setStyle("-fx-font-weight: bold; -fx-text-fill: #651fff;");
+        bookingsBox.getChildren().add(titleBookings);
 
-                Region spacer = new Region();
-                HBox.setHgrow(spacer, Priority.ALWAYS);
+        for (BookingResponseBean b : bookings) {
+            HBox bRow = new HBox(10);
+            bRow.setAlignment(Pos.CENTER_LEFT);
+            bRow.setStyle("-fx-background-color: #f3e8ff; -fx-padding: 10; -fx-background-radius: 8;");
 
-                Button checkInBtn = new Button("Check-in");
-                checkInBtn.getStyleClass().add("save-button");
-                checkInBtn.setOnAction(e -> onCheckIn.accept(b));
+            VBox eventInfo = new VBox(2);
+            Label eName = new Label(b.getEvent().getName());
+            eName.setStyle("-fx-font-weight: bold; -fx-text-fill: #333333; -fx-font-size: 14px;");
 
-                bRow.getChildren().addAll(bInfo, spacer, checkInBtn);
-                bookingsBox.getChildren().add(bRow);
-            }
+            String ticketType = (b.getTicketType() != null && !b.getTicketType().isEmpty()) ? b.getTicketType() : "Standard";
+            Label eTicket = new Label("Biglietto: " + ticketType);
+            eTicket.setStyle("-fx-font-size: 12px; -fx-text-fill: #666666;");
+
+            eventInfo.getChildren().addAll(eName, eTicket);
+            bRow.getChildren().add(eventInfo);
+
+            bookingsBox.getChildren().add(bRow);
         }
 
-        card.getChildren().addAll(header, bookingsBox);
-    }
-
-    private ListCell<ClientBean> participantCell() {
-        return new ListCell<>() {
-            @Override protected void updateItem(ClientBean item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.getFullName() + " (" + item.getEmail() + ")");
-            }
-        };
+        card.getChildren().addAll(header, sep, bookingsBox);
+        participantsContainer.getChildren().add(card);
     }
 }

@@ -5,7 +5,7 @@ import javafx.stage.Stage;
 
 public class MainGUI extends Application {
 
-    public static final int WINDOW_WIDTH  = 900;
+    public static final int WINDOW_WIDTH  = 1050;
     public static final int WINDOW_HEIGHT = 580;
 
     // SonarCloud vuole che se è static, sia gestito con estrema cautela.
