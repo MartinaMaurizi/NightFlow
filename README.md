@@ -52,28 +52,42 @@ Then, the interface must be selected:
 * **GUI** → graphical interface
 
 To use the database mode, create and configure the following file:
-`src/main/resources/db.properties`
 
+```text
+src/main/resources/db.properties
+```
 with the following content:
-```properties
-db.url=jdbc:mysql://localhost:3306/nightflowdb
-db.user.login=nf_login
-db.user.login.password=nf_login
-db.user.student=nf_student
-db.user.student.password=nf_student
-db.user.tutor=nf_tutor
-db.user.tutor.password=nf_tutor
+```text
+db.url=jdbc:mysql://localhost:3306/brainbankdb
+db.user.login=bb_login
+db.user.login.password=bb_login
+db.user.student=bb_student
+db.user.student.password=bb_student
+db.user.tutor=bb_tutor
+db.user.tutor.password=bb_tutor
+db.user.admin=bb_admin
+db.user.admin.password=bb_admin
 sendgrid.api.key=YOUR_SENDGRID_API_KEY
-⚠️ The db.properties file includes database credentials and a placeholder for the SendGrid API key. Email notifications in action can be seen in the project demo video.
-Demo credentials
-Role,Email,Password
-Client,client@demo,password
-Organizer,org@demo,password
+```
+⚠️ The `db.properties` file includes database credentials and a placeholder for the SendGrid API key.
+Email notifications in action can be seen in the [project demo video](https://youtu.be/BgFq779UIsI?si=oTgrq_BstdgU95Th).
+## Demo credentials
+
+| Role     | Email            | Password   |
+|------------|----------------|------------|
+| Client     | `client@demo`  | password   |
+| Organizer  | `org@demo`     | password   |
+
 Other test accounts available, see DemoDataStore for the full list.
-Database credentials (modalità MySQL)
-Role,Email,Password
-Client,martinamaurizi30@gmail.com,password123
-Organizer,info@jolieclub.com,password123
-Other test accounts available, see NightFlow_db.sql for the full list.
-Author
-Maurizi Martina 
+
+## Database credentials (modalità MySQL)
+
+| Role       | Email                           | Password    |
+|------------|-------------------------------|-------------|
+| Client     | `martinamaurizi30@gmail.com`  | password123 |
+| Organizer  | `info@jolieclub.com`          | password123 |
+
+
+Other test accounts available, see BrainBank_db.sql for the full list.
+## Author
+Maurizi Martina
