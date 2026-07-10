@@ -182,7 +182,7 @@ public class BookingController {
         bookingDAO.cancel(bookingId, clientId);
     }
     // 🌟 NUOVO METODO PER LEGGERE LE PRENOTAZIONI CANCELLATE
-    public List<BookingResponseBean> getCancelledBookings(int clientId) throws DAOException {
+    public List<BookingResponseBean> getCancelledBookings() throws DAOException {
         User loggedUser = SessionManager.getInstance().getLoggedUser();
 
         // 🌟 ECCO CHE USIAMO IL METODO DEL DATABASE! Il warning sparirà!

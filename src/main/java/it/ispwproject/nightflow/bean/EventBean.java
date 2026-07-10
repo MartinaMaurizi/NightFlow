@@ -14,9 +14,10 @@ public class EventBean {
     private int totalCapacity;
     private int availableTickets;
     private double price;
-
-    public EventBean() {}
-
+    
+    public EventBean() {
+        // Intenzionalmente vuoto
+    }
     // ─── Getters & Setters originali ────────────────────────
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }

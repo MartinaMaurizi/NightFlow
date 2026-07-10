@@ -44,7 +44,7 @@ public class ViewBookingsGUI {
                     .sorted((a, b) -> a.getEvent().getDateTime().compareTo(b.getEvent().getDateTime()))
                     .toList();
 // 🌟 Ora chiediamo direttamente le prenotazioni cancellate al Controller!
-            List<BookingResponseBean> cancelled = bookingController.getCancelledBookings(clientId);
+            List<BookingResponseBean> cancelled = bookingController.getCancelledBookings();
 
             // 🌟 PASSIAMO ENTRAMBI I METODI (ANNULLA E MODIFICA)
             view.buildContent(root, confirmed, cancelled, past, this::confirmCancel, this::handleEditBooking);

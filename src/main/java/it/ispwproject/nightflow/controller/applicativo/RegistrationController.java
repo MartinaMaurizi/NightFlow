@@ -28,7 +28,7 @@ public class RegistrationController {
             throw new RegistrationException("Errore durante la verifica dell'email.");
         }
 
-        // 🌟 3. Cifratura della password usando la tua utility condivisa
+        // 3. Cifratura della password usando la tua utility condivisa
         String hashedPassword;
         try {
             hashedPassword = PasswordUtils.hash(bean.getPassword());
@@ -47,7 +47,7 @@ public class RegistrationController {
             organizer.setPassword(hashedPassword);
             organizer.setRole(Role.ORGANIZER);
 
-            // 🌟 ECCO I CAMPI MANCANTI AGGIUNTI! (Il DB richiede dob, gender, country, city per tutti)
+            // (Il DB richiede dob, gender, country, city per tutti)
             organizer.setDateOfBirth(bean.getDateOfBirth());
             organizer.setGender(bean.getGender());
             organizer.setCountry(bean.getCountry());
@@ -62,7 +62,6 @@ public class RegistrationController {
             client.setPassword(hashedPassword);
             client.setRole(Role.CLIENT);
 
-            // 🌟 ECCO I CAMPI MANCANTI AGGIUNTI!
             client.setDateOfBirth(bean.getDateOfBirth());
             client.setGender(bean.getGender());
             client.setCountry(bean.getCountry());
@@ -88,7 +87,6 @@ public class RegistrationController {
                     new it.ispwproject.nightflow.bean.SessionBean(savedUser.getEmail(), savedUser.getRole())
             );
 
-            // 🌟 AGGIUNGI QUESTO BLOCCO QUI! 🌟
             // Se siamo connessi al Database, cambiamo i permessi SQL all'istante
             if (!DAOFactory.MEMORY.equalsIgnoreCase(DAOFactory.getPersistence())) {
                 try {
@@ -97,7 +95,6 @@ public class RegistrationController {
                     throw new RegistrationException("Errore nel cambio permessi DB: " + ex.getMessage());
                 }
             }
-            // 🌟 FINE BLOCCO AGGIUNTO 🌟
 
         } catch (DAOException e) {
             throw new RegistrationException("Errore durante il salvataggio: " + e.getMessage());

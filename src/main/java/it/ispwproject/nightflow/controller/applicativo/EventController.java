@@ -9,7 +9,6 @@ import it.ispwproject.nightflow.exception.AvailabilityException;
 import it.ispwproject.nightflow.model.Booking;
 import it.ispwproject.nightflow.model.Event;
 import it.ispwproject.nightflow.model.Organizer;
-import it.ispwproject.nightflow.pattern.observer.BookingCancellationObserver;
 import it.ispwproject.nightflow.pattern.observer.EventCancellationObserver;
 import it.ispwproject.nightflow.pattern.observer.EventModificationObserver;
 import it.ispwproject.nightflow.pattern.singleton.SessionManager;
