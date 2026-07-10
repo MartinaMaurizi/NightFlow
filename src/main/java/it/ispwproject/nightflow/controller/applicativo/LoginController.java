@@ -23,7 +23,6 @@ public class LoginController {
 
     public LoginResult login(String email, String password) throws LoginException {
 
-        // 🌟 1. COMMENTIAMO (O CANCELLIAMO) LA TRASFORMAZIONE IN HASH
         String hashedPassword = PasswordUtils.hash(password);
 
         Credentials credentials = DAOFactory.getLoginDAO().execute(email, hashedPassword);
@@ -58,7 +57,6 @@ public class LoginController {
         return switch (credentials.getRole()) {
             case CLIENT       -> LoginResult.SUCCESSO_CLIENT;
             case ORGANIZER -> LoginResult.SUCCESSO_ORGANIZER;
-            default -> throw new LoginException("Ruolo utente non riconosciuto dal sistema.");
         };
     }
 }

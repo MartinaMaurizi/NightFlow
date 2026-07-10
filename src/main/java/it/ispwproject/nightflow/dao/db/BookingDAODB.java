@@ -48,7 +48,7 @@ public class BookingDAODB extends AbstractBookingDAO {
     private static final String FIND_PAST_BY_CLIENT = SELECT_BOOKINGS + "WHERE b.client_id = ? AND b.status = 'CONFIRMED' AND e.date_time <= NOW() ORDER BY e.date_time DESC";
     private static final String FIND_COMPLETED_BY_CLIENT_AND_ORGANIZER = SELECT_BOOKINGS + "WHERE b.client_id = ? AND e.organizer_id = ? AND b.status = 'CONFIRMED' AND e.date_time <= NOW() ORDER BY e.date_time DESC";
     private static final String FIND_UPCOMING_BY_CLIENT_AND_ORGANIZER = SELECT_BOOKINGS + "WHERE b.client_id = ? AND e.organizer_id = ? AND b.status = 'CONFIRMED' AND e.date_time > NOW() ORDER BY e.date_time ASC";
-
+    private static final String FIND_CANCELLED_BY_CLIENT = SELECT_BOOKINGS + "WHERE b.client_id = ? AND b.status = 'CANCELLED' ORDER BY b.created_at DESC";
     @Override
     public void save(Booking booking) throws DAOException {
         try (Connection conn = ConnectionFactory.getConnection();
@@ -102,8 +102,16 @@ public class BookingDAODB extends AbstractBookingDAO {
         List<Booking> result = new ArrayList<>();
         try (Connection conn = ConnectionFactory.getConnection(); PreparedStatement ps = conn.prepareStatement(FIND_BY_CLIENT)) {
             ps.setInt(1, clientId);
-            try (ResultSet rs = ps.executeQuery()) { while (rs.next()) { Booking b = mapToBooking(rs); addToCache(b); result.add(b); } }
-        } catch (SQLException e) { throw new DAOException("Errore caricamento: " + e.getMessage(), e); }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Booking b = mapToBooking(rs);
+                    addToCache(b);
+                    result.add(b);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Errore caricamento: " + e.getMessage(), e);
+        }
         return result;
     }
 
@@ -112,7 +120,9 @@ public class BookingDAODB extends AbstractBookingDAO {
         List<Booking> result = new ArrayList<>();
         try (Connection conn = ConnectionFactory.getConnection(); PreparedStatement ps = conn.prepareStatement(FIND_ALL); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) result.add(mapToBooking(rs));
-        } catch (SQLException e) { throw new DAOException("Errore caricamento: " + e.getMessage(), e); }
+        } catch (SQLException e) {
+            throw new DAOException("Errore caricamento: " + e.getMessage(), e);
+        }
         return result;
     }
 
@@ -121,8 +131,12 @@ public class BookingDAODB extends AbstractBookingDAO {
         List<Booking> result = new ArrayList<>();
         try (Connection conn = ConnectionFactory.getConnection(); PreparedStatement ps = conn.prepareStatement(FIND_UPCOMING_BY_CLIENT)) {
             ps.setInt(1, clientId);
-            try (ResultSet rs = ps.executeQuery()) { while (rs.next()) result.add(mapToBooking(rs)); }
-        } catch (SQLException e) { throw new DAOException("Errore caricamento: " + e.getMessage(), e); }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) result.add(mapToBooking(rs));
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Errore caricamento: " + e.getMessage(), e);
+        }
         return result;
     }
 
@@ -131,8 +145,12 @@ public class BookingDAODB extends AbstractBookingDAO {
         List<Booking> result = new ArrayList<>();
         try (Connection conn = ConnectionFactory.getConnection(); PreparedStatement ps = conn.prepareStatement(FIND_PAST_BY_CLIENT)) {
             ps.setInt(1, clientId);
-            try (ResultSet rs = ps.executeQuery()) { while (rs.next()) result.add(mapToBooking(rs)); }
-        } catch (SQLException e) { throw new DAOException("Errore caricamento: " + e.getMessage(), e); }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) result.add(mapToBooking(rs));
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Errore caricamento: " + e.getMessage(), e);
+        }
         return result;
     }
 
@@ -140,9 +158,14 @@ public class BookingDAODB extends AbstractBookingDAO {
     public List<Booking> findCompletedByClientAndOrganizer(int clientId, int organizerId) throws DAOException {
         List<Booking> result = new ArrayList<>();
         try (Connection conn = ConnectionFactory.getConnection(); PreparedStatement ps = conn.prepareStatement(FIND_COMPLETED_BY_CLIENT_AND_ORGANIZER)) {
-            ps.setInt(1, clientId); ps.setInt(2, organizerId);
-            try (ResultSet rs = ps.executeQuery()) { while (rs.next()) result.add(mapToBooking(rs)); }
-        } catch (SQLException e) { throw new DAOException("Errore caricamento: " + e.getMessage(), e); }
+            ps.setInt(1, clientId);
+            ps.setInt(2, organizerId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) result.add(mapToBooking(rs));
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Errore caricamento: " + e.getMessage(), e);
+        }
         return result;
     }
 
@@ -150,9 +173,14 @@ public class BookingDAODB extends AbstractBookingDAO {
     public List<Booking> findUpcomingByClientAndOrganizer(int clientId, int organizerId) throws DAOException {
         List<Booking> result = new ArrayList<>();
         try (Connection conn = ConnectionFactory.getConnection(); PreparedStatement ps = conn.prepareStatement(FIND_UPCOMING_BY_CLIENT_AND_ORGANIZER)) {
-            ps.setInt(1, clientId); ps.setInt(2, organizerId);
-            try (ResultSet rs = ps.executeQuery()) { while (rs.next()) result.add(mapToBooking(rs)); }
-        } catch (SQLException e) { throw new DAOException("Errore caricamento: " + e.getMessage(), e); }
+            ps.setInt(1, clientId);
+            ps.setInt(2, organizerId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) result.add(mapToBooking(rs));
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Errore caricamento: " + e.getMessage(), e);
+        }
         return result;
     }
 
@@ -161,27 +189,36 @@ public class BookingDAODB extends AbstractBookingDAO {
         try (Connection conn = ConnectionFactory.getConnection()) {
             conn.setAutoCommit(false);
             try (PreparedStatement psR = conn.prepareStatement(RESTORE_TICKET); PreparedStatement psC = conn.prepareStatement(CANCEL_BOOKING)) {
-                psR.setInt(1, bookingId); psR.setInt(2, clientId); psR.executeUpdate();
-                psC.setInt(1, bookingId); psC.setInt(2, clientId);
+                psR.setInt(1, bookingId);
+                psR.setInt(2, clientId);
+                psR.executeUpdate();
+                psC.setInt(1, bookingId);
+                psC.setInt(2, clientId);
                 if (psC.executeUpdate() == 0) throw new DAOException("Prenotazione non trovata.");
             }
             conn.commit();
             updateInCache(bookingId);
             identityMap.removeIf(b -> b.getClient() != null && b.getClient().getId() == clientId);
-        } catch (SQLException e) { throw new DAOException("Errore annullamento: " + e.getMessage(), e); }
+        } catch (SQLException e) {
+            throw new DAOException("Errore annullamento: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public void updateStatus(int bookingId, String status) throws DAOException {
         try (Connection conn = ConnectionFactory.getConnection(); PreparedStatement ps = conn.prepareStatement("UPDATE booking SET status = ? WHERE id = ?")) {
-            ps.setString(1, status); ps.setInt(2, bookingId);
+            ps.setString(1, status);
+            ps.setInt(2, bookingId);
             ps.executeUpdate();
-        } catch (SQLException e) { throw new DAOException("Errore aggiornamento stato: " + e.getMessage(), e); }
+        } catch (SQLException e) {
+            throw new DAOException("Errore aggiornamento stato: " + e.getMessage(), e);
+        }
     }
 
     private void updateTicketAvailability(Connection conn, int eventId) throws SQLException {
         try (PreparedStatement ps = conn.prepareStatement(REDUCE_TICKET_AVAILABILITY)) {
-            ps.setInt(1, eventId); ps.executeUpdate();
+            ps.setInt(1, eventId);
+            ps.executeUpdate();
         }
     }
 
@@ -210,5 +247,44 @@ public class BookingDAODB extends AbstractBookingDAO {
         }
 
         return booking;
+    }
+
+    @Override
+    public List<Booking> getBookingsByEventId(int eventId) throws DAOException {
+        List<Booking> bookings = new ArrayList<>();
+
+        // 🌟 DEVI USARE LA QUERY CON LE JOIN!
+        // Concateniamo la base SELECT_BOOKINGS con la condizione specifica
+        String sql = SELECT_BOOKINGS + " WHERE b.event_id = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, eventId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    // Ora mapToBooking troverà tutte le colonne perché la query è identica alle altre
+                    bookings.add(mapToBooking(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Errore recupero prenotazioni evento: " + e.getMessage(), e);
+        }
+        return bookings;
+    }
+    @Override
+    public List<Booking> findCancelledByClient(int clientId) throws DAOException {
+        List<Booking> result = new ArrayList<>();
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(FIND_CANCELLED_BY_CLIENT)) {
+            ps.setInt(1, clientId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) result.add(mapToBooking(rs));
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Errore caricamento: " + e.getMessage(), e);
+        }
+        return result;
     }
 }

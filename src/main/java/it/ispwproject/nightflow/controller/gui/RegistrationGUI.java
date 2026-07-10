@@ -2,8 +2,6 @@ package it.ispwproject.nightflow.controller.gui;
 
 import it.ispwproject.nightflow.bean.RegistrationBean;
 import it.ispwproject.nightflow.controller.applicativo.RegistrationController;
-import it.ispwproject.nightflow.model.User;
-import it.ispwproject.nightflow.pattern.singleton.SessionManager;
 import it.ispwproject.nightflow.view.gui.RegistrationGUIView;
 import it.ispwproject.nightflow.enumerator.Role;
 import javafx.scene.Scene;
@@ -39,11 +37,7 @@ public class RegistrationGUI {
 
     // Tutta la logica estratta in un metodo dedicato
     private void handleRegistration() {
-
-        // 🌟 1. IL VIGILE: Controlla che tutti i campi obbligatori della View siano pieni
         if (view.checkMandatoryFields()) {
-
-            // Se il vigile dà l'ok, procediamo a raccogliere i dati!
             RegistrationBean bean = new RegistrationBean();
             bean.setName(view.nameField.getText());
             bean.setSurname(view.surnameField.getText());
@@ -51,31 +45,23 @@ public class RegistrationGUI {
             bean.setPassword(view.passField.getText());
             bean.setConfirmPassword(view.confirmPassField.getText());
             bean.setRole(view.isOrganizerCheck.isSelected() ? Role.ORGANIZER : Role.CLIENT);
+
+            // Assicuriamoci che la data sia formattata bene
             bean.setDateOfBirth(view.dobPicker.getValue());
             bean.setGender(view.genderBox.getValue());
             bean.setCountry(view.countryBox.getValue());
             bean.setCity(view.cityBox.getValue());
 
             try {
-                // Chiamata al controller applicativo
                 controller.register(bean);
-
-                // 1. Inserisce l'utente nella sessione (evita il crash della Dashboard)
-                User utenteRegistrato = new User();
-                utenteRegistrato.setName(bean.getName());
-                SessionManager.getInstance().setLoggedUser(utenteRegistrato);
-
-                // 2. Sceglie la dashboard giusta in base alla spunta
                 if (bean.getRole() == Role.ORGANIZER) {
                     MainGUI.showDashboardOrganizer();
                 } else {
                     MainGUI.showDashboardClient();
                 }
-
             } catch (Exception ex) {
-                // L'errore va direttamente alla grafica: SonarCloud è felice!
-                view.errorLabel.setText(ex.getMessage());
-                // Diamo un tocco di rosso per farlo notare
+                ex.printStackTrace(); // Stampa l'errore completo in console
+                view.errorLabel.setText("Errore: " + ex.getMessage());
                 view.errorLabel.setStyle("-fx-text-fill: #ff1744; -fx-font-weight: bold;");
             }
         }

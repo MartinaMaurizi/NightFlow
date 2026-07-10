@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "client": {
+      "id": 2,
+      "name": "Martina",
+      "surname": "Maurizi",
+      "email": "martinamaurizi30@gmail.com",
+      "password": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+      "role": "CLIENT",
+      "city": "Roma"
+    },
+    "event": {
+      "id": 1,
+      "name": "Latin Night",
+      "description": "Ospite speciale DJ Carl Cox Orario: 22:00 - 01:30",
+      "dateTime": "2026-07-22T22:00:00",
+      "location": "Via Velletri 13, Roma",
+      "localName": "Jolie Club",
+      "organizerId": 4,
+      "totalCapacity": 100,
+      "availableTickets": 99,
+      "price": 20.0
+    },
+    "status": "CONFIRMED",
+    "ticketCode": "NF-TKT-504D7668",
+    "paymentMethod": "PAYPAL",
+    "createdAt": "2026-07-08T19:02:43.572681",
+    "reservedUntil": "2026-07-08T19:17:43.572681",
+    "ticketType": "Tavolo VIP"
+  }
+]

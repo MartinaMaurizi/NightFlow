@@ -8,18 +8,17 @@ public class EditProfileView {
 
     public void mostraMenu() {
         CLIRenderer.vuota();
-        CLIRenderer.voceMenu(1, "Modifica email");
-        CLIRenderer.voceMenu(2, "Modifica città");
+        CLIRenderer.voceMenu(1, "Modifica password");
         CLIRenderer.voceMenuZero("Indietro");
     }
 
     // Aggiunti i campi anagrafici specifici di NightFlow
-    public void mostraDatiAttuali(String nome, String cognome, String email,  String citta) {
+    public void mostraDatiAttuali(String nome, String cognome, String email,  String password) {
         CLIRenderer.sezione("Profilo attuale");
         CLIRenderer.campo("Nome",    nome);
         CLIRenderer.campo("Cognome", cognome);
         CLIRenderer.campo("Email",   email);
-        CLIRenderer.campo("Città",   citta);
+        CLIRenderer.campo("Città",   password);
     }
 
     public String chiediScelta() {

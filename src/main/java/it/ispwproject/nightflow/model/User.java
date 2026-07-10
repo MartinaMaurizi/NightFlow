@@ -1,5 +1,6 @@
 package it.ispwproject.nightflow.model;
 
+
 import it.ispwproject.nightflow.enumerator.Role;
 import java.time.LocalDate;
 
@@ -11,8 +12,6 @@ public class User {
     private String email;
     private String password;
     private Role role;
-
-    // Campi anagrafici aggiunti
     private LocalDate dateOfBirth;
     private String gender;
     private String country;

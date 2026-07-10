@@ -18,27 +18,14 @@ public class InitialCLI extends AbstractCLIState {
 
     @Override
     public void action(CLIStateMachine context) {
-        boolean inputValido = false;
-
-        while (!inputValido) {
-            view.mostraMenu();
-            String scelta = view.chiediScelta();
-
-            switch (scelta) {
-
-                case "1" -> {
-                    goNext(context, new LoginCLI());
-                    inputValido = true;
-                }
-                case "2" -> {
-                    goNext(context, new RegistrationCLI());
-                    inputValido = true;
-                }
-                case "0" -> {
-                    context.setState(null);
-                    inputValido = true;
-                }
-                default -> view.mostraErrore("Scelta non valida. Inserisci 0, 1 o 2.");
+        view.mostraMenu();
+        switch (view.chiediScelta()) {
+            case "1" -> goNext(context, new LoginCLI());
+            case "2" -> goNext(context, new RegistrationCLI());
+            case "0" -> context.setState(null);
+            default  -> {
+                view.mostraErrore("Scelta non valida.");
+                goNext(context, this);
             }
         }
     }

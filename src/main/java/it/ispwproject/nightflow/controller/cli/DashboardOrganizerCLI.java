@@ -7,7 +7,6 @@ import it.ispwproject.nightflow.dao.ConnectionFactory;
 import it.ispwproject.nightflow.pattern.singleton.SessionManager;
 import it.ispwproject.nightflow.view.cli.DashboardOrganizerView;
 
-
 public class DashboardOrganizerCLI extends AbstractCLIState {
 
     private final DashboardOrganizerView view = new DashboardOrganizerView();
@@ -22,9 +21,10 @@ public class DashboardOrganizerCLI extends AbstractCLIState {
     public void action(CLIStateMachine context) {
         view.mostraMenu();
         switch (view.chiediScelta()) {
-            case "1" -> goNext(context, new ManageEventsCLI());
-            case "2" -> goNext(context, new ManageParticipantsCLI());
-            case "3" -> goNext(context, new EditProfileCLI());
+            case "1" -> goNext(context, new CreateEventCLI());
+            case "2" -> goNext(context, new ViewEventsCLI());
+            case "3" -> goNext(context, new ManageParticipantsCLI());
+            case "4" -> goNext(context, new EditProfileCLI());
             case "0" -> {
                 try {
                     ConnectionFactory.clearRole();

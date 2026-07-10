@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "name": "Karaoke",
+    "description": "serata da non perdere | Orario: 20:00-23:00",
+    "dateTime": "2026-07-24T20:00:00",
+    "location": "Via Tribale 3",
+    "localName": "Habitue",
+    "organizerId": 4,
+    "totalCapacity": 80,
+    "availableTickets": 80,
+    "price": 12.0
+  }
+]

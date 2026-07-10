@@ -1,13 +1,12 @@
 package it.ispwproject.nightflow.view.cli;
 
 import it.ispwproject.nightflow.bean.BookingResponseBean;
-import it.ispwproject.nightflow.util.logger.AppLogger; // 🌟 Logger
 import java.util.List;
 
 public class CancelBookingView {
 
     public void mostraIntestazione() {
-        CLIRenderer.intestazione("NightFlow  –  Annulla una prenotazione");
+        CLIRenderer.intestazione("Annulla una prenotazione");
     }
 
     public void mostraPrenotazioniAnnullabili(List<BookingResponseBean> cancellable) {
@@ -26,8 +25,9 @@ public class CancelBookingView {
 
         for (int i = 0; i < cancellable.size(); i++) {
             BookingResponseBean b = cancellable.get(i);
-            // 🌟 Usiamo AppLogger invece di System.out
-            AppLogger.logInfo(String.format(fmt,
+
+            // 🌟 Addio AppLogger (niente più scritte rosse!), stampiamo normalmente
+            System.out.println(String.format(fmt,
                     i + 1,
                     b.getEvent().getName(),
                     b.getEvent().getLocalName(),
@@ -46,5 +46,23 @@ public class CancelBookingView {
         CLIRenderer.campo("Codice",   selected.getTicketCode());
     }
 
-    // ... (metodi mostraSuccesso, mostraMessaggio, mostraErrore sono già perfetti)
+    public int chiediScelta(String prompt, int min, int max) {
+        return CLIRenderer.chiediScelta(prompt, min, max);
+    }
+
+    public boolean chiediConferma(String prompt) {
+        return CLIRenderer.chiediConferma(prompt);
+    }
+
+    public void mostraMessaggio(String messaggio) {
+        CLIRenderer.messaggio(messaggio);
+    }
+
+    public void mostraSuccesso() {
+        CLIRenderer.successo("Prenotazione annullata con successo.");
+    }
+
+    public void mostraErrore(String errore) {
+        CLIRenderer.errore(errore);
+    }
 }

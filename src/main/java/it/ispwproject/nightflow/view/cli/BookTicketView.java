@@ -1,7 +1,7 @@
 package it.ispwproject.nightflow.view.cli;
 
 import it.ispwproject.nightflow.bean.*;
-
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class BookTicketView {
@@ -38,13 +38,16 @@ public class BookTicketView {
         CLIRenderer.voceMenuZero("Indietro");
     }
 
-    public void mostraRiepilogo(EventBean event, String ticketType) {
+    public void mostraRiepilogo(EventBean event, String ticketType, double prezzo) {
         CLIRenderer.sezione("Riepilogo prenotazione");
         CLIRenderer.campo("Evento",    event.getName());
         CLIRenderer.campo("Locale",    event.getLocalName());
         CLIRenderer.campo("Data",      event.getDateTime().toLocalDate().toString());
-        CLIRenderer.campo("Orario",    event.getDateTime().toLocalTime().toString());
+        CLIRenderer.campo("Orario",    event.getDateTime().format(DateTimeFormatter.ofPattern("HH:mm")));
         CLIRenderer.campo("Biglietto", ticketType);
+
+        // Stampa il prezzo formattato
+        System.out.printf("  %-12s: %.2f€%n", "Prezzo Totale", prezzo);
     }
 
     public void mostraConferma(BookingResponseBean response) {
@@ -78,13 +81,16 @@ public class BookTicketView {
         CLIRenderer.sezione("Metodo di Pagamento");
         CLIRenderer.voceMenu(1, "Carta di Credito");
         CLIRenderer.voceMenu(2, "PayPal");
+        CLIRenderer.voceMenu(3, "Paga all'ingresso"); // 🌟 Nuova opzione
 
-        int scelta = CLIRenderer.chiediScelta("Scegli come pagare: ", 1, 2);
+        // Aggiorniamo il range di scelta da 1 a 3
+        int scelta = CLIRenderer.chiediScelta("Scegli come pagare: ", 1, 3);
 
-        if (scelta == 1) {
-            return it.ispwproject.nightflow.enumerator.PaymentMethod.CREDIT_CARD;
-        } else {
-            return it.ispwproject.nightflow.enumerator.PaymentMethod.PAYPAL;
-        }
+        return switch (scelta) {
+            case 1 -> it.ispwproject.nightflow.enumerator.PaymentMethod.CREDIT_CARD;
+            case 2 -> it.ispwproject.nightflow.enumerator.PaymentMethod.PAYPAL;
+            case 3 -> it.ispwproject.nightflow.enumerator.PaymentMethod.PAY_ON_SITE;
+            default -> throw new IllegalStateException("Scelta imprevista"); // Per sicurezza
+        };
     }
 }

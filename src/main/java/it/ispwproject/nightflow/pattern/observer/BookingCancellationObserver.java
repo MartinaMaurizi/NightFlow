@@ -16,21 +16,32 @@ public class BookingCancellationObserver implements Observer {
     @Override
     public void update() {
         try {
+            // 🌟 1. Controllo sicurezza Cliente
+            if (booking.getClient() == null || booking.getClient().getEmail() == null) {
+                AppLogger.logWarning("Dati cliente mancanti. Impossibile inviare email.");
+                return;
+            }
+
             BookingResponseBean response = buildResponse();
 
-            // Stile identico a BrainBank
+            // 🌟 2. Invio email al Cliente (QUESTA ORA PARTIRÀ SICURAMENTE)
             NotificationService.sendBookingCancellation(
                     booking.getClient().getEmail(),
                     response);
 
-            NotificationService.sendBookingCancellationToOrganizer(
-                    booking.getOrganizer().getEmail(),
-                    response);
+            // 🌟 3. Controllo sicurezza Organizzatore anti-crash
+            if (booking.getOrganizer() != null && booking.getOrganizer().getEmail() != null) {
+                NotificationService.sendBookingCancellationToOrganizer(
+                        booking.getOrganizer().getEmail(),
+                        response);
+            } else {
+                AppLogger.logWarning("Email organizzatore non trovata nell'oggetto Booking, notifica saltata.");
+            }
 
         } catch (Exception e) {
             AppLogger.logWarning("Notifica cancellazione non inviata: " + e.getMessage());
+            e.printStackTrace();
         }
-
     }
 
     private BookingResponseBean buildResponse() {
@@ -41,7 +52,6 @@ public class BookingCancellationObserver implements Observer {
                 booking.getClient().getEmail()
         );
 
-        // Creazione dell'EventBean a prova di SonarCloud (usando i setter)
         EventBean eventBean = new EventBean();
         eventBean.setId(booking.getEvent().getId());
         eventBean.setName(booking.getEvent().getName());

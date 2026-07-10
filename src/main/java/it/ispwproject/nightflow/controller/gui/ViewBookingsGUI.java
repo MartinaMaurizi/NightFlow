@@ -43,10 +43,8 @@ public class ViewBookingsGUI {
                     .filter(b -> b.getEvent().getDateTime().isAfter(LocalDateTime.now(Clock.systemDefaultZone())))
                     .sorted((a, b) -> a.getEvent().getDateTime().compareTo(b.getEvent().getDateTime()))
                     .toList();
-            List<BookingResponseBean> cancelled = allBookings.stream()
-                    .filter(b -> b.getStatus() == BookingStatus.CANCELLED)
-                    .sorted((a, b) -> a.getEvent().getDateTime().compareTo(b.getEvent().getDateTime()))
-                    .toList();
+// 🌟 Ora chiediamo direttamente le prenotazioni cancellate al Controller!
+            List<BookingResponseBean> cancelled = bookingController.getCancelledBookings(clientId);
 
             // 🌟 PASSIAMO ENTRAMBI I METODI (ANNULLA E MODIFICA)
             view.buildContent(root, confirmed, cancelled, past, this::confirmCancel, this::handleEditBooking);
@@ -90,4 +88,5 @@ public class ViewBookingsGUI {
 
         new CheckoutGUI(stage, b.getEvent(), b.getTicketType(), true).show();
     }
+
 }

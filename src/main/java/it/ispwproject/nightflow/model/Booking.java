@@ -66,6 +66,7 @@ public class Booking extends Observable {
     public User getClient() { return client; }
     public void setClient(User client) { this.client = client; }
     public User getOrganizer() { return organizer; }
+    public void setOrganizer(User organizer) { this.organizer = organizer; }
     public Event getEvent() { return event; }
     public void setEvent(Event event) { this.event = event; }
     public BookingStatus getStatus() { return status; }

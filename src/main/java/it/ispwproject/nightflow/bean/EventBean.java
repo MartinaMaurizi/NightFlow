@@ -9,8 +9,6 @@ public class EventBean {
     private String description;
     private LocalDateTime dateTime;
     private String location;
-
-    // 🌟 I NUOVI CAMPI MANCANTI DA AGGIUNGERE:
     private String localName;
     private int organizerId;
     private int totalCapacity;

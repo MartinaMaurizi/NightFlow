@@ -189,4 +189,21 @@ public class BookingDAOFile extends AbstractBookingDAO {
             AppLogger.logError("Errore aggiornamento eventi JSON: " + e.getMessage());
         }
     }
+    @Override
+    public List<Booking> getBookingsByEventId(int eventId) throws DAOException {
+        // Filtriamo la cache (identityMap) che è sempre sincronizzata con il file
+        return identityMap.stream()
+                .filter(b -> b.getEvent() != null
+                        && b.getEvent().getId() == eventId
+                        && b.getStatus() == BookingStatus.CONFIRMED)
+                .toList();
+    }
+    @Override
+    public List<Booking> findCancelledByClient(int clientId) throws DAOException {
+        // Filtriamo dalla nostra 'identityMap' (la cache in memoria che legge/scrive sul file JSON)
+        return identityMap.stream()
+                .filter(b -> b.getClient() != null && b.getClient().getId() == clientId
+                        && b.getStatus() == BookingStatus.CANCELLED)
+                .toList();
+    }
 }

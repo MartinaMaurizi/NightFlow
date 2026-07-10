@@ -33,7 +33,5 @@ public class RegistrationDAOMemory implements RegistrationDAO {
         // un 'Client' mascherato da 'User', finirà dentro come 'Client'!)
 
         store.getUsers().add(user);
-
-        System.out.println("DEBUG: Utente salvato nel DAO come: " + user.getClass().getName());
     }
 }

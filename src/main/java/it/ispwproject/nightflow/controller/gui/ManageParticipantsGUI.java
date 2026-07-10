@@ -3,11 +3,12 @@ package it.ispwproject.nightflow.controller.gui;
 import it.ispwproject.nightflow.bean.*;
 import it.ispwproject.nightflow.controller.applicativo.ClientManagementController;
 import it.ispwproject.nightflow.exception.DAOException;
-import it.ispwproject.nightflow.pattern.singleton.SessionManager; // 🌟 Aggiunto import
+import it.ispwproject.nightflow.pattern.singleton.SessionManager;
 import it.ispwproject.nightflow.view.gui.ManageParticipantsGUIView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ManageParticipantsGUI {
@@ -21,15 +22,14 @@ public class ManageParticipantsGUI {
     }
 
     public void show() {
-        // 🌟 Assegniamo le azioni a Indietro, Logout, Profilo e Home
         BorderPane root = view.buildRoot(
-                () -> new DashboardOrganizerGUI(stage).show(), // Azione Tasto Indietro
-                () -> {                                        // Azione Logout
+                () -> new DashboardOrganizerGUI(stage).show(),
+                () -> {
                     SessionManager.getInstance().setLoggedUser(null);
                     MainGUI.showLogin();
                 },
-                () -> new ProfileGUI(stage).show(),            // Azione Profilo
-                () -> new DashboardOrganizerGUI(stage).show()  // Azione Home
+                () -> new ProfileGUI(stage).show(),
+                () -> new DashboardOrganizerGUI(stage).show()
         );
 
         view.clearList();
@@ -37,14 +37,23 @@ public class ManageParticipantsGUI {
         try {
             List<ClientBean> allClients = clientManagementController.getClients();
             boolean hasParticipants = false;
+            LocalDateTime now = LocalDateTime.now();
 
             for (ClientBean client : allClients) {
                 List<BookingResponseBean> bookings = clientManagementController.getClientBookings(client.getId());
 
                 if (bookings != null && !bookings.isEmpty()) {
                     hasParticipants = true;
-                    // Chiamiamo la View senza passargli l'azione del Check-in (rimossa)
-                    view.addParticipantCard(client, bookings);
+
+                    // Filtriamo in attive e passate
+                    List<BookingResponseBean> active = bookings.stream()
+                            .filter(b -> b.getEvent().getDateTime().isAfter(now))
+                            .toList();
+                    List<BookingResponseBean> past = bookings.stream()
+                            .filter(b -> b.getEvent().getDateTime().isBefore(now))
+                            .toList();
+
+                    view.addParticipantCard(client, active, past);
                 }
             }
 

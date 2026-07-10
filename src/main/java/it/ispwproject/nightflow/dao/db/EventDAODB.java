@@ -30,7 +30,7 @@ public class EventDAODB implements EventDAO {
                     "WHERE id = ?";
 
     private static final String DELETE_EVENT =
-            "DELETE FROM event WHERE id = ?";
+            "UPDATE event SET status = 'CANCELLED' WHERE id = ? AND organizer_id = ?";
 
     @Override
     public Event findById(int id) throws DAOException {
@@ -56,7 +56,7 @@ public class EventDAODB implements EventDAO {
     }
 
     @Override
-    public List<Event> findByOrganizer(int organizerId) throws DAOException {
+    public List<Event> findByOrganizerId(int organizerId) throws DAOException {
         List<Event> result = new ArrayList<>();
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_BY_ORGANIZER)) {
@@ -109,15 +109,6 @@ public class EventDAODB implements EventDAO {
         } catch (SQLException e) { throw new DAOException("Errore durante l'aggiornamento: " + e.getMessage(), e); }
     }
 
-    @Override
-    public void delete(int eventId) throws DAOException {
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement(DELETE_EVENT)) {
-            ps.setInt(1, eventId);
-            ps.executeUpdate();
-        } catch (SQLException e) { throw new DAOException("Errore durante l'eliminazione: " + e.getMessage(), e); }
-    }
-
     private Event mapToEvent(ResultSet rs) throws SQLException {
         Event event = new Event(
                 rs.getInt("id"),
@@ -150,11 +141,6 @@ public class EventDAODB implements EventDAO {
     }
 
     @Override
-    public List<Event> findByOrganizerId(int organizerId) throws DAOException {
-        return findByOrganizer(organizerId);
-    }
-
-    @Override
     public void delete(int eventId, int organizerId) throws DAOException {
         String sql = "DELETE FROM event WHERE id = ? AND organizer_id = ?";
         try (Connection conn = ConnectionFactory.getConnection();
@@ -164,4 +150,5 @@ public class EventDAODB implements EventDAO {
             ps.executeUpdate();
         } catch (SQLException e) { throw new DAOException("Errore eliminazione sicura: " + e.getMessage(), e); }
     }
+
 }

@@ -15,7 +15,11 @@ public abstract class Observable {
         observers.remove(o);
     }
 
-    protected void notifyObservers() {
+    public void registerObserver(Observer observer){
+        observers.add(observer);
+    }
+
+    public void notifyObservers() {
         for (Observer o : observers) {
             o.update();
         }

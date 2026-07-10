@@ -2,6 +2,7 @@ package it.ispwproject.nightflow.dao;
 
 import it.ispwproject.nightflow.dao.db.*;
 import it.ispwproject.nightflow.dao.file.BookingDAOFile;
+import it.ispwproject.nightflow.dao.file.EventDAOFile;
 import it.ispwproject.nightflow.dao.memory.*;
 
 public class DAOFactory {
@@ -38,8 +39,11 @@ public class DAOFactory {
     }
 
     public static EventDAO getEventDAO() {
-        if (MEMORY.equalsIgnoreCase(persistence)) return new EventDAOMemory();
-        return new EventDAODB();
+        return switch (persistence.toLowerCase()) {
+            case FILE   -> new EventDAOFile();
+            case MEMORY -> new EventDAOMemory();
+            default     -> new EventDAODB();
+        };
     }
 
     public static OrganizerDAO getOrganizerDAO() {

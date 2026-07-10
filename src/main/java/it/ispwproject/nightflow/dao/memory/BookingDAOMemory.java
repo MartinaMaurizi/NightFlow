@@ -152,4 +152,28 @@ public class BookingDAOMemory implements BookingDAO {
             event.setAvailableTickets(event.getAvailableTickets() + 1);
         }
     }
+    @Override
+    public List<Booking> getBookingsByEventId(int eventId) throws DAOException {
+        List<Booking> filteredBookings = new ArrayList<>();
+
+        // 🌟 CORREZIONE: Usa lo store come hai fatto in tutti gli altri metodi!
+        List<Booking> bookings = store.getBookings();
+
+        for (Booking b : bookings) {
+            // Nota: Se status è un enum, meglio confrontarlo con equals o ==
+            if (b.getEvent() != null && b.getEvent().getId() == eventId
+                    && b.getStatus() == BookingStatus.CONFIRMED) {
+                filteredBookings.add(b);
+            }
+        }
+        return filteredBookings;
+    }
+    @Override
+    public List<Booking> findCancelledByClient(int clientId) throws DAOException {
+        // Filtriamo le prenotazioni nello store che appartengono al cliente e hanno status CANCELLED
+        return store.getBookings().stream()
+                .filter(b -> b.getClient() != null && b.getClient().getId() == clientId
+                        && b.getStatus() == BookingStatus.CANCELLED)
+                .toList();
+    }
 }

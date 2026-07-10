@@ -27,6 +27,12 @@ public class CheckoutGUIView {
     // 🌟 RESO PUBBLICO PER I CONTROLLI NEL CONTROLLER
     public final TextField phoneFld = new TextField();
 
+    // 🌟 CAMPI CARTA RESI PUBBLICI PER I CONTROLLI NEL CONTROLLER
+    public final TextField cardNameFld = new TextField();
+    public final TextField cardNumFld = new TextField();
+    public final TextField cardExpFld = new TextField();
+    public final TextField cardCvvFld = new TextField();
+
     public PaymentMethod selectedPaymentMethod = null;
 
     public BorderPane buildRoot(User loggedUser, Runnable onBack, Runnable onLogout, Runnable onConfirm,
@@ -133,16 +139,17 @@ public class CheckoutGUIView {
         Region separator = new Region();
         separator.setStyle("-fx-border-color: #651fff; -fx-border-width: 0 0 1 0;");
 
+        // 🌟 USIAMO I CAMPI PUBBLICI cardNameFld / cardNumFld / cardExpFld / cardCvvFld
         String inputStyle = "-fx-background-color: transparent; -fx-border-color: transparent; -fx-prompt-text-fill: #333333; -fx-text-fill: black;";
-        TextField cardName = new TextField(); cardName.setPromptText("Nome sulla carta"); cardName.setStyle(inputStyle);
-        TextField cardNum = new TextField(); cardNum.setPromptText("Numero della carta"); cardNum.setStyle(inputStyle);
+        cardNameFld.setPromptText("Nome sulla carta"); cardNameFld.setStyle(inputStyle);
+        cardNumFld.setPromptText("Numero della carta"); cardNumFld.setStyle(inputStyle);
 
         HBox bottomCardRow = new HBox(20);
-        TextField cardExp = new TextField(); cardExp.setPromptText("Scadenza(MM/AA)"); cardExp.setStyle(inputStyle);
-        TextField cardCvv = new TextField(); cardCvv.setPromptText("CVV"); cardCvv.setStyle(inputStyle);
-        bottomCardRow.getChildren().addAll(cardExp, cardCvv);
+        cardExpFld.setPromptText("Scadenza(MM/AA)"); cardExpFld.setStyle(inputStyle);
+        cardCvvFld.setPromptText("CVV"); cardCvvFld.setStyle(inputStyle);
+        bottomCardRow.getChildren().addAll(cardExpFld, cardCvvFld);
 
-        cardBox.getChildren().addAll(cardTitle, separator, cardName, cardNum, bottomCardRow);
+        cardBox.getChildren().addAll(cardTitle, separator, cardNameFld, cardNumFld, bottomCardRow);
 
         // Pillole PayPal e Contanti
         String defaultLabelStyle = "-fx-background-color: #bbaaf2; -fx-background-radius: 15; -fx-padding: 10 15; -fx-font-size: 16px; -fx-text-fill: black; -fx-cursor: hand;";

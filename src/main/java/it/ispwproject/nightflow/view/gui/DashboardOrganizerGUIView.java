@@ -4,8 +4,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.image.Image; // 🌟 Aggiunto import
-import javafx.scene.image.ImageView; // 🌟 Aggiunto import
+
 
 public class DashboardOrganizerGUIView extends PageGUIView{
 

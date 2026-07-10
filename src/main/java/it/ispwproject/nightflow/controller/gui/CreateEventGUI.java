@@ -24,11 +24,22 @@ public class CreateEventGUI {
 
     public void show() {
         Scene scene = new Scene(view.buildRoot(
+                // 1. onBack
                 () -> new DashboardOrganizerGUI(stage).show(),
+
+                // 2. onLogout
                 () -> {
                     SessionManager.getInstance().setLoggedUser(null);
                     MainGUI.showLogin();
                 },
+
+                // 🌟 3. onProfile (NUOVO)
+                () -> new ProfileGUI(stage).show(),
+
+                // 🌟 4. onHome (NUOVO)
+                () -> new DashboardOrganizerGUI(stage).show(),
+
+                // 5. onCreate (Tutta la tua fantastica logica di salvataggio)
                 () -> {
                     AppLogger.logInfo("Creazione evento in corso...");
 
@@ -45,7 +56,7 @@ public class CreateEventGUI {
                     try { capacity = Integer.parseInt(view.capacityFld.getText()); }
                     catch(NumberFormatException ex) { AppLogger.logWarning("Capacità non valida, uso default"); }
 
-                    // 🌟 Gestione dinamica di Data e Ora
+                    // Gestione dinamica di Data e Ora
                     LocalDate selectedDate = view.datePicker.getValue();
                     if (selectedDate == null) {
                         selectedDate = LocalDate.now(Clock.systemDefaultZone()).plusDays(7); // Default
@@ -90,6 +101,13 @@ public class CreateEventGUI {
                     }
                 }
         ), MainGUI.WINDOW_WIDTH, MainGUI.WINDOW_HEIGHT);
+
+        // Applichiamo il CSS per assicurarci che i bottoni della navbar si vedano bene
+        try {
+            scene.getStylesheets().add(getClass().getResource("/styles/nightflow.css").toExternalForm());
+        } catch (Exception e) {
+            AppLogger.logWarning("Impossibile caricare il CSS in CreateEventGUI: " + e.getMessage());
+        }
 
         stage.setScene(scene);
         stage.show();

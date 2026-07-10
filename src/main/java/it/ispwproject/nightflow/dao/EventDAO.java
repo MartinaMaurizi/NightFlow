@@ -13,17 +13,11 @@ public interface EventDAO {
     // Recupera tutti gli eventi futuri disponibili nel sistema (utile per la home del Cliente)
     List<Event> getAllUpcomingEvents() throws DAOException;
 
-    // Recupera tutti gli eventi creati da uno specifico Organizzatore
-    List<Event> findByOrganizer(int organizerId) throws DAOException;
-
     // Salva un nuovo evento nel database (quando un Organizzatore crea una nuova serata)
     void save(Event event) throws DAOException;
 
     // Aggiorna un evento esistente (es. cambia l'orario, il prezzo o i biglietti disponibili)
     void update(Event event) throws DAOException;
-
-    // Elimina o annulla un evento
-    void delete(int eventId) throws DAOException;
 
     // Recupera gli eventi dato il nome del locale (utile per controllare sovrapposizioni)
     List<Event> findByLocalName(String localName) throws DAOException;

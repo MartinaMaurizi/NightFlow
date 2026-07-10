@@ -3,7 +3,6 @@ package it.ispwproject.nightflow.dao.db;
 import it.ispwproject.nightflow.dao.ConnectionFactory;
 import it.ispwproject.nightflow.dao.RegistrationDAO;
 import it.ispwproject.nightflow.exception.DAOException;
-import it.ispwproject.nightflow.model.Organizer;
 import it.ispwproject.nightflow.model.User;
 import it.ispwproject.nightflow.util.logger.AppLogger;
 
@@ -12,12 +11,9 @@ import java.util.List;
 
 public class RegistrationDAODB implements RegistrationDAO {
 
-    // Tabella 'user' e 9 parametri
+    // Tabella 'user' e 9 parametri (corrispondono esattamente al tuo DB)
     private static final String INSERT_USER =
             "INSERT INTO user (name, surname, dob, gender, country, city, email, password, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-    private static final String INSERT_ORGANIZER_DETAIL =
-            "INSERT INTO organizer_details (user_id, company_name) VALUES (?, ?)";
 
     private static final String CHECK_EMAIL =
             "SELECT COUNT(*) FROM user WHERE email = ?";
@@ -46,23 +42,21 @@ public class RegistrationDAODB implements RegistrationDAO {
         catch (SQLException e) { AppLogger.logWarning("clearRole fallito: " + e.getMessage()); }
 
         try (Connection conn = ConnectionFactory.getConnection()) {
-            executeSaveTransaction(conn, user, localNames);
+            executeSaveTransaction(conn, user);
         } catch (SQLException e) {
             throw new DAOException("Errore di connessione durante la registrazione: " + e.getMessage(), e);
         }
     }
 
-    private void executeSaveTransaction(Connection conn, User user, List<String> localNames) throws SQLException, DAOException {
+    private void executeSaveTransaction(Connection conn, User user) throws SQLException, DAOException {
         conn.setAutoCommit(false);
         try {
+            // Inserisce l'utente
             int userId = insertUser(conn, user);
             user.setId(userId);
 
-            if (user instanceof Organizer && localNames != null) {
-                for (String localName : localNames) {
-                    insertOrganizerDetail(conn, userId, localName);
-                }
-            }
+            // RIMOSSO l'inserimento in organizer_details perché la tabella non esiste (e non serve)!
+
             conn.commit();
         } catch (SQLException e) {
             conn.rollback();
@@ -73,16 +67,18 @@ public class RegistrationDAODB implements RegistrationDAO {
     }
 
     private int insertUser(Connection conn, User user) throws SQLException {
+        System.out.println("DEBUG DAO: Inserimento utente " + user.getEmail() + " con ruolo " + (user.getRole() != null ? user.getRole().name() : "NULL"));
+
         try (PreparedStatement ps = conn.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, user.getName());
             ps.setString(2, user.getSurname());
 
-            // Qui usiamo il nome corretto del tuo modello: getDateOfBirth()
+            // Gestione sicura data
             if (user.getDateOfBirth() != null) {
                 ps.setDate(3, java.sql.Date.valueOf(user.getDateOfBirth()));
             } else {
-                ps.setNull(3, Types.DATE); // Evita crash se la data è vuota
+                ps.setNull(3, Types.DATE); // Se è null, mandiamo NULL al DB invece di lanciare eccezione
             }
 
             ps.setString(4, user.getGender());
@@ -90,22 +86,27 @@ public class RegistrationDAODB implements RegistrationDAO {
             ps.setString(6, user.getCity());
             ps.setString(7, user.getEmail());
             ps.setString(8, user.getPassword());
-            ps.setString(9, user.getRole().name());
 
-            ps.executeUpdate();
+            if (user.getRole() != null) {
+                ps.setString(9, user.getRole().name());
+            } else {
+                ps.setString(9, "CLIENT"); // Default se nullo
+            }
+
+            // --- ESECUZIONE CON TRAPPOLA PER L'ERRORE REALE ---
+            try {
+                int affectedRows = ps.executeUpdate();
+                if (affectedRows == 0) throw new SQLException("Nessuna riga inserita.");
+            } catch (SQLException e) {
+                System.err.println("!!! ERRORE SQL FATALE: " + e.getMessage());
+                e.printStackTrace();
+                throw e;
+            }
 
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) return keys.getInt(1);
             }
         }
-        throw new SQLException("ID utente non generato dal database.");
-    }
-
-    private void insertOrganizerDetail(Connection conn, int organizerId, String companyName) throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement(INSERT_ORGANIZER_DETAIL)) {
-            ps.setInt(1, organizerId);
-            ps.setString(2, companyName);
-            ps.executeUpdate();
-        }
+        throw new SQLException("ID utente non generato.");
     }
 }

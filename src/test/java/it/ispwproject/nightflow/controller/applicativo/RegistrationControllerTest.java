@@ -1,39 +1,76 @@
 package it.ispwproject.nightflow.controller.applicativo;
 
 import it.ispwproject.nightflow.bean.RegistrationBean;
+import it.ispwproject.nightflow.dao.DAOFactory;
+import it.ispwproject.nightflow.demo.DemoDataStore;
 import it.ispwproject.nightflow.enumerator.Role;
+import it.ispwproject.nightflow.exception.RegistrationException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.time.LocalDate;
-import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+/**
+ * ------------------------------------------------------------
+ * Test Class: RegistrationControllerTest
+ * Author: Martina Maurizi
+ * Description: Verifica che il sistema impedisca la registrazione
+ * di due account con la stessa email. Dopo una prima
+ * registrazione avvenuta con successo, un secondo
+ * tentativo con la stessa email deve lanciare una
+ * RegistrationException.
+ * ------------------------------------------------------------
+ */
 class RegistrationControllerTest {
 
-    @Test
-    void testRegisterIntegration() {
-        // 1. Setup
-        System.setProperty("DAO_TYPE", "MEMORY");
-        RegistrationController controller = new RegistrationController();
+    private RegistrationController registrationController;
 
-        // 2. Creazione Bean COMPLETO
+    @BeforeEach
+    void setup() {
+        // Ripuliamo i dati in memoria per avere un ambiente di test pulito
+        DemoDataStore.getInstance().getUsers().clear();
+        DAOFactory.setPersistence(DAOFactory.MEMORY);
+        registrationController = new RegistrationController();
+    }
+
+    @Test
+    void testRegistrazioneConEmailDuplicata() throws RegistrationException {
+        // Prima registrazione — deve andare a buon fine
         RegistrationBean bean = new RegistrationBean();
         bean.setName("Mario");
         bean.setSurname("Rossi");
-        String uniqueEmail = "mario." + System.currentTimeMillis() + "@test.it";
-        bean.setEmail(uniqueEmail);
-        bean.setPassword("password123");
-        bean.setConfirmPassword("password123");
+        bean.setEmail("mario@test.com");
+        bean.setPassword("Password123");
+        bean.setConfirmPassword("Password123");
         bean.setRole(Role.CLIENT);
+
+        // 🌟 Campi anagrafici obbligatori per NightFlow!
         bean.setDateOfBirth(LocalDate.of(1995, 5, 20));
-
-        // AGGIUNGIAMO TUTTO CIÒ CHE IL CONTROLLER SI ASPETTA
         bean.setGender("Uomo");
-        bean.setCountry("Italy");
-        bean.setCity("Milano");
+        bean.setCountry("Italia");
+        bean.setCity("Roma");
 
-        // 3. Esecuzione
-        assertDoesNotThrow(() -> {
-            controller.register(bean);
-        });
+        registrationController.register(bean);
+
+        // Seconda registrazione con la stessa email — deve lanciare RegistrationException
+        RegistrationBean duplicato = new RegistrationBean();
+        duplicato.setName("Luigi");
+        duplicato.setSurname("Verdi");
+        duplicato.setEmail("mario@test.com"); // 🌟 STESSA EMAIL
+        duplicato.setPassword("Password123");
+        duplicato.setConfirmPassword("Password123");
+        duplicato.setRole(Role.CLIENT);
+
+        // Campi anagrafici obbligatori
+        duplicato.setDateOfBirth(LocalDate.of(1996, 6, 21));
+        duplicato.setGender("Uomo");
+        duplicato.setCountry("Italia");
+        duplicato.setCity("Milano");
+
+        assertThrows(RegistrationException.class, () ->
+                registrationController.register(duplicato)
+        );
     }
 }

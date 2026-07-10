@@ -66,7 +66,7 @@ public class BookingController {
                 0, BookingStatus.PENDING, null, null,
                 createEventBean(event),
                 request.getTicketType(),
-                null // 🌟 In fase di checkout non c'è ancora il pagamento
+                null // In fase di checkout non c'è ancora il pagamento
         );
     }
 
@@ -94,6 +94,10 @@ public class BookingController {
         booking.setPaymentMethod(method);
         booking.setTicketType(request.getTicketType());
         booking.setTicketCode(TicketCodeService.generate());
+
+        OrganizerDAO organizerDAO = DAOFactory.getOrganizerDAO();
+        User organizer = organizerDAO.findById(event.getOrganizerId());
+        booking.setOrganizer(organizer);
 
         bookingDAO.save(booking);
         booking.attach(new BookingConfirmationObserver(booking));
@@ -156,8 +160,49 @@ public class BookingController {
     public void cancelBooking(int bookingId, int clientId) throws DAOException {
         List<Booking> bookings = bookingDAO.findByClient(clientId);
         Booking booking = bookings.stream().filter(b -> b.getId() == bookingId).findFirst().orElse(null);
-        if (booking != null) booking.attach(new BookingCancellationObserver(booking));
+
+        if (booking != null) {
+            // 🌟 INIETTIAMO IL CLIENTE DALLA SESSIONE PER EVITARE I NULL
+            User loggedUser = SessionManager.getInstance().getLoggedUser();
+            if (booking.getClient() == null || booking.getClient().getEmail() == null) {
+                booking.setClient(loggedUser);
+            }
+
+            if (booking.getOrganizer() == null || booking.getOrganizer().getEmail() == null) {
+                // 🌟 Usiamo OrganizerDAO invece di UserDAO
+                OrganizerDAO organizerDAO = DAOFactory.getOrganizerDAO();
+                User organizer = organizerDAO.findById(booking.getEvent().getOrganizerId());
+                booking.setOrganizer(organizer);
+            }
+
+            booking.attach(new BookingCancellationObserver(booking));
+            booking.cancel(); // Lancia notifyObservers()
+        }
+
         bookingDAO.cancel(bookingId, clientId);
+    }
+    // 🌟 NUOVO METODO PER LEGGERE LE PRENOTAZIONI CANCELLATE
+    public List<BookingResponseBean> getCancelledBookings(int clientId) throws DAOException {
+        User loggedUser = SessionManager.getInstance().getLoggedUser();
+
+        // 🌟 ECCO CHE USIAMO IL METODO DEL DATABASE! Il warning sparirà!
+        List<Booking> bookings = bookingDAO.findCancelledByClient(loggedUser.getId());
+
+        List<BookingResponseBean> responseBeans = new ArrayList<>();
+        for (Booking b : bookings) {
+            // Creiamo i Bean per la GUI (esattamente come fai per gli altri)
+            ClientBean clientBean = new ClientBean(b.getClient().getId(), b.getClient().getName(), b.getClient().getSurname(), b.getClient().getEmail());
+            EventBean eventBean = new EventBean();
+            eventBean.setId(b.getEvent().getId());
+            eventBean.setName(b.getEvent().getName());
+            eventBean.setDateTime(b.getEvent().getDateTime());
+            eventBean.setLocation(b.getEvent().getLocation());
+            eventBean.setLocalName(b.getEvent().getLocalName());
+            eventBean.setPrice(b.getEvent().getPrice());
+
+            responseBeans.add(new BookingResponseBean(b.getId(), b.getStatus(), b.getTicketCode(), clientBean, eventBean, b.getTicketType(), b.getPaymentMethod()));
+        }
+        return responseBeans;
     }
 
     public List<ClientBean> getAllParticipants() throws DAOException {

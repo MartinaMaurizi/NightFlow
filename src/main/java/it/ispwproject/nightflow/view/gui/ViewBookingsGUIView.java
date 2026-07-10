@@ -112,12 +112,16 @@ public class ViewBookingsGUIView extends PageGUIView {
         // 🌟 La molla che spinge i bottoni a destra
         HBox.setHgrow(textContainer, Priority.ALWAYS);
 
-        // ── PARTE DESTRA: I BOTTONI UNO SOPRA L'ALTRO ───────────────
+// ── PARTE DESTRA: I BOTTONI UNO SOPRA L'ALTRO ───────────────
         VBox actions = new VBox(8);
         actions.setAlignment(Pos.CENTER_RIGHT);
 
         if (cancellable) {
-            if (b.getPaymentMethod() == null || b.getPaymentMethod() == PaymentMethod.PAY_ON_SITE) {
+            // Controlla il metodo di pagamento
+            boolean isPaidOnline = b.getPaymentMethod() == PaymentMethod.PAYPAL ||
+                    b.getPaymentMethod() == PaymentMethod.CREDIT_CARD;
+
+            if (!isPaidOnline) {
                 if (onEdit != null) {
                     Button editBtn = new Button("Modifica Prenotazione");
                     editBtn.getStyleClass().add("btn-viola-small");
@@ -132,7 +136,8 @@ public class ViewBookingsGUIView extends PageGUIView {
                 actions.getChildren().add(paidBadge);
             }
 
-            if (onCancel != null) {
+            // 🌟 Aggiungi il pulsante Annulla SOLO SE non è stato pagato online
+            if (onCancel != null && !isPaidOnline) {
                 Button cancelBtn = new Button("Annulla Prenotazione");
                 cancelBtn.getStyleClass().add("danger-button");
                 // 🌟 IL SEGRETO 2: Stessa larghezza anche per il tasto rosso!
@@ -145,7 +150,6 @@ public class ViewBookingsGUIView extends PageGUIView {
         card.getChildren().addAll(textContainer, actions);
         return card;
     }
-
     private Label emptyLabel(String text) {
         Label lbl = new Label(text);
         lbl.getStyleClass().add("register-label");

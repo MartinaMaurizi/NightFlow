@@ -5,10 +5,9 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-public class CreateEventGUIView {
+// 🌟 1. ORA ESTENDE PageGUIView PER PRENDERE LO STESSO SFONDO E NAVBAR!
+public class CreateEventGUIView extends PageGUIView {
 
-    public final Button backBtn = new Button("<");
-    public final Button logoutBtn = new Button("Log out");
     public final Button createBtn = new Button("Crea Evento");
 
     // Campi del form
@@ -21,94 +20,80 @@ public class CreateEventGUIView {
     public final TextArea descArea = new TextArea();
     public final TextField locationFld = new TextField();
 
-    public BorderPane buildRoot(Runnable onBack, Runnable onLogout, Runnable onCreate) {
-        BorderPane root = new BorderPane();
-        root.setStyle("-fx-background-color: #ede7f6;");
+    public final Label errorLabel = buildErrorLabel();
 
-        // Navbar
-        root.setTop(buildNavbar(onBack, onLogout));
+    public BorderPane buildRoot(Runnable onBack, Runnable onLogout, Runnable onProfile, Runnable onHome, Runnable onCreate) {
 
-        // Contenuto Centrale
+        BorderPane root = buildShell("Crea un Nuovo Evento", onBack, onLogout, onProfile, onHome);
+
         VBox mainContent = new VBox(20);
-        mainContent.setAlignment(Pos.TOP_CENTER);
-        mainContent.setMaxWidth(600);
-        mainContent.setPadding(new Insets(30, 20, 50, 20));
+        // 🌟 1. ORA È COMPLETAMENTE CENTRATO IN VERTICALE
+        mainContent.setAlignment(Pos.CENTER);
+        mainContent.setMaxWidth(580);
+        mainContent.setPadding(new Insets(40, 20, 50, 20));
 
-        Label title = new Label("Crea un Nuovo Evento");
-        title.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: black;");
+        String fieldStyle = "-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 10 15; -fx-prompt-text-fill: #888888; -fx-text-fill: black; -fx-font-size: 14px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);";
 
-        // Stile per i campi di input
-        String fieldStyle = "-fx-background-color: #bbaaf2; -fx-background-radius: 10; -fx-padding: 10 15; -fx-prompt-text-fill: #444444; -fx-text-fill: black; -fx-font-size: 14px;";
-
+        // 🌟 2. ABBIAMO FISSATO LA LARGHEZZA PER UN ALLINEAMENTO A BLOCCO PERFETTO
         nameFld.setPromptText("Nome Evento (es. Latin Saturday)");
         nameFld.setStyle(fieldStyle);
+        nameFld.setMaxWidth(580);
 
         venueFld.setPromptText("Nome del Locale (es. Jolie Club)");
         venueFld.setStyle(fieldStyle);
+        venueFld.setMaxWidth(580);
 
-        // 🌟 SPOSTATO QUI IN ALTO: Configuriamo l'indirizzo
         locationFld.setPromptText("Indirizzo completo (es. Via Roma 1)");
         locationFld.setStyle(fieldStyle);
+        locationFld.setMaxWidth(580);
 
         HBox dateTimeBox = new HBox(20);
+        dateTimeBox.setAlignment(Pos.CENTER);
+
         datePicker.setPromptText("Data Evento");
         datePicker.setStyle("-fx-font-size: 14px;");
+        datePicker.setPrefWidth(280);
+
         timeFld.setPromptText("Ora (es. 22:30-00:30)");
         timeFld.setStyle(fieldStyle);
+        timeFld.setPrefWidth(280);
+
         dateTimeBox.getChildren().addAll(datePicker, timeFld);
 
         HBox numbersBox = new HBox(20);
+        numbersBox.setAlignment(Pos.CENTER);
+
         priceFld.setPromptText("Prezzo Base (€)");
         priceFld.setStyle(fieldStyle);
+        priceFld.setPrefWidth(280);
+
         capacityFld.setPromptText("Capacità max (es. 50)");
         capacityFld.setStyle(fieldStyle);
+        capacityFld.setPrefWidth(280);
+
         numbersBox.getChildren().addAll(priceFld, capacityFld);
 
         descArea.setPromptText("Descrizione dell'evento...");
         descArea.setPrefRowCount(4);
-        descArea.setStyle("-fx-control-inner-background: #bbaaf2; -fx-background-radius: 10; -fx-prompt-text-fill: #444444; -fx-text-fill: black; -fx-font-size: 14px;");
+        descArea.setStyle("-fx-control-inner-background: white; -fx-background-radius: 10; -fx-prompt-text-fill: #888888; -fx-text-fill: black; -fx-font-size: 14px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);");
+        descArea.setMaxWidth(580);
 
-        createBtn.setStyle("-fx-background-color: #651fff; -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 16px; -fx-padding: 10 40; -fx-cursor: hand;");
+        createBtn.getStyleClass().add("btn-viola-large");
+        createBtn.setPrefWidth(250);
         createBtn.setOnAction(e -> onCreate.run());
 
-        // 🌟 AGGIUNTO 'locationFld' QUI DENTRO PER FARLO COMPARIRE A SCHERMO
-        mainContent.getChildren().addAll(title, nameFld, venueFld, locationFld, dateTimeBox, numbersBox, descArea, createBtn);
+        mainContent.getChildren().addAll(
+                nameFld, venueFld, locationFld,
+                dateTimeBox, numbersBox, descArea,
+                createBtn, errorLabel
+        );
 
-        // ScrollPane per schermi più piccoli
-        ScrollPane scrollPane = new ScrollPane(new StackPane(mainContent));
-        scrollPane.setFitToWidth(true);
-        scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
-        scrollPane.getStyleClass().add("transparent-scroll");
+        // 🌟 3. USIAMO STACKPANE PER FORZARE IL CENTRAGGIO TOTALE
+        StackPane centerWrapper = new StackPane(mainContent);
+        centerWrapper.setAlignment(Pos.CENTER);
 
-        root.setCenter(scrollPane);
+        root.setCenter(transparentScroll(centerWrapper));
+
         return root;
-    }
-
-    private BorderPane buildNavbar(Runnable onBack, Runnable onLogout) {
-        BorderPane nav = new BorderPane();
-        nav.setPadding(new Insets(15, 30, 15, 0));
-        nav.setStyle("-fx-background-color: #ede7f6; -fx-border-color: #651fff; -fx-border-width: 0 0 2 0;");
-
-        HBox leftBox = new HBox(0);
-        leftBox.setAlignment(Pos.CENTER_LEFT);
-
-        backBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #651fff; -fx-font-size: 24px; -fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 0 4 0 10;");
-        backBtn.setOnAction(e -> onBack.run());
-
-        Label logo = new Label("NightFlow - Area Organizer");
-        logo.setStyle("-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #b39eff; -fx-font-family: 'Brush Script MT', cursive;");
-        logo.setMinWidth(Region.USE_PREF_SIZE);
-
-        leftBox.getChildren().addAll(backBtn, logo);
-        nav.setLeft(leftBox);
-
-        logoutBtn.setText("Log out");
-        logoutBtn.getStyleClass().clear(); // Pulisce lo stile grigio di default
-        logoutBtn.getStyleClass().add("logout-btn"); // Applica lo stile nero che abbiamo nel CSS
-        logoutBtn.setOnAction(e -> onLogout.run());
-
-        nav.setRight(logoutBtn);
-
-        return nav;
     }
 }

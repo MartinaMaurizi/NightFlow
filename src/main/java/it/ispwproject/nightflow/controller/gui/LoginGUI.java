@@ -4,7 +4,6 @@ import it.ispwproject.nightflow.controller.applicativo.LoginController;
 import it.ispwproject.nightflow.controller.applicativo.LoginController.LoginResult;
 import it.ispwproject.nightflow.exception.LoginException;
 import it.ispwproject.nightflow.view.gui.LoginGUIView;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class LoginGUI {
@@ -18,19 +17,8 @@ public class LoginGUI {
     }
 
     public void show() {
-        Scene scene = new Scene(
-                view.buildRoot(this::handleLogin, MainGUI::showRegistration),
-                MainGUI.WINDOW_WIDTH,
-                MainGUI.WINDOW_HEIGHT
-        );
-
-        try {
-            scene.getStylesheets().add(getClass().getResource("/styles/nightflow.css").toExternalForm());
-        } catch (Exception e) {
-            // Blocco vuoto tollerato per non sporcare la console se manca il CSS
-        }
-
-        stage.setScene(scene);
+        stage.setScene(GUIUtils.createScene(
+                view.buildRoot(this::handleLogin, MainGUI::showRegistration)));
         stage.show();
     }
 

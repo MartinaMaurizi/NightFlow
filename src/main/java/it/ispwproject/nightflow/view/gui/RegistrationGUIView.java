@@ -22,7 +22,7 @@ public class RegistrationGUIView {
     public final CheckBox isOrganizerCheck = new CheckBox("Registrati come Organizzatore");
     public final Label errorLabel = new Label();
 
-    public VBox buildRoot() {
+    public BorderPane buildRoot() {
         // 1. Setup Placeholder
         nameField.setPromptText("Nome*");
         surnameField.setPromptText("Cognome*");
@@ -65,25 +65,23 @@ public class RegistrationGUIView {
         });
 
         // 4. Tasto Indietro
-        // 🌟 RIMOSSO lo sfondo trasparente e AGGIUNTA la nostra classe CSS per i bottoni piccoli!
         backBtn.getStyleClass().add("btn-viola-small");
         backBtn.setFocusTraversable(false);
 
         HBox topBar = new HBox(backBtn);
-        topBar.setPadding(new Insets(15, 0, 0, 15)); // Un po' più di margine per farlo respirare
+        topBar.setPadding(new Insets(5, 0, 0, 15)); // Spazio ridotto per salire
         topBar.setAlignment(Pos.CENTER_LEFT);
 
-        // 5. Titoli (Li raggruppiamo per avvicinarli e risparmiare spazio)
+        // 5. Titoli
         Label titleLabel = new Label("NightFlow");
         titleLabel.setId("NightFlow-Neon");
 
         Label subtitleLabel = new Label("Registrazione");
         subtitleLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: black;");
 
-        // Usiamo uno spazio negativo (-10) per incollare il sottotitolo al titolo neon
         VBox titleBox = new VBox(-10, titleLabel, subtitleLabel);
         titleBox.setAlignment(Pos.CENTER);
-        titleBox.setPadding(new Insets(0, 0, 10, 0)); // Piccolo margine sotto il titolo
+        titleBox.setPadding(new Insets(0, 0, 10, 0));
 
         // 6. Simmetria dei campi
         nameField.setMaxWidth(Double.MAX_VALUE);
@@ -105,26 +103,25 @@ public class RegistrationGUIView {
         HBox row1 = new HBox(15, dobPicker, genderBox);
         HBox row2 = new HBox(15, countryBox, cityBox);
 
-        // 7. Testi di aiuto per le password
+        // 7. Testi di aiuto
         Label passHelper = new Label("Scegli una password con almeno 8 caratteri");
         passHelper.setStyle("-fx-font-size: 11px; -fx-text-fill: #333333;");
-        VBox passBox = new VBox(0, passField, passHelper); // Compattato
+        VBox passBox = new VBox(0, passField, passHelper);
 
         Label confirmHelper = new Label("*campi obbligatori");
         confirmHelper.setStyle("-fx-font-size: 11px; -fx-text-fill: #651fff;");
-        VBox confirmBox = new VBox(0, confirmPassField, confirmHelper); // Compattato
+        VBox confirmBox = new VBox(0, confirmPassField, confirmHelper);
 
-        // 8. Contenitore Form
-        // 🌟 RIDOTTO LO SPAZIO TRA I CAMPI da 10 a 6
-        VBox formGroup = new VBox(6);
+        // 8. Contenitore Form (spazi ridotti a 3)
+        VBox formGroup = new VBox(3);
         formGroup.setMaxWidth(400);
-        formGroup.setAlignment(Pos.TOP_CENTER); // 🌟 ALLINEATO IN ALTO INVECE CHE AL CENTRO
+        formGroup.setAlignment(Pos.TOP_CENTER);
 
         errorLabel.setWrapText(true);
         errorLabel.setAlignment(Pos.CENTER);
 
         formGroup.getChildren().addAll(
-                titleBox,      // 🌟 Il nuovo blocco titoli compatto
+                titleBox,
                 nameField,
                 surnameField,
                 row1,
@@ -137,23 +134,24 @@ public class RegistrationGUIView {
                 registerBtn
         );
 
-        // 9. Centratura Form tramite StackPane
+// 9. Centratura Form
         StackPane centerWrapper = new StackPane(formGroup);
-        // 🌟 Spingiamo tutto il pacchetto in alto, lasciando un po' di respiro dal bordo
+        // Niente più padding negativo, il BorderPane fa già tutto da solo!
         centerWrapper.setPadding(new Insets(10, 0, 0, 0));
         StackPane.setAlignment(formGroup, Pos.TOP_CENTER);
-        VBox.setVgrow(centerWrapper, Priority.ALWAYS);
 
-        // 10. Root Principale
-        VBox root = new VBox();
+        // 10. Root Principale (ORA È UN BORDERPANE)
+        BorderPane root = new BorderPane();
         root.setId("Registration-Root");
-        root.getChildren().addAll(topBar, centerWrapper);
+
+        // Separiamo le zone: la barra in alto e il form al centro! Nessuna sovrapposizione.
+        root.setTop(topBar);
+        root.setCenter(centerWrapper);
 
         return root;
     }
-    // 🌟 NUOVO METODO: Controlla che tutto sia compilato correttamente
+
     public boolean checkMandatoryFields() {
-        // 1. Controlla se c'è almeno un campo vuoto
         if (nameField.getText().trim().isEmpty() ||
                 surnameField.getText().trim().isEmpty() ||
                 dobPicker.getValue() == null ||
@@ -166,17 +164,15 @@ public class RegistrationGUIView {
 
             errorLabel.setText("Errore: Compila tutti i campi obbligatori (*)");
             errorLabel.setStyle("-fx-text-fill: #ff1744; -fx-font-weight: bold;");
-            return false; // Ferma tutto
+            return false;
         }
 
-        // 2. Controlla se le due password sono uguali
         if (!passField.getText().equals(confirmPassField.getText())) {
             errorLabel.setText("Errore: Le password non coincidono!");
             errorLabel.setStyle("-fx-text-fill: #ff1744; -fx-font-weight: bold;");
-            return false; // Ferma tutto
+            return false;
         }
 
-        // Se è tutto ok, pulisce l'errore e dà il via libera
         errorLabel.setText("");
         return true;
     }

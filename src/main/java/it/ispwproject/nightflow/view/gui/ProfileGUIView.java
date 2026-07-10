@@ -20,7 +20,6 @@ public class ProfileGUIView {
     public Button homeBtn = new Button();
 
     public final Button myBookingsBtn = new Button("Le mie prenotazioni");
-    public final Button myEventsBtn = new Button("Le mie serate");
     public final Button changePwdBtn = new Button("Cambia password");
 
     // 🌟 AGGIUNTO IL PARAMETRO 'localiGestiti' QUI:
@@ -71,7 +70,6 @@ public class ProfileGUIView {
 
         styleProfileButton(changePwdBtn);
         styleProfileButton(myBookingsBtn);
-        styleProfileButton(myEventsBtn);
 
         VBox actionButtons = new VBox(15);
         actionButtons.setAlignment(Pos.CENTER);
@@ -86,7 +84,7 @@ public class ProfileGUIView {
             locali.setStyle("-fx-font-size: 14px; -fx-text-fill: black;");
 
             userInfo.getChildren().addAll(role, locali);
-            actionButtons.getChildren().addAll(changePwdBtn, myEventsBtn);
+            actionButtons.getChildren().addAll(changePwdBtn);
 
         } else if (user instanceof Client) {
             Label role = new Label("Cliente");
@@ -154,7 +152,10 @@ public class ProfileGUIView {
     }
 
     private void styleProfileButton(Button btn) {
-        btn.setPrefWidth(260);
+        btn.setPrefWidth(300);
+        btn.setMinWidth(300); // 🌟 Forza la larghezza minima
+        btn.setMaxWidth(300); // 🌟 Forza la larghezza massima
+        btn.setAlignment(Pos.CENTER); // 🌟 Forza l'allineamento del testo al centro
         btn.getStyleClass().add("profile-action-button");
     }
 

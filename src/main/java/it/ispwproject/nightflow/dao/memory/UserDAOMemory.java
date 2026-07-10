@@ -12,26 +12,6 @@ public class UserDAOMemory implements UserDAO {
     private final DemoDataStore dataStore = DemoDataStore.getInstance();
 
     @Override
-    public void updateEmail(int id, String newEmail) throws DAOException {
-        User user = dataStore.getUsers().stream()
-                .filter(u -> u.getId() == id)
-                .findFirst()
-                .orElseThrow(() -> new DAOException("Utente con ID " + id + " non trovato."));
-
-        user.setEmail(newEmail);
-    }
-
-    @Override
-    public void updateCity(int id, String newCity) throws DAOException {
-        User user = dataStore.getUsers().stream()
-                .filter(u -> u.getId() == id)
-                .findFirst()
-                .orElseThrow(() -> new DAOException("Utente con ID " + id + " non trovato."));
-
-        user.setCity(newCity);
-    }
-
-    @Override
     public User findByEmail(String email) throws DAOException {
         return dataStore.getUsers().stream()
                 .filter(u -> u.getEmail() != null && u.getEmail().equalsIgnoreCase(email))
@@ -42,5 +22,18 @@ public class UserDAOMemory implements UserDAO {
     @Override
     public List<User> getAll() throws DAOException {
         return dataStore.getUsers();
+    }
+
+    // 🌟 AGGIUNTO IL METODO MANCANTE PER IL CAMBIO PASSWORD
+    @Override
+    public void updatePassword(int id, String newPassword) throws DAOException {
+        // Cerchiamo l'utente nella lista fittizia tramite il suo ID
+        User userToUpdate = dataStore.getUsers().stream()
+                .filter(u -> u.getId() == id)
+                .findFirst()
+                .orElseThrow(() -> new DAOException("Utente non trovato nel datastore in memoria."));
+
+        // Aggiorniamo la password dell'oggetto trovato
+        userToUpdate.setPassword(newPassword);
     }
 }

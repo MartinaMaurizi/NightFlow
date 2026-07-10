@@ -41,11 +41,6 @@ public class ClientManagementController {
         return buildBookingResponseList(allBookings);
     }
 
-    public void performCheckIn(int bookingId) throws DAOException {
-        // NOTA: Assicurati di aver aggiunto updateStatus all'interfaccia BookingDAO
-        bookingDAO.updateStatus(bookingId, "CHECKED_IN");
-    }
-
     private List<BookingResponseBean> buildBookingResponseList(List<Booking> bookings) {
         List<BookingResponseBean> result = new ArrayList<>();
         for (Booking booking : bookings) {

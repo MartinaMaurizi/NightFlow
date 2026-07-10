@@ -40,16 +40,18 @@ public class NotificationService {
     // NOTA: Se usi davvero SendGrid per l'esame, dovrai creare questi 4 template sulla loro dashboard
     // e incollare qui i nuovi ID dei template per NightFlow.
     private static final String TEMPLATE_CONFIRMATION           = "d-e58af91bd9b2428eb628457e5908a2f5";
-    private static final String TEMPLATE_CANCELLATION           = "d-9535f2c985ad4dc5ab7c51980e6069b9";
-    private static final String TEMPLATE_CONFIRMATION_ORGANIZER = "d-a56071917983440a8473eb642cac5d88";
-    private static final String TEMPLATE_CANCELLATION_ORGANIZER = "d-5187d5081a2a4baeb955d16656542960";
-
+    private static final String TEMPLATE_CANCELLATION           = "d-b0485d77c6e0494eb281dc356d586016";
+    private static final String TEMPLATE_CONFIRMATION_ORGANIZER = "d-fceb5a0323a947a2a118f11e92c9445d";
+    private static final String TEMPLATE_CANCELLATION_ORGANIZER = "d-83eff5b598d2455ebacd6b02e70b4819";
+    private static final String TEMPLATE_MODIFICATION = "d-0d4cf9e7b7814db888202a31f7a3c6bf";
+    private static final String TEMPLATE_CANCELLATION_EVENT     = "d-b75802bdf11f4950958a17d022e136af";
     // Variabili dinamiche che andranno a riempire i buchi nel template dell'email
     private static final String KEY_CLIENT_NAME    = "clientName";
     private static final String KEY_EVENT_NAME     = "eventName";
     private static final String KEY_EVENT_DATETIME = "eventDateTime";
     private static final String KEY_LOCATION       = "location";
     private static final String KEY_TICKET_CODE    = "ticketCode";
+    private static final String KEY_LOCAL_NAME    = "localName";
 
     private NotificationService() {}
 
@@ -78,7 +80,16 @@ public class NotificationService {
         Personalization p = buildPersonalizationForOrganizer(toEmail, booking);
         sendTemplateEmail(TEMPLATE_CANCELLATION_ORGANIZER, p);
     }
-
+    public static void sendEventModification(String toEmail, BookingResponseBean booking, String changeDescription) throws NotificationException {
+        Personalization p = buildPersonalization(toEmail, booking);
+        p.addDynamicTemplateData("changeDescription", changeDescription); // Nuova variabile
+        sendTemplateEmail(TEMPLATE_MODIFICATION, p);
+    }
+    public static void sendEventCancellation(String toEmail, BookingResponseBean booking) throws NotificationException {
+        // Riutilizziamo elegantemente il tuo buildPersonalization che estrae già tutti i dati (nome, evento, data)
+        Personalization p = buildPersonalization(toEmail, booking);
+        sendTemplateEmail(TEMPLATE_CANCELLATION_EVENT, p);
+    }
     // Metodo privato per assemblare i dati del Cliente
     private static Personalization buildPersonalization(String toEmail,
                                                         BookingResponseBean booking) {
@@ -91,6 +102,7 @@ public class NotificationService {
         p.addDynamicTemplateData(KEY_EVENT_NAME, booking.getEvent().getName());
         p.addDynamicTemplateData(KEY_EVENT_DATETIME, booking.getEvent().getDateTime().toString());
         p.addDynamicTemplateData(KEY_LOCATION, booking.getEvent().getLocation());
+        p.addDynamicTemplateData(KEY_LOCAL_NAME, booking.getEvent().getLocalName());
 
         return p;
     }

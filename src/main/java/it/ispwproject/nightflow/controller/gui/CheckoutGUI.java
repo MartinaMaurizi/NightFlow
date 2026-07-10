@@ -6,18 +6,21 @@ import it.ispwproject.nightflow.bean.BookingRequestBean;
 import it.ispwproject.nightflow.bean.BookingResponseBean;
 import it.ispwproject.nightflow.controller.applicativo.BookingController;
 import it.ispwproject.nightflow.enumerator.PaymentMethod;
-import it.ispwproject.nightflow.pattern.payment.PaymentRequest;
-import it.ispwproject.nightflow.pattern.payment.Subject;
+import it.ispwproject.nightflow.pattern.observer.Observable;
+import it.ispwproject.nightflow.bean.PaymentRequestBean;
 import it.ispwproject.nightflow.pattern.singleton.SessionManager;
 import it.ispwproject.nightflow.service.NotificationService;
 import it.ispwproject.nightflow.exception.NotificationException;
 import it.ispwproject.nightflow.util.logger.AppLogger;
 import it.ispwproject.nightflow.view.gui.CheckoutGUIView;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -82,7 +85,7 @@ public class CheckoutGUI {
     }
 
     private void processCheckout() {
-        if (view.phoneFld.getText() == null || view.phoneFld.getText().trim().isEmpty()) {
+        if (isBlank(view.phoneFld.getText())) {
             showAlert(Alert.AlertType.WARNING, "Campi Obbligatori Mancanti", "Per favore, compila il campo obbligatorio: Telefono.");
             return;
         }
@@ -92,16 +95,21 @@ public class CheckoutGUI {
             return;
         }
 
+        // 🌟 SE IL PAGAMENTO È CON CARTA, VALIDIAMO PRESENZA E FORMATO DEI DATI CARTA
+        if (view.selectedPaymentMethod == PaymentMethod.CREDIT_CARD && !validateCardFields()) {
+            return;
+        }
+
         String userEmail = view.emailFld.getText();
 
         if (view.selectedPaymentMethod == PaymentMethod.CREDIT_CARD || view.selectedPaymentMethod == PaymentMethod.PAYPAL) {
             double amountToPay = event.getPrice();
-            PaymentRequest paymentRequest = new PaymentRequest(amountToPay, userEmail);
+            PaymentRequestBean paymentRequest = new PaymentRequestBean(amountToPay, userEmail);
 
             boolean pagamentoRiuscito = mostraSimulazioneGateway(view.selectedPaymentMethod, paymentRequest);
 
             if (!pagamentoRiuscito) {
-                AppLogger.logInfo("Pagamento annullato dall'utente.");
+                AppLogger.logInfo("Pagamento annullato o tempo scaduto.");
                 return;
             }
         }
@@ -133,7 +141,7 @@ public class CheckoutGUI {
 
             BookingResponseBean bookingBean = appController.createBooking(requestBean, view.selectedPaymentMethod);
 
-            Subject subject = new Subject() {};
+            Observable subject = new Observable() {};
             subject.registerObserver(() -> {
                 try {
                     NotificationService.sendBookingConfirmation(userEmail, bookingBean);
@@ -154,26 +162,135 @@ public class CheckoutGUI {
         }
     }
 
-    private boolean mostraSimulazioneGateway(PaymentMethod method, PaymentRequest request) {
+    /**
+     * 🌟 Valida presenza e formato dei campi della carta di debito/credito.
+     * Mostra un alert e ritorna false al primo errore trovato.
+     */
+    private boolean validateCardFields() {
+        String cardName = view.cardNameFld.getText();
+        String cardNum = view.cardNumFld.getText();
+        String cardExp = view.cardExpFld.getText();
+        String cardCvv = view.cardCvvFld.getText();
+
+        if (isBlank(cardName) || isBlank(cardNum) || isBlank(cardExp) || isBlank(cardCvv)) {
+            showAlert(Alert.AlertType.WARNING, "Dati Carta Mancanti",
+                    "Per favore, compila tutti i campi della carta: Nome, Numero, Scadenza e CVV.");
+            return false;
+        }
+
+        // Nome sulla carta: solo lettere, spazi e apostrofi, almeno 2 caratteri
+        if (!cardName.trim().matches("[A-Za-zÀ-ÿ' ]{2,}")) {
+            showAlert(Alert.AlertType.WARNING, "Nome Carta non valido",
+                    "Inserisci il nome così come riportato sulla carta (solo lettere).");
+            return false;
+        }
+
+        // Numero carta: 13-19 cifre, con o senza spazi
+        String cardNumDigits = cardNum.replaceAll("\\s+", "");
+        if (!cardNumDigits.matches("\\d{13,19}")) {
+            showAlert(Alert.AlertType.WARNING, "Numero Carta non valido",
+                    "Inserisci un numero di carta valido (13-19 cifre).");
+            return false;
+        }
+
+        // Scadenza formato MM/AA e non già scaduta
+        if (!cardExp.trim().matches("(0[1-9]|1[0-2])/\\d{2}")) {
+            showAlert(Alert.AlertType.WARNING, "Scadenza non valida",
+                    "Inserisci la scadenza nel formato MM/AA.");
+            return false;
+        }
+        if (isCardExpired(cardExp.trim())) {
+            showAlert(Alert.AlertType.WARNING, "Carta Scaduta",
+                    "La carta inserita risulta scaduta.");
+            return false;
+        }
+
+        // CVV: 3 o 4 cifre
+        if (!cardCvv.trim().matches("\\d{3,4}")) {
+            showAlert(Alert.AlertType.WARNING, "CVV non valido",
+                    "Il CVV deve contenere 3 o 4 cifre.");
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Controlla se una scadenza MM/AA è già passata rispetto al mese/anno corrente.
+     */
+    private boolean isCardExpired(String monthYear) {
+        String[] parts = monthYear.split("/");
+        int month = Integer.parseInt(parts[0]);
+        int year = 2000 + Integer.parseInt(parts[1]);
+
+        java.time.YearMonth expiry = java.time.YearMonth.of(year, month);
+        java.time.YearMonth now = java.time.YearMonth.now();
+
+        return expiry.isBefore(now);
+    }
+
+    private boolean isBlank(String s) {
+        return s == null || s.trim().isEmpty();
+    }
+
+    private boolean mostraSimulazioneGateway(PaymentMethod method, PaymentRequestBean request) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 
         String nomeGateway = method == PaymentMethod.PAYPAL ? "PayPal" : "Mastercard / Visa";
         alert.setTitle("Gateway Esterno: " + nomeGateway);
         alert.setHeaderText("Autorizzazione Transazione con " + nomeGateway);
 
-        alert.setContentText(
-                "Stai per effettuare un pagamento sicuro.\n\n" +
-                        "Dettagli Richiesta:\n" +
-                        "• Account: " + request.getUserEmail() + "\n" +
-                        "• Importo totale: € " + request.getAmount() + "\n\n" +
-                        "Premi 'Paga Ora' per simulare l'addebito."
-        );
-
         ButtonType btnPaga = new ButtonType("Paga Ora", ButtonBar.ButtonData.OK_DONE);
         ButtonType btnAnnulla = new ButtonType("Annulla", ButtonBar.ButtonData.CANCEL_CLOSE);
         alert.getButtonTypes().setAll(btnPaga, btnAnnulla);
 
+        // 🌟 IMPOSTAZIONE DEL COUNTDOWN A 2 MINUTI (120 SECONDI)
+        final int[] secondsLeft = {120};
+        Timeline timeline = new Timeline();
+        timeline.setCycleCount(Timeline.INDEFINITE);
+
+        Runnable updateVisualCountdown = () -> {
+            int minutes = secondsLeft[0] / 60;
+            int seconds = secondsLeft[0] % 60;
+            alert.setContentText(
+                    "Stai per effettuare un pagamento sicuro.\n\n" +
+                            "Dettagli Richiesta:\n" +
+                            "• Account: " + request.getUserEmail() + "\n" +
+                            "• Importo totale: € " + request.getAmount() + "\n\n" +
+                            "⚠️ TEMPO MASSIMO PER CONFERMARE: " + String.format("%02d:%02d", minutes, seconds) + "\n\n" +
+                            "Premi 'Paga Ora' per simulare l'addebito."
+            );
+        };
+
+        // Renderizza il testo iniziale subito
+        updateVisualCountdown.run();
+
+        // Configurazione dell'evento scatenato ad ogni secondo della Timeline
+        KeyFrame keyFrame = new KeyFrame(Duration.seconds(1), event -> {
+            secondsLeft[0]--;
+            updateVisualCountdown.run();
+
+            if (secondsLeft[0] <= 0) {
+                timeline.stop();
+                alert.close(); // Chiude forzatamente il pop-up sbloccando showAndWait()
+            }
+        });
+
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.play(); // Avvia il countdown
+
         Optional<ButtonType> result = alert.showAndWait();
+        timeline.stop(); // 🌟 IMPORTANTE: Ferma il timer se l'utente risponde prima della scadenza
+
+        // Se il tempo è scaduto, mostra l'alert di errore e reindirizza l'utente
+        if (secondsLeft[0] <= 0) {
+            showAlert(Alert.AlertType.ERROR, "Tempo Scaduto",
+                    "Il tempo massimo di 2 minuti per confermare il pagamento è terminato.\nLa transazione è stata annullata.");
+
+            new DashboardClientGUI(stage).show();
+            return false;
+        }
+
         return result.isPresent() && result.get() == btnPaga;
     }
 

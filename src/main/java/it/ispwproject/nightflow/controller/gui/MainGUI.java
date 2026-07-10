@@ -49,11 +49,6 @@ public class MainGUI extends Application {
         new DashboardOrganizerGUI(primaryStage).show();
     }
 
-    public static void showMyBookings() {
-        // Sostituisce la scena corrente con la schermata delle prenotazioni
-        new ViewBookingsGUI(primaryStage).show();
-    }
-
     public static void launch(String[] args) {
         Application.launch(MainGUI.class, args);
     }

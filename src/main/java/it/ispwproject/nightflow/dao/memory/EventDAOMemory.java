@@ -31,15 +31,11 @@ public class EventDAOMemory implements EventDAO {
     }
 
     @Override
-    public List<Event> findByOrganizer(int organizerId) {
+    public List<Event> findByOrganizerId(int organizerId) {
+        // 🌟 CORRETTO: Ora filtra la lista degli eventi invece di andare in loop infinito
         return dataStore.getEvents().stream()
                 .filter(e -> e.getOrganizerId() == organizerId)
                 .toList();
-    }
-
-    @Override
-    public List<Event> findByOrganizerId(int organizerId) {
-        return findByOrganizer(organizerId);
     }
 
     @Override
@@ -67,11 +63,6 @@ public class EventDAOMemory implements EventDAO {
             }
         }
         throw new DAOException("Evento con ID " + event.getId() + " non trovato per l'aggiornamento.");
-    }
-
-    @Override
-    public void delete(int eventId) {
-        dataStore.getEvents().removeIf(e -> e.getId() == eventId);
     }
 
     @Override

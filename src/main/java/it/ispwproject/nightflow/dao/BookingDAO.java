@@ -27,14 +27,12 @@ public interface BookingDAO {
 
     // Trova gli eventi futuri di un cliente specifico, ma solo per un determinato organizzatore
     List<Booking> findUpcomingByClientAndOrganizer(int clientId, int organizerId) throws DAOException;
-
-    // ------------------------------------------------------------------------------
-
+    List<Booking> getBookingsByEventId(int eventId) throws DAOException;
     // Annulla una prenotazione (e rimette a disposizione il biglietto)
     void cancel(int bookingId, int clientId) throws DAOException;
 
     // Trova tutte le prenotazioni nel sistema (utile per l'amministratore o reportistica)
     List<Booking> findAll() throws DAOException;
-
+    List<Booking> findCancelledByClient(int clientId) throws DAOException;
     void updateStatus(int bookingId, String status) throws DAOException;
     }

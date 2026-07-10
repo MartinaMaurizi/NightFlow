@@ -40,8 +40,8 @@ public class BookTicketCLI extends AbstractCLIState {
 
             EventBean eventoSelezionato = eventiDisponibili.get(sceltaEvento - 1);
 
-            // 2. Usa il tuo metodo mostraTipiBiglietto
-            List<String> tipiBiglietto = Arrays.asList("Standard", "VIP (Salta Fila + Consumazione)");
+            // 2. Le 3 opzioni come nell'interfaccia grafica
+            List<String> tipiBiglietto = Arrays.asList("Senza drink (prezzo base)", "Con drink", "Tavolo VIP");
             view.mostraTipiBiglietto(tipiBiglietto);
 
             int sceltaTipo = view.chiediScelta("Scegli il tipo di biglietto (0 per annullare): ", 0, tipiBiglietto.size());
@@ -49,23 +49,29 @@ public class BookTicketCLI extends AbstractCLIState {
                 goBack(context);
                 return;
             }
-            String tipoSelezionato = (sceltaTipo == 1) ? "Standard" : "VIP";
+
+            // Mappiamo la scelta e calcoliamo il prezzo
+            String tipoSelezionato = switch (sceltaTipo) {
+                case 1 -> "Senza drink";
+                case 2 -> "Con drink";
+                case 3 -> "Tavolo VIP";
+                default -> throw new IllegalStateException("Scelta non valida");
+            };
+
+            double prezzoFinale = calcolaPrezzo(eventoSelezionato.getPrice(), tipoSelezionato);
 
             // 3. Chiediamo il pagamento e prepariamo la richiesta
             PaymentMethod metodoPagamento = view.chiediMetodoPagamento();
             BookingRequestBean request = new BookingRequestBean();
             request.setEvent(eventoSelezionato);
             request.setTicketType(tipoSelezionato);
-            // Non impostiamo il ClientBean perché ci penserà il Controller!
 
-            // 4. Usa il tuo metodo mostraRiepilogo
-            view.mostraRiepilogo(eventoSelezionato, tipoSelezionato);
+            // 4. Usa il tuo metodo mostraRiepilogo (aggiunto il prezzo finale)
+            view.mostraRiepilogo(eventoSelezionato, tipoSelezionato, prezzoFinale);
 
             boolean conferma = view.chiediConferma("Vuoi procedere con l'acquisto?");
             if (conferma) {
                 BookingResponseBean risultato = bookingController.createBooking(request, metodoPagamento);
-
-                // 5. Usa il tuo metodo mostraConferma
                 view.mostraConferma(risultato);
             } else {
                 view.mostraMessaggio("Prenotazione annullata.");
@@ -79,5 +85,13 @@ public class BookTicketCLI extends AbstractCLIState {
             view.attesaInvio();
             goBack(context);
         }
+    }
+
+    private double calcolaPrezzo(double base, String tipo) {
+        return switch (tipo) {
+            case "Con drink" -> base + 5.0;
+            case "Tavolo VIP" -> base + 85.0;
+            default -> base;
+        };
     }
 }

@@ -4,7 +4,6 @@ import it.ispwproject.nightflow.enumerator.Role;
 
 /**
  * Bean leggero che rappresenta la sessione autenticata.
- *
  * Contiene solo email e role — dati minimi per l'autorizzazione.
  * Per i dati completi dell'utente usa SessionManager.getLoggedUser().
  **/

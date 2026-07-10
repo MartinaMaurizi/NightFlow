@@ -5,7 +5,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
@@ -236,7 +235,6 @@ public class DashboardClientGUIView extends DashboardGUIView {
 
     private String getImagePathForEvent(String name) {
         String n = name.toLowerCase();
-        System.out.println("Cerco immagine per: " + n);
         if (n.contains("jolie")) return "/locali/jolieclub.png";
         if (n.contains("jer")) return "/locali/jerorestaurant.png";
         if (n.contains("satyrus")) return "/locali/satyrus.png";

@@ -1,5 +1,7 @@
 package it.ispwproject.nightflow.controller.gui;
 
+import it.ispwproject.nightflow.controller.applicativo.UserController;
+import it.ispwproject.nightflow.exception.DAOException;
 import it.ispwproject.nightflow.model.Client;
 import it.ispwproject.nightflow.model.Organizer;
 import it.ispwproject.nightflow.model.User;
@@ -132,44 +134,37 @@ public class ProfileGUI {
 
         // Intercettiamo il click su "Salva" per fare i controlli prima di chiudere il popup
         final Button saveBtn = (Button) dialog.getDialogPane().lookupButton(saveButtonType);
+// Intercettiamo il click su "Salva"
         saveBtn.addEventFilter(ActionEvent.ACTION, event -> {
-
             String oldPwd = oldPwdField.getText();
             String newPwd = newPwdField.getText();
             String confirmPwd = confirmPwdField.getText();
 
-            // 1. Controllo vecchia password
-            if (!oldPwd.equals(user.getPassword())) {
-                mostraErrore("La vecchia password non è corretta.");
-                event.consume(); // Blocca la chiusura del popup
-                return;
-            }
-
-            // 2. Controllo campo vuoto
-            if (newPwd.isEmpty()) {
-                mostraErrore("La nuova password non può essere vuota.");
-                event.consume();
-                return;
-            }
-
-            // 3. Controllo corrispondenza nuove password
+            // Controllo "grafico": le due password nuove coincidono?
             if (!newPwd.equals(confirmPwd)) {
                 mostraErrore("Le nuove password non coincidono.");
                 event.consume();
+                return;
+            }
+
+            // 🌟 CHIAMATA AL CONTROLLER APPLICATIVO
+            try {
+                UserController userController = new UserController();
+                userController.updatePassword(oldPwd, newPwd);
+
+                // Se arriva qui, nessuna eccezione è stata lanciata: successo!
+                AppLogger.logInfo(" Password cambiata con successo per l'utente.");
+
+            } catch (DAOException e) {
+                // Se il controller si arrabbia (es. vecchia password errata), mostriamo l'errore
+                mostraErrore(e.getMessage());
+                event.consume(); // Blocca la chiusura del popup!
             }
         });
 
-        // Se tutti i controlli passano e l'utente clicca Salva
+        // Se l'utente clicca Salva e il controller non ha lanciato eccezioni, il popup si chiuderà da solo
         dialog.showAndWait().ifPresent(result -> {
             if (result == saveButtonType) {
-                // Aggiorniamo la password nell'oggetto utente
-                user.setPassword(newPwdField.getText());
-
-                // (Se usi un Database, qui andrebbe chiamato il controller per salvare sul DB)
-                // userController.updatePassword(user);
-
-                AppLogger.logInfo("✅ Password cambiata con successo per: " + user.getEmail());
-
                 Alert success = new Alert(Alert.AlertType.INFORMATION);
                 success.setTitle("Successo");
                 success.setHeaderText(null);

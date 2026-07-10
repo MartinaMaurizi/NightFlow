@@ -29,8 +29,8 @@ public class EditProfileCLI extends AbstractCLIState {
             scelta = view.chiediScelta();
 
             switch (scelta) {
-                case "1" -> editEmail();
-                case "2" -> editCity(); // Nuova funzionalità aggiunta!
+                // 🌟 Ora la scelta 1 punta al cambio password
+                case "1" -> editPassword();
                 case "0" -> { /* esce dal while e torna indietro */ }
                 default  -> view.mostraErrore("Scelta non valida.");
             }
@@ -39,29 +39,27 @@ public class EditProfileCLI extends AbstractCLIState {
         goBack(context);
     }
 
-    private void editEmail() {
-        String newEmail = view.chiediCampo("Nuova email");
-        if (!view.chiediConferma("Confermare il cambio email a " + newEmail + "?")) {
-            view.mostraMessaggio("Operazione annullata.");
-            return;
-        }
-        try {
-            userController.updateEmail(newEmail);
-            view.mostraSuccesso("Email aggiornata con successo.");
-        } catch (DAOException e) {
-            view.mostraErrore(e.getMessage());
-        }
-    }
+    // 🌟 Nuovo metodo integrato con UserController
+    private void editPassword() {
+        String oldPwd = view.chiediCampo("Vecchia password");
+        String newPwd = view.chiediCampo("Nuova password");
+        String confirmPwd = view.chiediCampo("Conferma nuova password");
 
-    private void editCity() {
-        String newCity = view.chiediCampo("Nuova città");
-        if (!view.chiediConferma("Confermare il cambio città in " + newCity + "?")) {
+        // Controllo lato View (Boundary)
+        if (!newPwd.equals(confirmPwd)) {
+            view.mostraErrore("Le nuove password non coincidono. Riprova.");
+            return;
+        }
+
+        if (!view.chiediConferma("Sei sicuro di voler cambiare la tua password?")) {
             view.mostraMessaggio("Operazione annullata.");
             return;
         }
+
+        // Chiamata al Controller Applicativo
         try {
-            userController.updateCity(newCity);
-            view.mostraSuccesso("Città aggiornata con successo.");
+            userController.updatePassword(oldPwd, newPwd);
+            view.mostraSuccesso("Password aggiornata con successo.");
         } catch (DAOException e) {
             view.mostraErrore(e.getMessage());
         }
