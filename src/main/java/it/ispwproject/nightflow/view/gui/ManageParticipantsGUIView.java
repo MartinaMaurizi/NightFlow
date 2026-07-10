@@ -62,7 +62,16 @@ public class ManageParticipantsGUIView extends PageGUIView {
 
         // Sezione Attive
         VBox bookingsBox = new VBox(10);
-        bookingsBox.getChildren().add(new Label("Prenotazioni Attive:"));
+
+        // 1. Crea la Label
+        Label activeTitle = new Label("Prenotazioni Attive:");
+
+        // 2. Imposta il colore nero (e magari anche il grassetto per farla risaltare)
+        activeTitle.setStyle("-fx-text-fill: black; -fx-font-weight: bold;");
+
+        // 3. Aggiungila al contenitore
+        bookingsBox.getChildren().add(activeTitle);
+
         for (BookingResponseBean b : active) bookingsBox.getChildren().add(buildBookingRow(b, false));
 
         // Sezione Passate

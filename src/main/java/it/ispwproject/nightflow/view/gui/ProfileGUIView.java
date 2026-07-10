@@ -1,8 +1,5 @@
 package it.ispwproject.nightflow.view.gui;
 
-import it.ispwproject.nightflow.model.Client;
-import it.ispwproject.nightflow.model.Organizer;
-import it.ispwproject.nightflow.model.User;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -22,8 +19,8 @@ public class ProfileGUIView {
     public final Button myBookingsBtn = new Button("Le mie prenotazioni");
     public final Button changePwdBtn = new Button("Cambia password");
 
-    // 🌟 AGGIUNTO IL PARAMETRO 'localiGestiti' QUI:
-    public BorderPane buildRoot(User user, String localiGestiti, Runnable onBack, Runnable onLogout, Runnable onProfile) {
+    // Riceve dati "pronti" (String e boolean), non Entity!
+    public BorderPane buildRoot(String nomeCompleto, String email, String ruolo, boolean isOrganizer, String localiGestiti, Runnable onBack, Runnable onLogout, Runnable onProfile) {
         BorderPane root = new BorderPane();
         root.setStyle("-fx-background-color: #ede7f6;");
 
@@ -41,32 +38,23 @@ public class ProfileGUIView {
         StackPane avatarContainer = new StackPane();
         try {
             ImageView userIcon = new ImageView(new Image(getClass().getResourceAsStream("/icons/profileUser.png")));
-            userIcon.setFitWidth(140);
-            userIcon.setFitHeight(140);
-            userIcon.setScaleX(1.2); // Ingrandisce l'icona del 40%
-            userIcon.setScaleY(1.2);
+            userIcon.setFitWidth(140); userIcon.setFitHeight(140);
+            userIcon.setScaleX(1.2); userIcon.setScaleY(1.2);
             Circle clip = new Circle(70, 70, 70);
             userIcon.setClip(clip);
-
             Circle borderCircle = new Circle(72, Color.TRANSPARENT);
             borderCircle.setStroke(Color.web("#651fff"));
             borderCircle.setStrokeWidth(3);
-
             avatarContainer.getChildren().addAll(borderCircle, userIcon);
-        } catch (Exception e) {
-            System.err.println("Immagine /icons/profileUser.png non trovata!");
-        }
+        } catch (Exception e) { System.err.println("Immagine non trovata!"); }
 
         VBox userInfo = new VBox(8);
         userInfo.setAlignment(Pos.CENTER);
-
-        Label name = new Label((user.getName() + " " + user.getSurname()).toUpperCase());
+        Label name = new Label(nomeCompleto.toUpperCase());
         name.setStyle("-fx-font-size: 14px; -fx-text-fill: black; -fx-font-weight: bold;");
-
-        Label email = new Label(user.getEmail());
-        email.setStyle("-fx-font-size: 14px; -fx-text-fill: black;");
-
-        userInfo.getChildren().addAll(name, email);
+        Label emailLbl = new Label(email);
+        emailLbl.setStyle("-fx-font-size: 14px; -fx-text-fill: black;");
+        userInfo.getChildren().addAll(name, emailLbl);
 
         styleProfileButton(changePwdBtn);
         styleProfileButton(myBookingsBtn);
@@ -75,35 +63,25 @@ public class ProfileGUIView {
         actionButtons.setAlignment(Pos.CENTER);
         actionButtons.setPadding(new Insets(20, 0, 0, 0));
 
-        if (user instanceof Organizer) {
-            Label role = new Label("Organizzatore");
-            role.setStyle("-fx-font-size: 14px; -fx-text-fill: #651fff; -fx-font-weight: bold;");
-
-            // 🌟 ORA USA LA STRINGA CALCOLATA DAL CONTROLLER
+        // Logica semplificata: ora basata su un flag booleano
+        if (isOrganizer) {
+            Label roleLbl = new Label(ruolo);
+            roleLbl.setStyle("-fx-font-size: 14px; -fx-text-fill: #651fff; -fx-font-weight: bold;");
             Label locali = new Label("Locali gestiti: " + localiGestiti);
             locali.setStyle("-fx-font-size: 14px; -fx-text-fill: black;");
-
-            userInfo.getChildren().addAll(role, locali);
+            userInfo.getChildren().addAll(roleLbl, locali);
             actionButtons.getChildren().addAll(changePwdBtn);
-
-        } else if (user instanceof Client) {
-            Label role = new Label("Cliente");
-            role.setStyle("-fx-font-size: 14px; -fx-text-fill: #2196F3; -fx-font-weight: bold;");
-
-            userInfo.getChildren().add(role);
+        } else {
+            Label roleLbl = new Label(ruolo);
+            roleLbl.setStyle("-fx-font-size: 14px; -fx-text-fill: #2196F3; -fx-font-weight: bold;");
+            userInfo.getChildren().add(roleLbl);
             actionButtons.getChildren().addAll(changePwdBtn, myBookingsBtn);
         }
 
         centerColumn.getChildren().addAll(title, avatarContainer, userInfo, actionButtons);
-
-        StackPane scrollContent = new StackPane(centerColumn);
-        scrollContent.setPadding(new Insets(20, 0, 50, 0));
-
-        ScrollPane scrollPane = new ScrollPane(scrollContent);
+        ScrollPane scrollPane = new ScrollPane(new StackPane(centerColumn));
         scrollPane.setFitToWidth(true);
         scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
-        scrollPane.getStyleClass().add("transparent-scroll");
-
         root.setCenter(scrollPane);
         return root;
     }

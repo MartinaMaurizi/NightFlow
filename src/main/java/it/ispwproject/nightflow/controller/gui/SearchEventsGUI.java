@@ -1,13 +1,15 @@
 package it.ispwproject.nightflow.controller.gui;
 
 import it.ispwproject.nightflow.bean.EventBean;
+import it.ispwproject.nightflow.controller.applicativo.EventController;
 import it.ispwproject.nightflow.pattern.singleton.SessionManager;
 import it.ispwproject.nightflow.view.gui.SearchEventsGUIView;
 import it.ispwproject.nightflow.util.logger.AppLogger;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import java.time.LocalDateTime;
-import java.time.Clock;
+
+import java.util.List;
 
 public class SearchEventsGUI {
     private final Stage stage;
@@ -18,7 +20,6 @@ public class SearchEventsGUI {
     }
 
     public void show() {
-// Nel metodo show() di SearchEventsGUI
         Scene scene = new Scene(view.buildRoot(
                 () -> new DashboardClientGUI(stage).show(), // Torna indietro pulito
                 () -> {
@@ -28,18 +29,34 @@ public class SearchEventsGUI {
                 nomeLocaleSelezionato -> {
                     AppLogger.logInfo("Hai cliccato su: " + nomeLocaleSelezionato);
 
-                    EventBean fintoEvento = new EventBean();
-                    fintoEvento.setId(99);
-                    fintoEvento.setName("Serata a " + nomeLocaleSelezionato);
-                    fintoEvento.setDescription("Descrizione evento");
-                    // 🌟 Timezone esplicita
-                    fintoEvento.setDateTime(LocalDateTime.now(Clock.systemDefaultZone()).plusDays(2));
-                    fintoEvento.setLocation("Roma");
-                    fintoEvento.setLocalName(nomeLocaleSelezionato);
-                    fintoEvento.setAvailableTickets(100);
-                    fintoEvento.setPrice(15.0);
+                    try {
+                        // 🌟 1. Chiamiamo il Controller Applicativo per avere i VERI eventi
+                        EventController eventController = new EventController();
+                        List<EventBean> eventiFuturi = eventController.getAllUpcomingEvents();
 
-                    new BookTicketGUI(stage, fintoEvento).show();
+                        // 🌟 2. Cerchiamo l'evento corrispondente al locale cliccato
+                        EventBean veroEvento = null;
+                        for (EventBean evento : eventiFuturi) {
+                            if (evento.getLocalName().equalsIgnoreCase(nomeLocaleSelezionato)) {
+                                veroEvento = evento;
+                                break; // Trovato! Prendiamo il primo evento in programma per questo locale
+                            }
+                        }
+
+                        // 🌟 3. Se esiste, andiamo al checkout, altrimenti avvisiamo l'utente
+                        if (veroEvento != null) {
+                            new BookTicketGUI(stage, veroEvento).show();
+                        } else {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Nessun Evento");
+                            alert.setHeaderText("Nessuna serata in programma");
+                            alert.setContentText("Al momento non ci sono eventi imminenti per il locale: " + nomeLocaleSelezionato);
+                            alert.showAndWait();
+                        }
+
+                    } catch (Exception e) {
+                        AppLogger.logError("Errore durante il caricamento degli eventi: " + e.getMessage());
+                    }
                 }
         ), MainGUI.WINDOW_WIDTH, MainGUI.WINDOW_HEIGHT);
 
@@ -49,7 +66,7 @@ public class SearchEventsGUI {
         try {
             scene.getStylesheets().add(getClass().getResource("/styles/nightflow.css").toExternalForm());
         } catch (Exception e) {
-            AppLogger.logWarning("CSS non trovato: " + e.getMessage()); // 🌟 Logger
+            AppLogger.logWarning("CSS non trovato: " + e.getMessage());
         }
 
         stage.setScene(scene);

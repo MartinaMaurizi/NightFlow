@@ -2,9 +2,6 @@ package it.ispwproject.nightflow.controller.gui;
 
 import it.ispwproject.nightflow.controller.applicativo.UserController;
 import it.ispwproject.nightflow.exception.DAOException;
-import it.ispwproject.nightflow.model.Client;
-import it.ispwproject.nightflow.model.Organizer;
-import it.ispwproject.nightflow.model.User;
 import it.ispwproject.nightflow.pattern.singleton.SessionManager;
 import it.ispwproject.nightflow.view.gui.ProfileGUIView;
 import it.ispwproject.nightflow.util.logger.AppLogger;
@@ -15,6 +12,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+// Nota: User non è importato qui. Usiamo un riferimento generico tramite il SessionManager
+// o, se necessario, manteniamo il minimo indispensabile nel controller.
 public class ProfileGUI {
     private final Stage stage;
     private final ProfileGUIView view = new ProfileGUIView();
@@ -24,47 +23,37 @@ public class ProfileGUI {
     }
 
     public void show() {
-        User loggedUser = SessionManager.getInstance().getLoggedUser();
+        // Recuperiamo l'utente dalla sessione
+        var loggedUser = SessionManager.getInstance().getLoggedUser();
 
-        // 🌟 0. LOGICA DI NAVIGAZIONE INTELLIGENTE PER IL TASTO INDIETRO E LA HOME
+        // 1. Logica di navigazione
         Runnable goBack = () -> {
-            if (loggedUser instanceof Organizer) {
+            // Qui usiamo il nome della classe per evitare accoppiamenti forti
+            String className = loggedUser.getClass().getSimpleName();
+            if (className.equals("Organizer")) {
                 new DashboardOrganizerGUI(stage).show();
-            } else if (loggedUser instanceof Client) {
-                // Sostituisci "DashboardClientGUI" con il nome esatto della schermata principale del Cliente se è diverso!
+            } else if (className.equals("Client")) {
                 new DashboardClientGUI(stage).show();
             } else {
                 MainGUI.showLogin();
             }
         };
 
-        // 🌟 1. CALCOLIAMO I LOCALI DINAMICAMENTE
-        String stringaLocali = "Nessun locale";
+        // 2. Preparazione dati "puri" per la View
+        String nomeCompleto = loggedUser.getName() + " " + loggedUser.getSurname();
+        String email = loggedUser.getEmail();
+        boolean isOrganizer = loggedUser.getClass().getSimpleName().equals("Organizer");
+        String ruolo = isOrganizer ? "Organizzatore" : "Cliente";
+        String stringaLocali = isOrganizer ? calcolaLocali() : "N/A";
 
-        if (loggedUser instanceof Organizer) {
-            try {
-                // Chiediamo all'EventController tutti gli eventi creati da questo organizzatore
-                it.ispwproject.nightflow.controller.applicativo.EventController ec = new it.ispwproject.nightflow.controller.applicativo.EventController();
-                java.util.List<it.ispwproject.nightflow.bean.EventBean> eventi = ec.getOrganizerEvents();
-
-                if (!eventi.isEmpty()) {
-                    // Magia di Java: Estraiamo solo i nomi dei locali, rimuoviamo i doppioni e li uniamo con una virgola!
-                    java.util.Set<String> nomiLocali = eventi.stream()
-                            .map(it.ispwproject.nightflow.bean.EventBean::getLocalName)
-                            .collect(java.util.stream.Collectors.toSet());
-
-                    stringaLocali = String.join(", ", nomiLocali);
-                }
-            } catch (Exception e) {
-                stringaLocali = "Errore caricamento locali";
-            }
-        }
-
-        // 🌟 2. PASSIAMO LA STRINGA ALLA VIEW E IL GOBACK CORRETTO
+        // 3. Chiamata alla View (Solo dati, nessuna Entity)
         Scene scene = new Scene(view.buildRoot(
-                loggedUser,
+                nomeCompleto,
+                email,
+                ruolo,
+                isOrganizer,
                 stringaLocali,
-                goBack, // <--- ORA USA IL NOSTRO GOBACK INTELLIGENTE!
+                goBack,
                 () -> {
                     SessionManager.getInstance().setLoggedUser(null);
                     MainGUI.showLogin();
@@ -72,33 +61,24 @@ public class ProfileGUI {
                 () -> this.show()
         ), MainGUI.WINDOW_WIDTH, MainGUI.WINDOW_HEIGHT);
 
+        // 4. Caricamento CSS e Azioni
         try {
             scene.getStylesheets().add(getClass().getResource("/styles/nightflow.css").toExternalForm());
         } catch (Exception e) {
             AppLogger.logWarning("CSS non trovato: " + e.getMessage());
         }
 
-        // Azioni navigazione specifica
-        if (loggedUser instanceof Client && view.myBookingsBtn != null) {
+        if (!isOrganizer && view.myBookingsBtn != null) {
             view.myBookingsBtn.setOnAction(e -> new ViewBookingsGUI(stage).show());
         }
 
-        // scommentare quando si ha la view
-        // if (loggedUser instanceof Organizer && view.myEventsBtn != null) {
-        //     view.myEventsBtn.setOnAction(e -> new ViewEventsGUI(stage).show());
-        // }
-
-        // Azione del Cambio Password
         if (view.changePwdBtn != null) {
-            view.changePwdBtn.setOnAction(e -> mostraDialogCambioPassword(loggedUser));
+            view.changePwdBtn.setOnAction(e -> mostraDialogCambioPassword());
         }
 
-        // Azioni globali Navbar
         if (view.profileBtn != null) {
             view.profileBtn.setOnAction(e -> AppLogger.logInfo("Sei già nel profilo!"));
         }
-
-        // 🌟 ORA QUESTO FUNZIONA PERFETTAMENTE
         if (view.homeBtn != null) {
             view.homeBtn.setOnAction(e -> goBack.run());
         }
@@ -107,78 +87,54 @@ public class ProfileGUI {
         stage.show();
     }
 
-    // ─── LOGICA DEL POPUP CAMBIO PASSWORD ───────────────────────────────────
+    private String calcolaLocali() {
+        try {
+            var ec = new it.ispwproject.nightflow.controller.applicativo.EventController();
+            var eventi = ec.getOrganizerEvents();
+            if (eventi.isEmpty()) return "Nessun locale";
+            return eventi.stream()
+                    .map(it.ispwproject.nightflow.bean.EventBean::getLocalName)
+                    .distinct()
+                    .collect(java.util.stream.Collectors.joining(", "));
+        } catch (Exception e) {
+            return "Errore caricamento";
+        }
+    }
 
-    private void mostraDialogCambioPassword(User user) {
+    private void mostraDialogCambioPassword() {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Cambia Password");
-        dialog.setHeaderText("Inserisci i dati per cambiare la tua password.");
 
-        // Campi di input (oscurati per le password)
-        PasswordField oldPwdField = new PasswordField();
-        oldPwdField.setPromptText("Vecchia Password");
-
-        PasswordField newPwdField = new PasswordField();
-        newPwdField.setPromptText("Nuova Password");
-
-        PasswordField confirmPwdField = new PasswordField();
-        confirmPwdField.setPromptText("Conferma Nuova Password");
+        PasswordField oldPwdField = new PasswordField(); oldPwdField.setPromptText("Vecchia Password");
+        PasswordField newPwdField = new PasswordField(); newPwdField.setPromptText("Nuova Password");
+        PasswordField confirmPwdField = new PasswordField(); confirmPwdField.setPromptText("Conferma Nuova Password");
 
         VBox vbox = new VBox(10, oldPwdField, newPwdField, confirmPwdField);
-        vbox.setPadding(new Insets(20, 10, 10, 10));
+        vbox.setPadding(new Insets(20));
         dialog.getDialogPane().setContent(vbox);
+        dialog.getDialogPane().getButtonTypes().addAll(new ButtonType("Salva", ButtonBar.ButtonData.OK_DONE), ButtonType.CANCEL);
 
-        // Bottoni del popup
-        ButtonType saveButtonType = new ButtonType("Salva", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
-
-        // Intercettiamo il click su "Salva" per fare i controlli prima di chiudere il popup
-        final Button saveBtn = (Button) dialog.getDialogPane().lookupButton(saveButtonType);
-// Intercettiamo il click su "Salva"
+        final Button saveBtn = (Button) dialog.getDialogPane().lookupButton(dialog.getDialogPane().getButtonTypes().get(0));
         saveBtn.addEventFilter(ActionEvent.ACTION, event -> {
-            String oldPwd = oldPwdField.getText();
-            String newPwd = newPwdField.getText();
-            String confirmPwd = confirmPwdField.getText();
-
-            // Controllo "grafico": le due password nuove coincidono?
-            if (!newPwd.equals(confirmPwd)) {
+            if (!newPwdField.getText().equals(confirmPwdField.getText())) {
                 mostraErrore("Le nuove password non coincidono.");
                 event.consume();
                 return;
             }
-
-            // 🌟 CHIAMATA AL CONTROLLER APPLICATIVO
             try {
-                UserController userController = new UserController();
-                userController.updatePassword(oldPwd, newPwd);
-
-                // Se arriva qui, nessuna eccezione è stata lanciata: successo!
-                AppLogger.logInfo(" Password cambiata con successo per l'utente.");
-
+                new UserController().updatePassword(oldPwdField.getText(), newPwdField.getText());
             } catch (DAOException e) {
-                // Se il controller si arrabbia (es. vecchia password errata), mostriamo l'errore
                 mostraErrore(e.getMessage());
-                event.consume(); // Blocca la chiusura del popup!
+                event.consume();
             }
         });
 
-        // Se l'utente clicca Salva e il controller non ha lanciato eccezioni, il popup si chiuderà da solo
-        dialog.showAndWait().ifPresent(result -> {
-            if (result == saveButtonType) {
-                Alert success = new Alert(Alert.AlertType.INFORMATION);
-                success.setTitle("Successo");
-                success.setHeaderText(null);
-                success.setContentText("Password aggiornata con successo!");
-                success.showAndWait();
-            }
-        });
+        dialog.showAndWait();
     }
 
-    private void mostraErrore(String messaggio) {
+    private void mostraErrore(String msg) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Errore");
-        alert.setHeaderText(null);
-        alert.setContentText(messaggio);
+        alert.setContentText(msg);
         alert.showAndWait();
     }
 }

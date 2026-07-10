@@ -31,16 +31,12 @@ public class CheckoutGUI {
     private final CheckoutGUIView view = new CheckoutGUIView();
     private final EventBean event;
     private final String ticketDetails;
-
-    // 🌟 NUOVA VARIABILE PER CAPIRE SE È UNA MODIFICA
     private final boolean isModification;
 
-    // Costruttore originale (usato per le nuove prenotazioni)
     public CheckoutGUI(Stage stage, EventBean event, String ticketDetails) {
-        this(stage, event, ticketDetails, false); // Di default non è una modifica
+        this(stage, event, ticketDetails, false);
     }
 
-    // Nuovo costruttore (usato quando modifichiamo una prenotazione esistente)
     public CheckoutGUI(Stage stage, EventBean event, String ticketDetails, boolean isModification) {
         this.stage = stage;
         this.event = event;
@@ -54,8 +50,28 @@ public class CheckoutGUI {
 
         User loggedUser = SessionManager.getInstance().getLoggedUser();
 
+        // 🌟 PREPARAZIONE DATI PER DISACCOPPIARE LA VIEW DAL MODELLO
+        String userName = "";
+        String userEmail = "";
+        String userDob = "Data non inserita";
+
+        if (loggedUser != null) {
+            userName = loggedUser.getName();
+            userEmail = loggedUser.getEmail();
+            if (loggedUser instanceof it.ispwproject.nightflow.model.Client) {
+                it.ispwproject.nightflow.model.Client clientUser = (it.ispwproject.nightflow.model.Client) loggedUser;
+                if (clientUser.getDateOfBirth() != null) {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    userDob = clientUser.getDateOfBirth().format(formatter);
+                }
+            }
+        }
+
+        // 🌟 PASSIAMO ALLA VIEW SOLO STRINGHE
         Scene scene = new Scene(view.buildRoot(
-                loggedUser,
+                userName,
+                userEmail,
+                userDob,
                 () -> {
                     if (isModification) new ViewBookingsGUI(stage).show();
                     else new BookTicketGUI(stage, event).show();
@@ -95,7 +111,6 @@ public class CheckoutGUI {
             return;
         }
 
-        // 🌟 SE IL PAGAMENTO È CON CARTA, VALIDIAMO PRESENZA E FORMATO DEI DATI CARTA
         if (view.selectedPaymentMethod == PaymentMethod.CREDIT_CARD && !validateCardFields()) {
             return;
         }
@@ -114,23 +129,21 @@ public class CheckoutGUI {
             }
         }
 
-        // 🌟 SE È UNA MODIFICA, AGGIORNIAMO SOLO IL PAGAMENTO E FERMIAMO QUI IL CODICE!
         if (isModification) {
             try {
                 BookingController appController = new BookingController();
                 appController.updatePaymentMethod(event.getId(), view.selectedPaymentMethod);
 
                 showAlert(Alert.AlertType.INFORMATION, "Pagamento Completato", "La tua prenotazione è stata aggiornata a Pagata!");
-                new ViewBookingsGUI(stage).show(); // Torna alla pagina delle prenotazioni
+                new ViewBookingsGUI(stage).show();
 
             } catch (Exception ex) {
                 AppLogger.logError("Errore aggiornamento: " + ex.getMessage());
                 showAlert(Alert.AlertType.ERROR, "Errore", "Impossibile aggiornare il pagamento.");
             }
-            return; // ⛔ IMPORTANTISSIMO: il return ferma tutto ed evita di creare un biglietto nuovo!
+            return;
         }
 
-        // Se INVECE non è una modifica, si prosegue col creare il nuovo biglietto...
         AppLogger.logInfo("Elaborazione transazione confermata. Creazione biglietto...");
 
         try {
@@ -162,10 +175,6 @@ public class CheckoutGUI {
         }
     }
 
-    /**
-     * 🌟 Valida presenza e formato dei campi della carta di debito/credito.
-     * Mostra un alert e ritorna false al primo errore trovato.
-     */
     private boolean validateCardFields() {
         String cardName = view.cardNameFld.getText();
         String cardNum = view.cardNumFld.getText();
@@ -178,14 +187,12 @@ public class CheckoutGUI {
             return false;
         }
 
-        // Nome sulla carta: solo lettere, spazi e apostrofi, almeno 2 caratteri
         if (!cardName.trim().matches("[A-Za-zÀ-ÿ' ]{2,}")) {
             showAlert(Alert.AlertType.WARNING, "Nome Carta non valido",
                     "Inserisci il nome così come riportato sulla carta (solo lettere).");
             return false;
         }
 
-        // Numero carta: 13-19 cifre, con o senza spazi
         String cardNumDigits = cardNum.replaceAll("\\s+", "");
         if (!cardNumDigits.matches("\\d{13,19}")) {
             showAlert(Alert.AlertType.WARNING, "Numero Carta non valido",
@@ -193,7 +200,6 @@ public class CheckoutGUI {
             return false;
         }
 
-        // Scadenza formato MM/AA e non già scaduta
         if (!cardExp.trim().matches("(0[1-9]|1[0-2])/\\d{2}")) {
             showAlert(Alert.AlertType.WARNING, "Scadenza non valida",
                     "Inserisci la scadenza nel formato MM/AA.");
@@ -205,7 +211,6 @@ public class CheckoutGUI {
             return false;
         }
 
-        // CVV: 3 o 4 cifre
         if (!cardCvv.trim().matches("\\d{3,4}")) {
             showAlert(Alert.AlertType.WARNING, "CVV non valido",
                     "Il CVV deve contenere 3 o 4 cifre.");
@@ -215,9 +220,6 @@ public class CheckoutGUI {
         return true;
     }
 
-    /**
-     * Controlla se una scadenza MM/AA è già passata rispetto al mese/anno corrente.
-     */
     private boolean isCardExpired(String monthYear) {
         String[] parts = monthYear.split("/");
         int month = Integer.parseInt(parts[0]);
@@ -244,7 +246,6 @@ public class CheckoutGUI {
         ButtonType btnAnnulla = new ButtonType("Annulla", ButtonBar.ButtonData.CANCEL_CLOSE);
         alert.getButtonTypes().setAll(btnPaga, btnAnnulla);
 
-        // 🌟 IMPOSTAZIONE DEL COUNTDOWN A 2 MINUTI (120 SECONDI)
         final int[] secondsLeft = {120};
         Timeline timeline = new Timeline();
         timeline.setCycleCount(Timeline.INDEFINITE);
@@ -262,27 +263,24 @@ public class CheckoutGUI {
             );
         };
 
-        // Renderizza il testo iniziale subito
         updateVisualCountdown.run();
 
-        // Configurazione dell'evento scatenato ad ogni secondo della Timeline
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(1), event -> {
             secondsLeft[0]--;
             updateVisualCountdown.run();
 
             if (secondsLeft[0] <= 0) {
                 timeline.stop();
-                alert.close(); // Chiude forzatamente il pop-up sbloccando showAndWait()
+                alert.close();
             }
         });
 
         timeline.getKeyFrames().add(keyFrame);
-        timeline.play(); // Avvia il countdown
+        timeline.play();
 
         Optional<ButtonType> result = alert.showAndWait();
-        timeline.stop(); // 🌟 IMPORTANTE: Ferma il timer se l'utente risponde prima della scadenza
+        timeline.stop();
 
-        // Se il tempo è scaduto, mostra l'alert di errore e reindirizza l'utente
         if (secondsLeft[0] <= 0) {
             showAlert(Alert.AlertType.ERROR, "Tempo Scaduto",
                     "Il tempo massimo di 2 minuti per confermare il pagamento è terminato.\nLa transazione è stata annullata.");

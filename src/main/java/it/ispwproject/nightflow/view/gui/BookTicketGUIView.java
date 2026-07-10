@@ -73,14 +73,18 @@ public class BookTicketGUIView {
 
         checkoutBtn.getStyleClass().add("btn-viola-large");
 
+        // 🌟 Niente più "Ingresso Base" di default! Mostriamo un avviso se non c'è selezione
         checkoutBtn.setOnAction(e -> {
             RadioButton selected = (RadioButton) ticketGroup.getSelectedToggle();
             if (selected != null) {
-                // 🌟 Estraggo la stringa descrittiva E il prezzo finale dall'UserData
                 Object[] data = (Object[]) selected.getUserData();
                 onCheckout.accept((String) data[0], (Double) data[1]);
             } else {
-                onCheckout.accept("Ingresso Base", event.getPrice());
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Selezione Mancante");
+                alert.setHeaderText(null);
+                alert.setContentText("Per favore, seleziona una tipologia di biglietto prima di procedere al Check Out.");
+                alert.showAndWait();
             }
         });
 

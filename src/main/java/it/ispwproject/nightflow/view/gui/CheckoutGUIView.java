@@ -1,6 +1,5 @@
 package it.ispwproject.nightflow.view.gui;
 
-import it.ispwproject.nightflow.model.User;
 import it.ispwproject.nightflow.enumerator.PaymentMethod;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -9,8 +8,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
-
-import java.time.format.DateTimeFormatter;
 
 public class CheckoutGUIView {
 
@@ -35,7 +32,8 @@ public class CheckoutGUIView {
 
     public PaymentMethod selectedPaymentMethod = null;
 
-    public BorderPane buildRoot(User loggedUser, Runnable onBack, Runnable onLogout, Runnable onConfirm,
+    // 🌟 ORA RICEVE SOLO STRINGHE: userName, userEmail, userDob
+    public BorderPane buildRoot(String userName, String userEmail, String userDob, Runnable onBack, Runnable onLogout, Runnable onConfirm,
                                 String eventTitle, String eventDate, String ticketDetails, String imagePath) {
 
         BorderPane root = new BorderPane();
@@ -94,24 +92,10 @@ public class CheckoutGUIView {
         phoneFld.setPromptText("Telefono*");
         phoneFld.setStyle(fieldStyle);
 
-        // 🌟 RIEMPIMENTO CON L'OGGETTO USER
-        if (loggedUser != null) {
-            nameFld.setText(loggedUser.getName() != null ? loggedUser.getName() : "");
-            emailFld.setText(loggedUser.getEmail() != null ? loggedUser.getEmail() : "");
-
-            if (loggedUser instanceof it.ispwproject.nightflow.model.Client) {
-                it.ispwproject.nightflow.model.Client clientUser = (it.ispwproject.nightflow.model.Client) loggedUser;
-
-                if (clientUser.getDateOfBirth() != null) {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    dateFld.setText(clientUser.getDateOfBirth().format(formatter));
-                } else {
-                    dateFld.setText("Data non inserita"); // 🌟 Se l'oggetto è vuoto
-                }
-            } else {
-                dateFld.setText("");
-            }
-        }
+        // 🌟 RIEMPIMENTO TRAMITE STRINGHE PURIFICATE
+        nameFld.setText(userName != null ? userName : "");
+        emailFld.setText(userEmail != null ? userEmail : "");
+        dateFld.setText(userDob != null ? userDob : "");
 
         // Blocchiamo i campi anagrafici precompilati per impedire modifiche
         nameFld.setEditable(false); nameFld.setFocusTraversable(false);
@@ -120,7 +104,6 @@ public class CheckoutGUIView {
 
         Label reqLbl = new Label("*campi obbligatori"); reqLbl.setStyle("-fx-font-size: 12px; -fx-text-fill: black;");
 
-        // 🌟 AGGIUNTI SOLO 3 CAMPI + TELEFONO (La Città è stata rimossa)
         leftCol.getChildren().addAll(datiTitle, nameFld, emailFld, dateFld, phoneFld, reqLbl);
 
         // COLONNA DESTRA: METODO DI PAGAMENTO
@@ -139,7 +122,6 @@ public class CheckoutGUIView {
         Region separator = new Region();
         separator.setStyle("-fx-border-color: #651fff; -fx-border-width: 0 0 1 0;");
 
-        // 🌟 USIAMO I CAMPI PUBBLICI cardNameFld / cardNumFld / cardExpFld / cardCvvFld
         String inputStyle = "-fx-background-color: transparent; -fx-border-color: transparent; -fx-prompt-text-fill: #333333; -fx-text-fill: black;";
         cardNameFld.setPromptText("Nome sulla carta"); cardNameFld.setStyle(inputStyle);
         cardNumFld.setPromptText("Numero della carta"); cardNumFld.setStyle(inputStyle);
@@ -214,9 +196,9 @@ public class CheckoutGUIView {
         nav.setPadding(new Insets(15, 30, 15, 0));
         nav.setStyle("-fx-background-color: #ede7f6; -fx-border-color: #651fff; -fx-border-width: 0 0 2 0;");
 
-        HBox leftBox = new HBox(5); // Spazio ridotto tra bottone e logo
+        HBox leftBox = new HBox(5);
         leftBox.setAlignment(Pos.CENTER_LEFT);
-        leftBox.setPrefWidth(180); // Fissiamo una larghezza massima per il blocco sinistro
+        leftBox.setPrefWidth(180);
 
         backBtn.setText("< Indietro");
         backBtn.getStyleClass().clear();
@@ -262,8 +244,6 @@ public class CheckoutGUIView {
         btn.setMinWidth(35);
         btn.setMaxWidth(35);
 
-        // 🌟 IL SEGRETO È QUI:
-        // Abbiamo cancellato il vecchio btn.setStyle(...) e messo la classe CSS!
         btn.getStyleClass().add("icon-btn");
 
         return btn;
