@@ -3,8 +3,7 @@
 Developed for the Software Engineering and Web Design course, University of Rome Tor Vergata.
 
 <p align="center">
-  <!-- Sostituisci "LINK_AL_TUO_LOGO.png" con l'URL o il percorso reale della tua immagine -->
-  <img src="LINK_AL_TUO_LOGO.png" alt="NightFlow Logo" width="200">
+  <img src="src/main/resources/images/logo.png" alt="NightFlow Logo" width="200">
 </p>
 
 ## Description
