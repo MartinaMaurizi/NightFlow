@@ -4,7 +4,7 @@ package it.ispwproject.nightflow.model;
 import it.ispwproject.nightflow.enumerator.Role;
 import java.time.LocalDate;
 
-public class User {
+public abstract class User {
 
     private int id;
     private String name;

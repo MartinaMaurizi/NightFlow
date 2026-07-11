@@ -57,10 +57,17 @@ public class DemoDataStore {
         // RISOLTO: Uso di Month.AUGUST invece di 8
         c2.setDateOfBirth(LocalDate.of(1998, Month.AUGUST, 5));
 
-        Organizer o1 = new Organizer(3, "Demo", "Organizer", "org@demo", DEFAULT_PASSWORD , null, "M", "Italy", "Roma",
-                new ArrayList<>(List.of("Jolie Club")));
-        Organizer o2 = new Organizer(4, "Marco", "Bianchi", "marco@demo", DEFAULT_PASSWORD, null, "M", "Italy", "Roma",
-                new ArrayList<>(List.of("Magazzini Generali")));
+        Organizer o1 = new Organizer(3, "Demo", "Organizer", "org@demo", DEFAULT_PASSWORD);
+        o1.setGender("M");
+        o1.setCountry("Italy");
+        o1.setCity("Roma");
+        o1.addLocalName("Jolie Club");
+
+        Organizer o2 = new Organizer(4, "Marco", "Bianchi", "marco@demo", DEFAULT_PASSWORD);
+        o2.setGender("M");
+        o2.setCountry("Italy");
+        o2.setCity("Roma");
+        o2.addLocalName("Magazzini Generali");
 
         users.add(c1); users.add(c2); users.add(o1); users.add(o2);
 

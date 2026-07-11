@@ -82,13 +82,15 @@ public class UserDAODB implements UserDAO {
             c.setDateOfBirth(dob); // Ecco la data!
             return c;
         } else {
-            Organizer o = new Organizer(
-                    id, name, surname, email, password, null, null, null, city, new ArrayList<>()
-            );
+            // Usiamo il nuovo costruttore snello da 5 parametri
+            Organizer o = new Organizer(id, name, surname, email, password);
+
+            // Impostiamo i dati anagrafici usando i setter, proprio come per il Client
             o.setCity(city);
             o.setCountry(country);
             o.setGender(gender);
             o.setDateOfBirth(dob);
+
             return o;
         }
     }

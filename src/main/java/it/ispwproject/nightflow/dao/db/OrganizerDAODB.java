@@ -46,9 +46,13 @@ public class OrganizerDAODB implements OrganizerDAO {
     @Override public void delete(int id) throws DAOException { throw new DAOException("Non supportato"); }
 
     private Organizer mapToOrganizer(ResultSet rs) throws SQLException {
+
         return new Organizer(
-                rs.getInt("id"), rs.getString("name"), rs.getString("surname"),
-                rs.getString("email"), null, null, null, null, null, new ArrayList<>()
+                rs.getInt("id"),
+                rs.getString("name"),
+                rs.getString("surname"),
+                rs.getString("email"),
+                null
         );
     }
-}
+    }
