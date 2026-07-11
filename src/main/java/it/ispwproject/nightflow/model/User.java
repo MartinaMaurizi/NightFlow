@@ -17,10 +17,10 @@ public abstract class User {
     private String country;
     private String city;
 
-    public User() {}
+    protected User() {}
 
     // Costruttore base (per utenti semplici)
-    public User(int id, String name, String surname, String email, String password, Role role) {
+    protected User(int id, String name, String surname, String email, String password, Role role) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -30,7 +30,7 @@ public abstract class User {
     }
 
     // Costruttore completo (per la registrazione con tutti i dati anagrafici)
-    public User(int id, String name, String surname, String email, String password,
+    protected User(int id, String name, String surname, String email, String password,
                 Role role, LocalDate dateOfBirth, String gender, String country, String city) {
         this.id = id;
         this.name = name;
