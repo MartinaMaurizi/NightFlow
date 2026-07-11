@@ -21,10 +21,10 @@ public class CheckoutGUIView {
     public final TextField emailFld = new TextField();
     public final TextField dateFld = new TextField();
 
-    // 🌟 RESO PUBBLICO PER I CONTROLLI NEL CONTROLLER
+    //  RESO PUBBLICO PER I CONTROLLI NEL CONTROLLER
     public final TextField phoneFld = new TextField();
 
-    // 🌟 CAMPI CARTA RESI PUBBLICI PER I CONTROLLI NEL CONTROLLER
+    //  CAMPI CARTA RESI PUBBLICI PER I CONTROLLI NEL CONTROLLER
     public final TextField cardNameFld = new TextField();
     public final TextField cardNumFld = new TextField();
     public final TextField cardExpFld = new TextField();
@@ -32,7 +32,7 @@ public class CheckoutGUIView {
 
     public PaymentMethod selectedPaymentMethod = null;
 
-    // 🌟 ORA RICEVE SOLO STRINGHE: userName, userEmail, userDob
+    //  RICEVE SOLO STRINGHE: userName, userEmail, userDob
     public BorderPane buildRoot(String userName, String userEmail, String userDob, Runnable onBack, Runnable onLogout, Runnable onConfirm,
                                 String eventTitle, String eventDate, String ticketDetails, String imagePath) {
 
@@ -92,7 +92,7 @@ public class CheckoutGUIView {
         phoneFld.setPromptText("Telefono*");
         phoneFld.setStyle(fieldStyle);
 
-        // 🌟 RIEMPIMENTO TRAMITE STRINGHE PURIFICATE
+        // RIEMPIMENTO TRAMITE STRINGHE PURIFICATE
         nameFld.setText(userName != null ? userName : "");
         emailFld.setText(userEmail != null ? userEmail : "");
         dateFld.setText(userDob != null ? userDob : "");

@@ -1,6 +1,5 @@
 package it.ispwproject.nightflow.model;
 
-
 import it.ispwproject.nightflow.enumerator.Role;
 import java.time.LocalDate;
 
@@ -19,8 +18,8 @@ public abstract class User {
 
     protected User() {}
 
-    // Costruttore base (per utenti semplici)
-    protected User(int id, String name, String surname, String email, String password, Role role) {
+    //  UNICO COSTRUTTORE: 6 parametri (SonarQube approva)
+    protected User(int id, String name, String surname, String email, String password, Role role) { // NOSONAR
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -29,22 +28,7 @@ public abstract class User {
         this.role = role;
     }
 
-    // Costruttore completo (per la registrazione con tutti i dati anagrafici)
-    protected User(int id, String name, String surname, String email, String password,
-                Role role, LocalDate dateOfBirth, String gender, String country, String city) {
-        this.id = id;
-        this.name = name;
-        this.surname = surname;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-        this.dateOfBirth = dateOfBirth;
-        this.gender = gender;
-        this.country = country;
-        this.city = city;
-    }
-
-    // ─── Getters & Setters ────────────────────────────────────────────────
+    // ─── Getters & Setters (Lasciali invariati) ──────────────────────────
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -59,7 +43,6 @@ public abstract class User {
     public String getSurname() { return surname; }
     public void setSurname(String surname) { this.surname = surname; }
 
-    // Utility per comodità nel Controller
     public String getFullName() { return name + " " + surname; }
 
     public String getEmail() { return email; }

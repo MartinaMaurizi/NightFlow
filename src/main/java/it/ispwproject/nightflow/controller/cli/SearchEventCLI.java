@@ -30,10 +30,8 @@ public class SearchEventCLI extends AbstractCLIState {
         }
 
         try {
-            // 1. Usi ESATTAMENTE il metodo che hai già nel Controller!
             List<EventBean> allUpcoming = eventController.getAllUpcomingEvents();
 
-            // 2. Filtri la lista direttamente qui nella CLI
             String lowerKw = keyword.toLowerCase();
             List<EventBean> risultati = allUpcoming.stream()
                     .filter(e -> e.getName().toLowerCase().contains(lowerKw) ||
@@ -41,19 +39,29 @@ public class SearchEventCLI extends AbstractCLIState {
                             e.getLocation().toLowerCase().contains(lowerKw))
                     .toList();
 
-            // 3. Mostri i risultati
             if (risultati.isEmpty()) {
                 view.mostraNessunRisultato();
+                view.attesaInvio();
+                goBack(context);
             } else {
                 view.mostraRisultati(risultati);
+                // 🌟 Ora chiediamo di selezionare un evento invece di uscire subito
+                int scelta = view.chiediSelezioneEvento(risultati.size());
+
+                if (scelta == 0) {
+                    goBack(context);
+                } else {
+                    EventBean selectedEvent = risultati.get(scelta - 1);
+                    // Passiamo l'evento selezionato direttamente al BookTicketCLI!
+                    goNext(context, new BookTicketCLI(selectedEvent));
+                }
             }
 
         } catch (DAOException e) {
             AppLogger.logError("Errore durante la ricerca: " + e.getMessage());
             view.mostraErrore("Si è verificato un errore. Riprova più tardi.");
+            view.attesaInvio();
+            goBack(context);
         }
-
-        view.attesaInvio();
-        goBack(context);
     }
 }

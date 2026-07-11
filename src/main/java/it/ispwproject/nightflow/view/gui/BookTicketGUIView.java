@@ -60,20 +60,20 @@ public class BookTicketGUIView {
             eventTime += " - Late";
         }
 
-        // 🌟 2. CALCOLIAMO I PREZZI COME NUMERI VERI (DOUBLE)
+        // 2. CALCOLIAMO I PREZZI COME NUMERI VERI (DOUBLE)
         double basePriceValue = event.getPrice();
         double drinkPriceValue = event.getPrice() + 5.0;
         double vipPriceValue = event.getPrice() + 85.0;
 
         ticketSection.getChildren().addAll(listeLbl, ingressoLbl,
-                createTicketRow(eventTime, "Senza drink", basePriceValue), // 🌟 Passiamo il Double
+                createTicketRow(eventTime, "Senza drink", basePriceValue), // Passiamo il Double
                 createTicketRow(eventTime, "Con drink", drinkPriceValue),
                 createTicketRow(eventTime, "Tavolo VIP", vipPriceValue)
         );
 
         checkoutBtn.getStyleClass().add("btn-viola-large");
 
-        // 🌟 Niente più "Ingresso Base" di default! Mostriamo un avviso se non c'è selezione
+        // Niente più "Ingresso Base" di default! Mostriamo un avviso se non c'è selezione
         checkoutBtn.setOnAction(e -> {
             RadioButton selected = (RadioButton) ticketGroup.getSelectedToggle();
             if (selected != null) {
@@ -155,7 +155,7 @@ public class BookTicketGUIView {
 
         RadioButton radio = new RadioButton();
         radio.setToggleGroup(ticketGroup);
-        // 🌟 Salviamo un ARRAY con la descrizione e il prezzo VERO
+        //  Salviamo un ARRAY con la descrizione e il prezzo VERO
         radio.setUserData(new Object[]{desc, finalPrice});
         radio.setStyle("-fx-cursor: hand;");
 
@@ -176,9 +176,6 @@ public class BookTicketGUIView {
         btn.setPrefWidth(35);
         btn.setMinWidth(35);
         btn.setMaxWidth(35);
-
-        // 🌟 IL SEGRETO È QUI:
-        // Abbiamo cancellato il vecchio btn.setStyle(...) e messo la classe CSS!
         btn.getStyleClass().add("icon-btn");
 
         return btn;

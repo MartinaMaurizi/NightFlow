@@ -51,7 +51,7 @@ public class CheckoutGUI {
 
         User loggedUser = SessionManager.getInstance().getLoggedUser();
 
-        // 🌟 PREPARAZIONE DATI PER DISACCOPPIARE LA VIEW DAL MODELLO
+        // PREPARAZIONE DATI PER DISACCOPPIARE LA VIEW DAL MODELLO
         String userName = "";
         String userEmail = "";
         String userDob = "Data non inserita";
@@ -68,7 +68,7 @@ public class CheckoutGUI {
             }
         }
 
-        // 🌟 PASSIAMO ALLA VIEW SOLO STRINGHE
+        // PASSIAMO ALLA VIEW SOLO STRINGHE
         Scene scene = new Scene(view.buildRoot(
                 userName,
                 userEmail,
@@ -129,7 +129,7 @@ public class CheckoutGUI {
                 return;
             }
 
-            // 🌟 CHIAMATA AL PAYMENT SERVICE INSERITA QUI 🌟
+            // CHIAMATA AL PAYMENT SERVICE INSERITA QUI
             PaymentService paymentService = new PaymentService();
             boolean addebitoCompletato = paymentService.processPayment(paymentRequest);
 

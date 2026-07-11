@@ -16,32 +16,54 @@ public class BookTicketCLI extends AbstractCLIState {
 
     private final BookTicketView view = new BookTicketView();
     private final BookingController bookingController = new BookingController();
+    private EventBean eventoPreselezionato;
+
+    // Costruttore base (usato dalla Dashboard)
+    public BookTicketCLI() {
+        this.eventoPreselezionato = null;
+    }
+
+    // 🌟 Nuovo Costruttore per ricevere l'evento dalla Ricerca
+    public BookTicketCLI(EventBean event) {
+        this.eventoPreselezionato = event;
+    }
 
     @Override
     public void action(CLIStateMachine context) {
         view.mostraIntestazione();
 
         try {
-            // 1. Usa il tuo metodo mostraEventi
-            List<EventBean> eventiDisponibili = bookingController.getAvailableEvents();
-            view.mostraEventi(eventiDisponibili);
+            EventBean eventoSelezionato = this.eventoPreselezionato;
 
-            if (eventiDisponibili.isEmpty()) {
-                view.attesaInvio();
-                goBack(context);
-                return;
+            // Se l'evento non arriva dalla ricerca, chiediamo all'utente di sceglierlo
+            if (eventoSelezionato == null) {
+                List<EventBean> eventiDisponibili = bookingController.getAvailableEvents();
+                view.mostraEventi(eventiDisponibili);
+
+                if (eventiDisponibili.isEmpty()) {
+                    view.attesaInvio();
+                    goBack(context);
+                    return;
+                }
+
+                int sceltaEvento = view.chiediScelta("Seleziona l'evento da prenotare (0 per annullare): ", 0, eventiDisponibili.size());
+                if (sceltaEvento == 0) {
+                    goBack(context);
+                    return;
+                }
+                eventoSelezionato = eventiDisponibili.get(sceltaEvento - 1);
+            } else {
+                // Confermiamo visivamente l'evento scelto dalla ricerca
+                view.mostraMessaggio("Stai prenotando per: " + eventoSelezionato.getName() + " @ " + eventoSelezionato.getLocalName());
             }
 
-            int sceltaEvento = view.chiediScelta("Seleziona l'evento da prenotare (0 per annullare): ", 0, eventiDisponibili.size());
-            if (sceltaEvento == 0) {
-                goBack(context);
-                return;
-            }
-
-            EventBean eventoSelezionato = eventiDisponibili.get(sceltaEvento - 1);
-
-            // 2. Le 3 opzioni come nell'interfaccia grafica
-            List<String> tipiBiglietto = Arrays.asList("Senza drink (prezzo base)", "Con drink", "Tavolo VIP");
+            // 🌟 Calcoliamo i prezzi e li inseriamo direttamente nella View!
+            double base = eventoSelezionato.getPrice();
+            List<String> tipiBiglietto = Arrays.asList(
+                    String.format("Senza drink (prezzo base)  [ %.2f€ ]", base),
+                    String.format("Con drink                  [ %.2f€ ]", base + 5.0),
+                    String.format("Tavolo VIP                 [ %.2f€ ]", base + 85.0)
+            );
             view.mostraTipiBiglietto(tipiBiglietto);
 
             int sceltaTipo = view.chiediScelta("Scegli il tipo di biglietto (0 per annullare): ", 0, tipiBiglietto.size());
@@ -50,7 +72,6 @@ public class BookTicketCLI extends AbstractCLIState {
                 return;
             }
 
-            // Mappiamo la scelta e calcoliamo il prezzo
             String tipoSelezionato = switch (sceltaTipo) {
                 case 1 -> "Senza drink";
                 case 2 -> "Con drink";
@@ -60,13 +81,11 @@ public class BookTicketCLI extends AbstractCLIState {
 
             double prezzoFinale = calcolaPrezzo(eventoSelezionato.getPrice(), tipoSelezionato);
 
-            // 3. Chiediamo il pagamento e prepariamo la richiesta
             PaymentMethod metodoPagamento = view.chiediMetodoPagamento();
             BookingRequestBean request = new BookingRequestBean();
             request.setEvent(eventoSelezionato);
             request.setTicketType(tipoSelezionato);
 
-            // 4. Usa il tuo metodo mostraRiepilogo (aggiunto il prezzo finale)
             view.mostraRiepilogo(eventoSelezionato, tipoSelezionato, prezzoFinale);
 
             boolean conferma = view.chiediConferma("Vuoi procedere con l'acquisto?");

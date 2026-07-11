@@ -32,12 +32,12 @@ public class DashboardOrganizerCLI extends AbstractCLIState {
                     view.mostraMessaggio("✓ Logout effettuato.");
                     goNext(context, new InitialCLI());
                 } catch (java.sql.SQLException ex) {
-                    view.mostraMessaggio("❌ Errore: impossibile effettuare il logout in sicurezza. Riprova.");
+                    view.mostraMessaggio(" Errore: impossibile effettuare il logout in sicurezza. Riprova.");
                     goNext(context, this);
                 }
             }
             default -> {
-                view.mostraMessaggio("❌ Scelta non valida.");
+                view.mostraMessaggio(" Scelta non valida.");
                 goNext(context, this);
             }
         }

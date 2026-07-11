@@ -26,7 +26,7 @@ public class BookTicketGUI {
                     MainGUI.showLogin();
                 },
 
-                // 🌟 IL CONSUMER ORA PRENDE DUE VALORI: TICKETINFO E FINALPRICE
+                // IL CONSUMER PRENDE DUE VALORI: TICKETINFO E FINALPRICE
                 (ticketInfo, finalPrice) -> {
                     if (event.getAvailableTickets() < 1) {
                         Alert alert = new Alert(Alert.AlertType.WARNING);
