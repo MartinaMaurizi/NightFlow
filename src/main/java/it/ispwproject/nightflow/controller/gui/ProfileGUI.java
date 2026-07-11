@@ -1,5 +1,7 @@
 package it.ispwproject.nightflow.controller.gui;
 
+import it.ispwproject.nightflow.bean.ClientBean;
+import it.ispwproject.nightflow.bean.OrganizerBean;
 import it.ispwproject.nightflow.controller.applicativo.UserController;
 import it.ispwproject.nightflow.exception.DAOException;
 import it.ispwproject.nightflow.pattern.singleton.SessionManager;
@@ -12,8 +14,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-// Nota: User non è importato qui. Usiamo un riferimento generico tramite il SessionManager
-// o, se necessario, manteniamo il minimo indispensabile nel controller.
 public class ProfileGUI {
     private final Stage stage;
     private final ProfileGUIView view = new ProfileGUIView();
@@ -23,30 +23,54 @@ public class ProfileGUI {
     }
 
     public void show() {
-        // Recuperiamo l'utente dalla sessione
-        var loggedUser = SessionManager.getInstance().getLoggedUser();
+        // 1. La Boundary chiama il Controller Applicativo per farsi dare il Bean
+        UserController controller = new UserController();
+        Object profileBean = controller.getUserProfile();
 
-        // 1. Logica di navigazione
+        // 2. Estrazione dati "puri" dal Bean
+        String nomeCompleto = "";
+        String email = "";
+        boolean isOrganizer = false;
+        String ruolo = "";
+        String stringaLocali = "N/A";
+        String className = "";
+
+        if (profileBean instanceof OrganizerBean) {
+            OrganizerBean orgBean = (OrganizerBean) profileBean;
+            nomeCompleto = orgBean.getFullName();
+            email = orgBean.getEmail();
+            isOrganizer = true;
+            ruolo = "Organizzatore";
+            className = "Organizer";
+
+            if (orgBean.getLocalNames() == null || orgBean.getLocalNames().isEmpty()) {
+                stringaLocali = "Nessun locale";
+            } else {
+                stringaLocali = String.join(", ", orgBean.getLocalNames());
+            }
+
+        } else if (profileBean instanceof ClientBean) {
+            ClientBean cliBean = (ClientBean) profileBean;
+            nomeCompleto = cliBean.getName() + " " + cliBean.getSurname();
+            email = cliBean.getEmail();
+            isOrganizer = false;
+            ruolo = "Cliente";
+            className = "Client";
+        }
+
+        // 3. Logica di navigazione basata sulla stringa estratta
+        final String userRoleClass = className; // Variabile finale per la lambda
         Runnable goBack = () -> {
-            // Qui usiamo il nome della classe per evitare accoppiamenti forti
-            String className = loggedUser.getClass().getSimpleName();
-            if (className.equals("Organizer")) {
+            if (userRoleClass.equals("Organizer")) {
                 new DashboardOrganizerGUI(stage).show();
-            } else if (className.equals("Client")) {
+            } else if (userRoleClass.equals("Client")) {
                 new DashboardClientGUI(stage).show();
             } else {
                 MainGUI.showLogin();
             }
         };
 
-        // 2. Preparazione dati "puri" per la View
-        String nomeCompleto = loggedUser.getName() + " " + loggedUser.getSurname();
-        String email = loggedUser.getEmail();
-        boolean isOrganizer = loggedUser.getClass().getSimpleName().equals("Organizer");
-        String ruolo = isOrganizer ? "Organizzatore" : "Cliente";
-        String stringaLocali = isOrganizer ? calcolaLocali() : "N/A";
-
-        // 3. Chiamata alla View (Solo dati, nessuna Entity)
+        // 4. Chiamata alla View (Solo dati, nessuna Entity)
         Scene scene = new Scene(view.buildRoot(
                 nomeCompleto,
                 email,
@@ -58,10 +82,10 @@ public class ProfileGUI {
                     SessionManager.getInstance().setLoggedUser(null);
                     MainGUI.showLogin();
                 },
-                () -> this.show()
+                this::show
         ), MainGUI.WINDOW_WIDTH, MainGUI.WINDOW_HEIGHT);
 
-        // 4. Caricamento CSS e Azioni
+        // 5. Caricamento CSS e Azioni
         try {
             scene.getStylesheets().add(getClass().getResource("/styles/nightflow.css").toExternalForm());
         } catch (Exception e) {
@@ -85,20 +109,6 @@ public class ProfileGUI {
 
         stage.setScene(scene);
         stage.show();
-    }
-
-    private String calcolaLocali() {
-        try {
-            var ec = new it.ispwproject.nightflow.controller.applicativo.EventController();
-            var eventi = ec.getOrganizerEvents();
-            if (eventi.isEmpty()) return "Nessun locale";
-            return eventi.stream()
-                    .map(it.ispwproject.nightflow.bean.EventBean::getLocalName)
-                    .distinct()
-                    .collect(java.util.stream.Collectors.joining(", "));
-        } catch (Exception e) {
-            return "Errore caricamento";
-        }
     }
 
     private void mostraDialogCambioPassword() {

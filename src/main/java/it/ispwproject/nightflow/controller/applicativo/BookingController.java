@@ -136,7 +136,7 @@ public class BookingController {
                     new ClientBean(booking.getClient().getId(), booking.getClient().getName(), booking.getClient().getSurname(), booking.getClient().getEmail()),
                     createEventBean(booking.getEvent()),
                     booking.getTicketType(),
-                    booking.getPaymentMethod() // 🌟
+                    booking.getPaymentMethod()
             ));
         }
         return result;
@@ -151,7 +151,7 @@ public class BookingController {
                     new ClientBean(booking.getClient().getId(), booking.getClient().getName(), booking.getClient().getSurname(), booking.getClient().getEmail()),
                     createEventBean(booking.getEvent()),
                     booking.getTicketType(),
-                    booking.getPaymentMethod() // 🌟
+                    booking.getPaymentMethod()
             ));
         }
         return result;
@@ -162,14 +162,14 @@ public class BookingController {
         Booking booking = bookings.stream().filter(b -> b.getId() == bookingId).findFirst().orElse(null);
 
         if (booking != null) {
-            // 🌟 INIETTIAMO IL CLIENTE DALLA SESSIONE PER EVITARE I NULL
+            // INIETTIAMO IL CLIENTE DALLA SESSIONE PER EVITARE I NULL
             User loggedUser = SessionManager.getInstance().getLoggedUser();
             if (booking.getClient() == null || booking.getClient().getEmail() == null) {
                 booking.setClient(loggedUser);
             }
 
             if (booking.getOrganizer() == null || booking.getOrganizer().getEmail() == null) {
-                // 🌟 Usiamo OrganizerDAO invece di UserDAO
+
                 OrganizerDAO organizerDAO = DAOFactory.getOrganizerDAO();
                 User organizer = organizerDAO.findById(booking.getEvent().getOrganizerId());
                 booking.setOrganizer(organizer);
