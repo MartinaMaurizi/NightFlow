@@ -11,7 +11,7 @@ import java.util.List;
 
 public class RegistrationDAODB implements RegistrationDAO {
 
-    // Tabella 'user' e 9 parametri (corrispondono esattamente al tuo DB)
+    // Tabella 'user' e 9 parametri (corrispondono esattamente al DB)
     private static final String INSERT_USER =
             "INSERT INTO user (name, surname, dob, gender, country, city, email, password, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -65,7 +65,6 @@ public class RegistrationDAODB implements RegistrationDAO {
     }
 
     private int insertUser(Connection conn, User user) throws SQLException {
-        // RIMOSSO: System.out.println di debug
 
         try (PreparedStatement ps = conn.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -91,7 +90,6 @@ public class RegistrationDAODB implements RegistrationDAO {
                 ps.setString(9, "CLIENT"); // Default se nullo
             }
 
-            // RIMOSSO: blocco try-catch ridondante e e.printStackTrace()
             int affectedRows = ps.executeUpdate();
             if (affectedRows == 0) {
                 throw new SQLException("Nessuna riga inserita.");
