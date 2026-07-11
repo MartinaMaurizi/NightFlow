@@ -23,7 +23,7 @@ public class BookTicketCLI extends AbstractCLIState {
         this.eventoPreselezionato = null;
     }
 
-    // 🌟 Nuovo Costruttore per ricevere l'evento dalla Ricerca
+    // Costruttore per ricevere l'evento dalla Ricerca
     public BookTicketCLI(EventBean event) {
         this.eventoPreselezionato = event;
     }

@@ -9,7 +9,6 @@ import it.ispwproject.nightflow.exception.AvailabilityException;
 import it.ispwproject.nightflow.model.Booking;
 import it.ispwproject.nightflow.model.Event;
 import it.ispwproject.nightflow.model.Organizer;
-import it.ispwproject.nightflow.pattern.observer.EventCancellationObserver;
 import it.ispwproject.nightflow.pattern.observer.EventModificationObserver;
 import it.ispwproject.nightflow.pattern.singleton.SessionManager;
 
@@ -73,7 +72,7 @@ public class EventController {
         return eventBeans;
     }
 
-    // 🌟 NUOVO METODO: Recupero di tutti gli eventi futuri per il Cliente
+    //  Recupero di tutti gli eventi futuri per il Cliente
     public List<EventBean> getAllUpcomingEvents() throws DAOException {
         List<Event> events = eventDAO.getAllUpcomingEvents();
         List<EventBean> eventBeans = new ArrayList<>();
@@ -98,20 +97,17 @@ public class EventController {
     public void deleteEvent(int eventId) throws DAOException {
         Organizer organizer = (Organizer) SessionManager.getInstance().getLoggedUser();
 
-        // 1. Recupera le prenotazioni PRIMA di cancellare l'evento dal DB
+        // 1. Recupera le prenotazioni collegate all'evento
         List<Booking> bookings = bookingDAO.getBookingsByEventId(eventId);
 
-        // 2. Notifica i clienti e annulla esplicitamente le prenotazioni
+        // 2. Annulla silenziosamente tutte le prenotazioni (Nessuna notifica email inviata)
         for (Booking b : bookings) {
-            // 🌟 Usiamo il NUOVO Observer dedicato alla cancellazione dell'evento!
-            new EventCancellationObserver(b).update();
-
-            // 🌟 ECCO IL FIX PER LA MEMORIA: Cambiamo lo stato della prenotazione in CANCELLED
-            // prima di distruggere l'evento, così il cliente lo vedrà nella scheda giusta!
+            // Cambiamo lo stato della prenotazione in CANCELLED nel Database.
+            // In questo modo il cliente troverà il biglietto annullato nella sua
             bookingDAO.cancel(b.getId(), b.getClient().getId());
         }
 
-        // 3. Cancella l'evento
+        // 3. Cancella definitivamente l'evento dal DB
         eventDAO.delete(eventId, organizer.getId());
     }
 

@@ -44,7 +44,6 @@ public class NotificationService {
     private static final String TEMPLATE_CONFIRMATION_ORGANIZER = "d-fceb5a0323a947a2a118f11e92c9445d";
     private static final String TEMPLATE_CANCELLATION_ORGANIZER = "d-83eff5b598d2455ebacd6b02e70b4819";
     private static final String TEMPLATE_MODIFICATION = "d-0d4cf9e7b7814db888202a31f7a3c6bf";
-    private static final String TEMPLATE_CANCELLATION_EVENT     = "d-b75802bdf11f4950958a17d022e136af";
     // Variabili dinamiche che andranno a riempire i buchi nel template dell'email
     private static final String KEY_CLIENT_NAME    = "clientName";
     private static final String KEY_EVENT_NAME     = "eventName";
@@ -84,11 +83,6 @@ public class NotificationService {
         Personalization p = buildPersonalization(toEmail, booking);
         p.addDynamicTemplateData("changeDescription", changeDescription); // Nuova variabile
         sendTemplateEmail(TEMPLATE_MODIFICATION, p);
-    }
-    public static void sendEventCancellation(String toEmail, BookingResponseBean booking) throws NotificationException {
-        // Riutilizziamo elegantemente il tuo buildPersonalization che estrae già tutti i dati (nome, evento, data)
-        Personalization p = buildPersonalization(toEmail, booking);
-        sendTemplateEmail(TEMPLATE_CANCELLATION_EVENT, p);
     }
     // Metodo privato per assemblare i dati del Cliente
     private static Personalization buildPersonalization(String toEmail,

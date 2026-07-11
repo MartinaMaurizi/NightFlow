@@ -15,7 +15,6 @@ import java.sql.SQLException;
 
 public class LoginController {
 
-    // 1. Ho modificato i risultati in base agli attori del tuo diagramma
     public enum LoginResult {
         SUCCESSO_CLIENT,
         SUCCESSO_ORGANIZER
@@ -27,7 +26,7 @@ public class LoginController {
 
         Credentials credentials = DAOFactory.getLoginDAO().execute(email, hashedPassword);
 
-        // Il vigile del backend (che avevamo aggiunto prima, se lo hai messo)
+        // Il vigile del backend
         if (credentials == null) {
             throw new LoginException("Email o password errati.");
         }
@@ -53,7 +52,7 @@ public class LoginController {
                 new SessionBean(user.getEmail(), credentials.getRole())
         );
 
-        // 2. Lo switch ora smista l'utente verso la dashboard corretta del tuo progetto
+        // 2. Lo switch smista l'utente verso la dashboard corretta del tuo progetto
         return switch (credentials.getRole()) {
             case CLIENT       -> LoginResult.SUCCESSO_CLIENT;
             case ORGANIZER -> LoginResult.SUCCESSO_ORGANIZER;

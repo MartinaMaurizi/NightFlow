@@ -18,7 +18,7 @@ public class EventBean {
     public EventBean() {
         // Intenzionalmente vuoto
     }
-    // ─── Getters & Setters originali ────────────────────────
+
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -34,7 +34,7 @@ public class EventBean {
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
 
-    // ─── NUOVI Getters & Setters per risolvere gli errori ───
+
     public String getLocalName() { return localName; }
     public void setLocalName(String localName) { this.localName = localName; }
 

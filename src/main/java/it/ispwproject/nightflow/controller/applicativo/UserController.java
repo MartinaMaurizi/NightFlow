@@ -28,7 +28,7 @@ public class UserController {
         this.userDAO = DAOFactory.getUserDAO();
     }
 
-    // 🌟 NUOVO METODO: Trasforma l'Entity della sessione in un Bean per la View
+    //  Trasforma l'Entity della sessione in un Bean per la View
     public Object getUserProfile() {
         // Il controller legge l'Entity dalla Sessione
         User loggedUser = SessionManager.getInstance().getLoggedUser();

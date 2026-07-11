@@ -22,7 +22,7 @@ public class RegistrationBean {
     public RegistrationBean() {
         // Justification: Default constructor required by JavaBean standard.
     }
-    // Getter e Setter per tutti i campi
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
