@@ -17,8 +17,9 @@ public class Event {
 
     public Event() {}
 
+    @SuppressWarnings("java:S107")
     public Event(int id, String name, String description, LocalDateTime dateTime,
-                 String location, String localName, int totalCapacity, double price, int organizerId) { // NOSONAR
+                 String location, String localName, int totalCapacity, double price, int organizerId) {
         this.id = id;
         this.name = name;
         this.description = description;
