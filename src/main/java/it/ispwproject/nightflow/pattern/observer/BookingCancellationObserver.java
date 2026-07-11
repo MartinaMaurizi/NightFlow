@@ -39,8 +39,9 @@ public class BookingCancellationObserver implements Observer {
             }
 
         } catch (Exception e) {
+            // L'errore viene loggato correttamente qui
             AppLogger.logWarning("Notifica cancellazione non inviata: " + e.getMessage());
-            e.printStackTrace();
+            // Rimosso e.printStackTrace() per risolvere l'errore di SonarQube
         }
     }
 

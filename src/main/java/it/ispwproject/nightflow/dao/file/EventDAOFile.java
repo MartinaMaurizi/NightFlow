@@ -54,7 +54,8 @@ public class EventDAOFile implements EventDAO {
 
     @Override
     public List<Event> getAllUpcomingEvents() {
-        LocalDateTime now = LocalDateTime.now();
+        // RISOLTO: Ora passiamo esplicitamente il fuso orario di default del sistema
+        LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
         return cache.stream().filter(e -> e.getDateTime().isAfter(now)).toList();
     }
 

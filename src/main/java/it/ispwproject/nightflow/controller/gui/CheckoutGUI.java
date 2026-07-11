@@ -11,6 +11,7 @@ import it.ispwproject.nightflow.bean.PaymentRequestBean;
 import it.ispwproject.nightflow.pattern.singleton.SessionManager;
 import it.ispwproject.nightflow.service.NotificationService;
 import it.ispwproject.nightflow.exception.NotificationException;
+import it.ispwproject.nightflow.service.PaymentService;
 import it.ispwproject.nightflow.util.logger.AppLogger;
 import it.ispwproject.nightflow.view.gui.CheckoutGUIView;
 import javafx.animation.KeyFrame;
@@ -125,6 +126,16 @@ public class CheckoutGUI {
 
             if (!pagamentoRiuscito) {
                 AppLogger.logInfo("Pagamento annullato o tempo scaduto.");
+                return;
+            }
+
+            // 🌟 CHIAMATA AL PAYMENT SERVICE INSERITA QUI 🌟
+            PaymentService paymentService = new PaymentService();
+            boolean addebitoCompletato = paymentService.processPayment(paymentRequest);
+
+            // Controllo di sicurezza
+            if (!addebitoCompletato) {
+                showAlert(Alert.AlertType.ERROR, "Transazione Fallita", "La banca ha rifiutato l'addebito.");
                 return;
             }
         }

@@ -5,6 +5,7 @@ import it.ispwproject.nightflow.model.*;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month; // Aggiunto import
 import java.util.ArrayList;
 import java.util.List;
 import it.ispwproject.nightflow.util.PasswordUtils;
@@ -49,10 +50,12 @@ public class DemoDataStore {
         // ── Utenti ───────────────────────────────────────────────
 
         Client c1 = new Client(1, "Demo", "Client", "client@demo", DEFAULT_PASSWORD);
-        c1.setDateOfBirth(LocalDate.of(2001, 1, 13));
+        // RISOLTO: Uso di Month.JANUARY invece di 1
+        c1.setDateOfBirth(LocalDate.of(2001, Month.JANUARY, 13));
 
         Client c2 = new Client(2, "Anna", "Bianchi", "anna@demo", DEFAULT_PASSWORD);
-        c2.setDateOfBirth(LocalDate.of(1998, 8, 5));
+        // RISOLTO: Uso di Month.AUGUST invece di 8
+        c2.setDateOfBirth(LocalDate.of(1998, Month.AUGUST, 5));
 
         Organizer o1 = new Organizer(3, "Demo", "Organizer", "org@demo", DEFAULT_PASSWORD , null, "M", "Italy", "Roma",
                 new ArrayList<>(List.of("Jolie Club")));
@@ -93,8 +96,9 @@ public class DemoDataStore {
                 "Via Pietrasanta 16, Roma", "Satyrus", 200, 20.0, o2.getId());
 
         // 🌟 EVENTO PASSATO PER TESTARE LO STORICO PRENOTAZIONI
+        // RISOLTO: Uso di Month.MAY invece di 5
         Event ePassato = new Event(99, "Festa Passata", "Un evento di test nel passato",
-                LocalDateTime.of(2025, 5, 20, 22, 30), "Via Tribale 3, Roma", "Sanctuary", 100, 15.0, o1.getId());
+                LocalDateTime.of(2025, Month.MAY, 20, 22, 30), "Via Tribale 3, Roma", "Sanctuary", 100, 15.0, o1.getId());
 
         events.add(e1); events.add(e2); events.add(e3);
         events.add(e4); events.add(e5); events.add(e6);

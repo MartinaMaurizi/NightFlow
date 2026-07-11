@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.time.Month; // Aggiunto import
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -47,7 +48,8 @@ class RegistrationControllerTest {
         bean.setRole(Role.CLIENT);
 
         // 🌟 Campi anagrafici obbligatori per NightFlow!
-        bean.setDateOfBirth(LocalDate.of(1995, 5, 20));
+        // RISOLTO: Uso di Month.MAY invece di 5
+        bean.setDateOfBirth(LocalDate.of(1995, Month.MAY, 20));
         bean.setGender("Uomo");
         bean.setCountry("Italia");
         bean.setCity("Roma");
@@ -64,7 +66,8 @@ class RegistrationControllerTest {
         duplicato.setRole(Role.CLIENT);
 
         // Campi anagrafici obbligatori
-        duplicato.setDateOfBirth(LocalDate.of(1996, 6, 21));
+        // RISOLTO: Uso di Month.JUNE invece di 6
+        duplicato.setDateOfBirth(LocalDate.of(1996, Month.JUNE, 21));
         duplicato.setGender("Uomo");
         duplicato.setCountry("Italia");
         duplicato.setCity("Milano");

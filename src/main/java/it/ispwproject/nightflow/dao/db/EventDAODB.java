@@ -29,8 +29,9 @@ public class EventDAODB implements EventDAO {
             "UPDATE event SET name = ?, description = ?, date_time = ?, location = ?, club_name = ?, total_tickets = ?, available_tickets = ?, base_price = ? " +
                     "WHERE id = ?";
 
+    // RISOLTO: Ora questa costante contiene la query esatta e viene usata nel metodo delete() in basso
     private static final String DELETE_EVENT =
-            "UPDATE event SET status = 'CANCELLED' WHERE id = ? AND organizer_id = ?";
+            "DELETE FROM event WHERE id = ? AND organizer_id = ?";
 
     @Override
     public Event findById(int id) throws DAOException {
@@ -142,9 +143,9 @@ public class EventDAODB implements EventDAO {
 
     @Override
     public void delete(int eventId, int organizerId) throws DAOException {
-        String sql = "DELETE FROM event WHERE id = ? AND organizer_id = ?";
+        // RISOLTO: Ora passiamo la costante DELETE_EVENT al PreparedStatement
         try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(DELETE_EVENT)) {
             ps.setInt(1, eventId);
             ps.setInt(2, organizerId);
             ps.executeUpdate();

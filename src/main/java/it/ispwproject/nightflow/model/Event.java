@@ -9,19 +9,14 @@ public class Event {
     private String description;
     private LocalDateTime dateTime;
     private String location;
-
-    // --- NUOVI ATTRIBUTI ---
     private String localName;
     private int organizerId;
-    // -----------------------
-
     private int totalCapacity;
     private int availableTickets;
     private double price;
 
     public Event() {}
 
-    // Costruttore aggiornato con i nuovi campi
     public Event(int id, String name, String description, LocalDateTime dateTime,
                  String location, String localName, int totalCapacity, double price, int organizerId) {
         this.id = id;

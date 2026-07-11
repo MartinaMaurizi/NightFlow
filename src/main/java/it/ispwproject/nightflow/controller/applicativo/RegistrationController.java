@@ -37,7 +37,6 @@ public class RegistrationController {
         }
 
         // 4. Creazione e popolamento dell'utente
-// 4. Creazione e popolamento dell'utente
         User user;
         if (bean.getRole() == Role.ORGANIZER) {
             Organizer organizer = new Organizer();
@@ -70,34 +69,44 @@ public class RegistrationController {
             user = client;
         }
 
-// 5. Salvataggio
+        // 5. Salvataggio
         try {
             dao.save(user, bean.getLocalNames());
             it.ispwproject.nightflow.demo.DemoDataStore.getInstance().getUsers().add(user);
 
-            User savedUser;
-            try {
-                savedUser = DAOFactory.getUserDAO().findByEmail(bean.getEmail());
-            } catch (Exception e) {
-                savedUser = user;
-            }
+            // Sostituzione del try-catch annidato con la chiamata al nuovo metodo
+            User savedUser = retrieveSavedUser(bean.getEmail(), user);
 
             SessionManager.getInstance().setLoggedUser(savedUser);
             SessionManager.getInstance().setSessionBean(
                     new it.ispwproject.nightflow.bean.SessionBean(savedUser.getEmail(), savedUser.getRole())
             );
 
-            // Se siamo connessi al Database, cambiamo i permessi SQL all'istante
-            if (!DAOFactory.MEMORY.equalsIgnoreCase(DAOFactory.getPersistence())) {
-                try {
-                    ConnectionFactory.changeRole(savedUser.getRole());
-                } catch (java.sql.SQLException ex) {
-                    throw new RegistrationException("Errore nel cambio permessi DB: " + ex.getMessage());
-                }
-            }
+            // Sostituzione del secondo try-catch annidato
+            changeDatabaseRole(savedUser.getRole());
 
         } catch (DAOException e) {
             throw new RegistrationException("Errore durante il salvataggio: " + e.getMessage());
+        }
+    }
+
+    // --- NUOVI METODI PRIVATI PER RISOLVERE L'ERRORE SONARQUBE ---
+
+    private User retrieveSavedUser(String email, User fallbackUser) {
+        try {
+            return DAOFactory.getUserDAO().findByEmail(email);
+        } catch (Exception e) {
+            return fallbackUser;
+        }
+    }
+
+    private void changeDatabaseRole(Role role) throws RegistrationException {
+        if (!DAOFactory.MEMORY.equalsIgnoreCase(DAOFactory.getPersistence())) {
+            try {
+                ConnectionFactory.changeRole(role);
+            } catch (java.sql.SQLException ex) {
+                throw new RegistrationException("Errore nel cambio permessi DB: " + ex.getMessage());
+            }
         }
     }
 }

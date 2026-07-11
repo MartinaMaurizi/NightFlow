@@ -55,8 +55,6 @@ public class RegistrationDAODB implements RegistrationDAO {
             int userId = insertUser(conn, user);
             user.setId(userId);
 
-            // RIMOSSO l'inserimento in organizer_details perché la tabella non esiste (e non serve)!
-
             conn.commit();
         } catch (SQLException e) {
             conn.rollback();
@@ -67,7 +65,7 @@ public class RegistrationDAODB implements RegistrationDAO {
     }
 
     private int insertUser(Connection conn, User user) throws SQLException {
-        System.out.println("DEBUG DAO: Inserimento utente " + user.getEmail() + " con ruolo " + (user.getRole() != null ? user.getRole().name() : "NULL"));
+        // RIMOSSO: System.out.println di debug
 
         try (PreparedStatement ps = conn.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -93,14 +91,10 @@ public class RegistrationDAODB implements RegistrationDAO {
                 ps.setString(9, "CLIENT"); // Default se nullo
             }
 
-            // --- ESECUZIONE CON TRAPPOLA PER L'ERRORE REALE ---
-            try {
-                int affectedRows = ps.executeUpdate();
-                if (affectedRows == 0) throw new SQLException("Nessuna riga inserita.");
-            } catch (SQLException e) {
-                System.err.println("!!! ERRORE SQL FATALE: " + e.getMessage());
-                e.printStackTrace();
-                throw e;
+            // RIMOSSO: blocco try-catch ridondante e e.printStackTrace()
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Nessuna riga inserita.");
             }
 
             try (ResultSet keys = ps.getGeneratedKeys()) {
