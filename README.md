@@ -11,7 +11,7 @@ Developed for the Software Engineering and Web Design course, University of Rome
 NightFlow is a Java-based event management platform that connects organizers and attendees. It allows customers to easily book and manage event tickets, while organizers can efficiently create events and track attendees. The application supports both a graphical user interface (JavaFX) and a command-line interface.
 
 * **Clients** can book tickets, modify existing reservations, view detailed information on active and past reservations, and receive email notifications.
-* **Organizers** can create new events, edit their details, view information about registered customers, and receive email notifications.
+* **Organizers** can create new events, edit their details, view information about registered attendees, and receive email notifications.
 
 ## Technologies
 
@@ -61,10 +61,10 @@ with the following content:
 db.url=jdbc:mysql://localhost:3306/nightflowdb
 db.user.login=nf_login
 db.user.login.password=nf_login
-db.user.student=nf_student
-db.user.student.password=nf_student
-db.user.tutor=nf_tutor
-db.user.tutor.password=nf_tutor
+db.user.client=nf_client
+db.user.client.password=nf_client
+db.user.organizer=nf_organizer
+db.user.organizer.password=nf_organizer
 sendgrid.api.key=YOUR_SENDGRID_API_KEY
 ```
 ⚠️ The `db.properties` file includes database credentials and a placeholder for the SendGrid API key.
