@@ -1,4 +1,4 @@
-# NightFlow - Connect to the nightlife!
+# NightFlow
 
 Developed for the Software Engineering and Web Design course, University of Rome Tor Vergata.
 
