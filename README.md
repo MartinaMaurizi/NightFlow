@@ -58,15 +58,13 @@ src/main/resources/db.properties
 ```
 with the following content:
 ```text
-db.url=jdbc:mysql://localhost:3306/brainbankdb
-db.user.login=bb_login
-db.user.login.password=bb_login
-db.user.student=bb_student
-db.user.student.password=bb_student
-db.user.tutor=bb_tutor
-db.user.tutor.password=bb_tutor
-db.user.admin=bb_admin
-db.user.admin.password=bb_admin
+db.url=jdbc:mysql://localhost:3306/nightflowdb
+db.user.login=nf_login
+db.user.login.password=nf_login
+db.user.student=nf_student
+db.user.student.password=nf_student
+db.user.tutor=nf_tutor
+db.user.tutor.password=nf_tutor
 sendgrid.api.key=YOUR_SENDGRID_API_KEY
 ```
 ⚠️ The `db.properties` file includes database credentials and a placeholder for the SendGrid API key.
