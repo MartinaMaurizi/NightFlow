@@ -1,4 +1,4 @@
-# NightFlow - Connect to the nightlife!
+# NightFlow
 
 Developed for the Software Engineering and Web Design course, University of Rome Tor Vergata.
 
@@ -11,7 +11,7 @@ Developed for the Software Engineering and Web Design course, University of Rome
 NightFlow is a Java-based event management platform that connects organizers and attendees. It allows customers to easily book and manage event tickets, while organizers can efficiently create events and track attendees. The application supports both a graphical user interface (JavaFX) and a command-line interface.
 
 * **Clients** can book tickets, modify existing reservations, view detailed information on active and past reservations, and receive email notifications.
-* **Organizers** can create new events, edit their details, view information about registered customers, and receive email notifications.
+* **Organizers** can create new events, edit their details, view information about registered attendees, and receive email notifications.
 
 ## Technologies
 
@@ -58,19 +58,17 @@ src/main/resources/db.properties
 ```
 with the following content:
 ```text
-db.url=jdbc:mysql://localhost:3306/brainbankdb
-db.user.login=bb_login
-db.user.login.password=bb_login
-db.user.student=bb_student
-db.user.student.password=bb_student
-db.user.tutor=bb_tutor
-db.user.tutor.password=bb_tutor
-db.user.admin=bb_admin
-db.user.admin.password=bb_admin
+db.url=jdbc:mysql://localhost:3306/nightflowdb
+db.user.login=nf_login
+db.user.login.password=nf_login
+db.user.client=nf_cliente
+db.user.client.password=nf_cliente
+db.user.organizer=nf_organizzatore
+db.user.organizer.password=nf_organizzatore
 sendgrid.api.key=YOUR_SENDGRID_API_KEY
 ```
 ⚠️ The `db.properties` file includes database credentials and a placeholder for the SendGrid API key.
-Email notifications in action can be seen in the [project demo video](https://youtu.be/BgFq779UIsI?si=oTgrq_BstdgU95Th).
+Email notifications in action can be seen in the [project demo video](https://youtu.be/w-RNxzK7c6I?si=UnCEmEwtZw_1LKpJ).
 ## Demo credentials
 
 | Role     | Email            | Password   |
@@ -88,6 +86,6 @@ Other test accounts available, see DemoDataStore for the full list.
 | Organizer  | `info@jolieclub.com`          | password123 |
 
 
-Other test accounts available, see BrainBank_db.sql for the full list.
+Other test accounts available, see NightFlow_db.sql for the full list.
 ## Author
 Maurizi Martina
