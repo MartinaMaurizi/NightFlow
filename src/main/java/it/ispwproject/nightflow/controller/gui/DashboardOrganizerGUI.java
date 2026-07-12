@@ -35,7 +35,7 @@ public class DashboardOrganizerGUI {
         ), MainGUI.WINDOW_WIDTH, MainGUI.WINDOW_HEIGHT);
 
         // =================================================================
-        // 🌟 AGGIUNTA AZIONI PER I BOTTONI PROFILO E HOME
+        // AGGIUNTA AZIONI PER I BOTTONI PROFILO E HOME
         // =================================================================
         if (view.profileBtn != null) {
             view.profileBtn.setOnAction(e -> {

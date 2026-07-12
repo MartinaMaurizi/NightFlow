@@ -19,7 +19,6 @@ public final class GUIUtils {
                 MainGUI.WINDOW_HEIGHT
         );
 
-        // Assicurati di rinominare il file CSS nella cartella resources!
         scene.getStylesheets().add(
                 GUIUtils.class
                         .getResource("/styles/nightflow.css")

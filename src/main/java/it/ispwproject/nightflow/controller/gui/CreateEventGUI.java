@@ -33,10 +33,10 @@ public class CreateEventGUI {
                     MainGUI.showLogin();
                 },
 
-                // 🌟 3. onProfile (NUOVO)
+                // 3. onProfile
                 () -> new ProfileGUI(stage).show(),
 
-                // 🌟 4. onHome (NUOVO)
+                // 4. onHome
                 () -> new DashboardOrganizerGUI(stage).show(),
 
                 // 5. onCreate (Tutta la tua fantastica logica di salvataggio)

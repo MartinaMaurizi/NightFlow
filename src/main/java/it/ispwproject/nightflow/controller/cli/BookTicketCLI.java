@@ -57,7 +57,7 @@ public class BookTicketCLI extends AbstractCLIState {
                 view.mostraMessaggio("Stai prenotando per: " + eventoSelezionato.getName() + " @ " + eventoSelezionato.getLocalName());
             }
 
-            // 🌟 Calcoliamo i prezzi e li inseriamo direttamente nella View!
+            // Calcoliamo i prezzi e li inseriamo direttamente nella View!
             double base = eventoSelezionato.getPrice();
             List<String> tipiBiglietto = Arrays.asList(
                     String.format("Senza drink (prezzo base)  [ %.2f€ ]", base),

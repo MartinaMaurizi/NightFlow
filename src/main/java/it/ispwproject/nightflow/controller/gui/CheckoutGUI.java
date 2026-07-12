@@ -269,7 +269,7 @@ public class CheckoutGUI {
                             "Dettagli Richiesta:\n" +
                             "• Account: " + request.getUserEmail() + "\n" +
                             "• Importo totale: € " + request.getAmount() + "\n\n" +
-                            "⚠️ TEMPO MASSIMO PER CONFERMARE: " + String.format("%02d:%02d", minutes, seconds) + "\n\n" +
+                            " TEMPO MASSIMO PER CONFERMARE: " + String.format("%02d:%02d", minutes, seconds) + "\n\n" +
                             "Premi 'Paga Ora' per simulare l'addebito."
             );
         };

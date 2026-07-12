@@ -12,14 +12,11 @@ public final class CLIRenderer {
     public static final String LINE      = "─".repeat(WIDTH);
     public static final String LINE_THIN = "╌".repeat(WIDTH);
     public static final String LINE_DECO = "═".repeat(WIDTH);
-    public static final String DONE = "[✓]";    // O usa un simbolo che preferisci
-    public static final String PENDING = "[ ]";
 
     // Simboli di stato NightFlow
     public static final String OK      = "✓";
     public static final String ERR     = "✗";
     public static final String BULLET  = "•";
-    public static final String STAR    = "★"; // Per locali preferiti
     public static final String PARTY   = "🎉"; // Per eventi
     public static final String TICKET  = "🎟️"; // Per prenotazioni
     public static final String LOCATION = "📍"; // Per luoghi

@@ -134,9 +134,8 @@ public class RegistrationGUIView {
                 registerBtn
         );
 
-// 9. Centratura Form
+      // 9. Centratura Form
         StackPane centerWrapper = new StackPane(formGroup);
-        // Niente più padding negativo, il BorderPane fa già tutto da solo!
         centerWrapper.setPadding(new Insets(10, 0, 0, 0));
         StackPane.setAlignment(formGroup, Pos.TOP_CENTER);
 

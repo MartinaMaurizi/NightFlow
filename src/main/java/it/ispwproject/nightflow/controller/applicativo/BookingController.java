@@ -108,7 +108,7 @@ public class BookingController {
                 new ClientBean(client.getId(), client.getName(), client.getSurname(), client.getEmail()),
                 createEventBean(event),
                 booking.getTicketType(),
-                booking.getPaymentMethod() // 🌟 Passiamo il metodo salvato
+                booking.getPaymentMethod() // Passiamo il metodo salvato
         );
     }
 
@@ -121,7 +121,7 @@ public class BookingController {
                     new ClientBean(booking.getClient().getId(), booking.getClient().getName(), booking.getClient().getSurname(), booking.getClient().getEmail()),
                     createEventBean(booking.getEvent()),
                     booking.getTicketType(),
-                    booking.getPaymentMethod() // 🌟
+                    booking.getPaymentMethod()
             ));
         }
         return result;
@@ -181,11 +181,10 @@ public class BookingController {
 
         bookingDAO.cancel(bookingId, clientId);
     }
-    // 🌟 NUOVO METODO PER LEGGERE LE PRENOTAZIONI CANCELLATE
+    // METODO PER LEGGERE LE PRENOTAZIONI CANCELLATE
     public List<BookingResponseBean> getCancelledBookings() throws DAOException {
         User loggedUser = SessionManager.getInstance().getLoggedUser();
 
-        // 🌟 ECCO CHE USIAMO IL METODO DEL DATABASE! Il warning sparirà!
         List<Booking> bookings = bookingDAO.findCancelledByClient(loggedUser.getId());
 
         List<BookingResponseBean> responseBeans = new ArrayList<>();

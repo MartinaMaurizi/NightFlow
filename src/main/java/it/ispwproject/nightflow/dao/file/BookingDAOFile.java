@@ -56,7 +56,7 @@ public class BookingDAOFile extends AbstractBookingDAO {
         updateEventTickets(booking.getEvent().getId(), false);
     }
 
-    // 🌟 ECCO IL NUOVO METODO UPDATE PER IL SALVATAGGIO SU FILE
+    // SALVATAGGIO SU FILE
     @Override
     public void update(Booking booking) throws DAOException {
         boolean found = false;

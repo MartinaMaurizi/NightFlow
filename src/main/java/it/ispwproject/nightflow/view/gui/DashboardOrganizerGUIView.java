@@ -13,7 +13,6 @@ public class DashboardOrganizerGUIView extends PageGUIView{
     public final Button modifyEventBtn = new Button("✏️ Modifica Evento");
     public final Button manageListBtn = new Button("📋 Gestisci Lista");
 
-    // 🌟 1. Aggiunti i bottoni del profilo e della home
     public Button profileBtn = new Button();
     public Button homeBtn = new Button();
 
@@ -74,7 +73,7 @@ public class DashboardOrganizerGUIView extends PageGUIView{
         nav.setLeft(logo);
         BorderPane.setAlignment(logo, Pos.CENTER_LEFT);
 
-        // 🌟 2. Creiamo un contenitore orizzontale (HBox) per raggruppare i 3 bottoni a destra
+        // Creiamo un contenitore orizzontale (HBox) per raggruppare i 3 bottoni a destra
         HBox rightBox = new HBox(15);
         rightBox.setAlignment(Pos.CENTER_RIGHT);
 

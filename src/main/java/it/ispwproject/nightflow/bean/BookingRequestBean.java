@@ -4,7 +4,7 @@ public class BookingRequestBean {
 
     private ClientBean client;
     private EventBean  event;
-    private String     ticketType; // "STANDARD", "VIP", "TAVOLO", ecc.
+    private String     ticketType; // "Senza drink", "Con drink", "VIP"
 
     public BookingRequestBean() {}
 

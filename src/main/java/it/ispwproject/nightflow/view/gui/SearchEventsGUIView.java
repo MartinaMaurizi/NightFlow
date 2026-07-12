@@ -109,7 +109,6 @@ public class SearchEventsGUIView {
         searchContainer.setPrefWidth(350);
         searchContainer.setMaxWidth(350);
 
-        // 🌟 APPLICA LA CLASSE CSS DEFINITA IN PRECEDENZA
         searchContainer.getStyleClass().add("search-field");
 
         try {
@@ -119,13 +118,10 @@ public class SearchEventsGUIView {
         } catch (Exception e) {}
 
         searchField.setPromptText("Cerca");
-        // Rimuovi eventuali stili che forzano il colore, lasciamo che sia il CSS a gestire il focus
         searchField.setStyle("-fx-background-color: transparent; -fx-prompt-text-fill: #5e17eb; -fx-text-fill: #5e17eb;");
         HBox.setHgrow(searchField, Priority.ALWAYS);
         searchContainer.getChildren().add(searchField);
 
-        // 🌟 EVENTO CLICK: Anche se siamo già in Search, cliccare qui
-        // può ad esempio resettare la ricerca o dare feedback visivo
         searchContainer.setOnMouseClicked(e -> {
             searchField.requestFocus(); // Assicura che il campo diventi attivo
         });
@@ -197,8 +193,6 @@ public class SearchEventsGUIView {
         btn.setMinWidth(35);
         btn.setMaxWidth(35);
 
-        // 🌟 IL SEGRETO È QUI:
-        // Abbiamo cancellato il vecchio btn.setStyle(...) e messo la classe CSS!
         btn.getStyleClass().add("icon-btn");
 
         return btn;

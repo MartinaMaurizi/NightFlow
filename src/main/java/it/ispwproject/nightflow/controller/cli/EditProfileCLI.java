@@ -29,7 +29,6 @@ public class EditProfileCLI extends AbstractCLIState {
             scelta = view.chiediScelta();
 
             switch (scelta) {
-                // 🌟 Ora la scelta 1 punta al cambio password
                 case "1" -> editPassword();
                 case "0" -> { /* esce dal while e torna indietro */ }
                 default  -> view.mostraErrore("Scelta non valida.");
@@ -39,7 +38,7 @@ public class EditProfileCLI extends AbstractCLIState {
         goBack(context);
     }
 
-    // 🌟 Nuovo metodo integrato con UserController
+    // metodo integrato con UserController
     private void editPassword() {
         String oldPwd = view.chiediCampo("Vecchia password");
         String newPwd = view.chiediCampo("Nuova password");

@@ -32,14 +32,6 @@ public class Event {
         this.organizerId = organizerId;
     }
 
-    public boolean bookTickets(int quantity) {
-        if (this.availableTickets >= quantity) {
-            this.availableTickets -= quantity;
-            return true;
-        }
-        return false;
-    }
-
     // ─── Getters & Setters ────────────────────────────────────────────────
 
     public int getId() { return id; }

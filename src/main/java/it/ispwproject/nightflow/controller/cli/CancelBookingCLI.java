@@ -29,7 +29,7 @@ public class CancelBookingCLI extends AbstractCLIState {
         int clientId = SessionManager.getInstance().getLoggedUser().getId();
 
         try {
-            // 🌟 FILTRO RIGIDO: Mostriamo SOLO le prenotazioni da pagare all'ingresso
+            // Mostriamo SOLO le prenotazioni da pagare all'ingresso
             List<BookingResponseBean> manageables = bookingController
                     .getAllClientBookings(clientId)
                     .stream()
@@ -56,7 +56,7 @@ public class CancelBookingCLI extends AbstractCLIState {
             BookingResponseBean selected = manageables.get(choice - 1);
             view.mostraRiepilogo(selected);
 
-            // 🌟 BIVIO LOGICO: L'utente può Annullare o Pagare
+            // BIVIO LOGICO: L'utente può Annullare o Pagare
             int azione = view.chiediAzioneGestione();
 
             if (azione == 0) {

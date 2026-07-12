@@ -51,7 +51,7 @@ public class ViewEventsGUI {
                     .sorted((a, b) -> b.getDateTime().compareTo(a.getDateTime()))
                     .toList();
 
-            // 🌟 AGGIORNAMENTO: Passiamo il riferimento a changeDate e confirmDelete
+            // Passiamo il riferimento a changeDate e confirmDelete
             view.buildContent(root, upcoming, past, this::changeDate, this::confirmDelete);
 
         } catch (DAOException e) {
@@ -63,7 +63,7 @@ public class ViewEventsGUI {
         stage.show();
     }
 
-    // 🌟 NUOVO METODO: Gestisce il popup del calendario
+    // Gestisce il popup del calendario
     private void changeDate(EventBean eventBean) {
         Dialog<LocalDateTime> dialog = new Dialog<>();
         dialog.setTitle("Modifica Data Evento");

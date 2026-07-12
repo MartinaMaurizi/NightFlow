@@ -23,9 +23,9 @@ public class DashboardClientCLI extends AbstractCLIState {
         switch (view.chiediScelta()) {
             case "1" -> goNext(context, new BookTicketCLI());
             case "2" -> goNext(context, new ViewBookingsCLI());
-            case "3" -> goNext(context, new CancelBookingCLI()); // 🌟 Allineato a "Annulla una prenotazione"
-            case "4" -> goNext(context, new SearchEventCLI());   // 🌟 Allineato a "Cerca evento"
-            case "5" -> goNext(context, new EditProfileCLI());   // 🌟 Il Profilo ora è correttamente sul 5
+            case "3" -> goNext(context, new CancelBookingCLI()); // Allineato a "Annulla una prenotazione"
+            case "4" -> goNext(context, new SearchEventCLI());   // Allineato a "Cerca evento"
+            case "5" -> goNext(context, new EditProfileCLI());
             case "0" -> {
                 try {
                     ConnectionFactory.clearRole();

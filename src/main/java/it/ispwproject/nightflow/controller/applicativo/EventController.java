@@ -111,7 +111,6 @@ public class EventController {
     }
 
     // Modifica data evento con invio email diretto
-// Modifica data evento con invio email diretto
     public void updateEventDate(EventBean eventBean) throws DAOException {
         Event event = eventDAO.findById(eventBean.getId());
         if (event != null) {

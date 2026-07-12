@@ -36,7 +36,7 @@ public class ViewBookingsCLI extends AbstractCLIState {
             List<BookingResponseBean> all  = bookingController.getAllClientBookings(clientId);
             List<BookingResponseBean> past = bookingController.getClientPastBookings(clientId);
 
-            // 🌟 MODIFICA QUI: Passiamo Clock.systemDefaultZone()
+            // Passiamo Clock.systemDefaultZone()
             List<BookingResponseBean> confirmed = all.stream()
                     .filter(b -> b.getStatus() == BookingStatus.CONFIRMED)
                     .filter(b -> b.getEvent().getDateTime().isAfter(LocalDateTime.now(Clock.systemDefaultZone())))
@@ -58,7 +58,7 @@ public class ViewBookingsCLI extends AbstractCLIState {
                     case 2 -> view.mostraCancellate(cancelled);
                     case 3 -> view.mostraScadute(past);
                     case 0 -> running = false;
-                    default -> view.mostraErrore("Scelta non valida."); // 🌟 Default aggiunto
+                    default -> view.mostraErrore("Scelta non valida.");
                 }
             }
         } catch (DAOException e) {

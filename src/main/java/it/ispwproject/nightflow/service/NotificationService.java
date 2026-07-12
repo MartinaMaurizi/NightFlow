@@ -37,8 +37,6 @@ public class NotificationService {
     private static final String API_KEY    = properties.getProperty("SENDGRID_API_KEY");
     private static final String FROM_EMAIL = properties.getProperty("SENDGRID_FROM_EMAIL");
 
-    // NOTA: Se usi davvero SendGrid per l'esame, dovrai creare questi 4 template sulla loro dashboard
-    // e incollare qui i nuovi ID dei template per NightFlow.
     private static final String TEMPLATE_CONFIRMATION           = "d-e58af91bd9b2428eb628457e5908a2f5";
     private static final String TEMPLATE_CANCELLATION           = "d-b0485d77c6e0494eb281dc356d586016";
     private static final String TEMPLATE_CONFIRMATION_ORGANIZER = "d-fceb5a0323a947a2a118f11e92c9445d";

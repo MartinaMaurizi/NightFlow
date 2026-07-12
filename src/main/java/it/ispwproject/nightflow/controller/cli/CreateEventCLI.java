@@ -62,7 +62,7 @@ public class CreateEventCLI extends AbstractCLIState {
             goBack(context);
 
         } catch (AvailabilityException e) {
-            // 🌟 Intercettiamo l'eccezione specifica per la sovrapposizione del locale
+            // Intercettiamo l'eccezione specifica per la sovrapposizione del locale
             view.mostraErrore("Locale non disponibile: " + e.getMessage());
             view.attesaInvio();
             goBack(context);

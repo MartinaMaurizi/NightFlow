@@ -131,9 +131,9 @@ public class ProfileGUIView {
 
     private void styleProfileButton(Button btn) {
         btn.setPrefWidth(300);
-        btn.setMinWidth(300); // 🌟 Forza la larghezza minima
-        btn.setMaxWidth(300); // 🌟 Forza la larghezza massima
-        btn.setAlignment(Pos.CENTER); // 🌟 Forza l'allineamento del testo al centro
+        btn.setMinWidth(300); // Forza la larghezza minima
+        btn.setMaxWidth(300); // Forza la larghezza massima
+        btn.setAlignment(Pos.CENTER); // Forza l'allineamento del testo al centro
         btn.getStyleClass().add("profile-action-button");
     }
 
@@ -151,8 +151,6 @@ public class ProfileGUIView {
         btn.setMinWidth(35);
         btn.setMaxWidth(35);
 
-        // 🌟 IL SEGRETO È QUI:
-        // Abbiamo cancellato il vecchio btn.setStyle(...) e messo la classe CSS!
         btn.getStyleClass().add("icon-btn");
 
         return btn;

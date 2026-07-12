@@ -39,7 +39,7 @@ public class BookTicketGUI {
                         return;
                     }
 
-                    // 🌟 FORZIAMO L'EVENTBEAN AD AVERE IL PREZZO DEL VIP!
+                    // FORZIAMO L'EVENTBEAN AD AVERE IL PREZZO DEL VIP!
                     // Aggiorniamo temporaneamente l'EventBean con il prezzo maggiorato
                     // prima di passarlo alla CheckoutGUI, così la ricevuta sarà perfetta.
                     event.setPrice(finalPrice);

@@ -30,11 +30,11 @@ public class SearchEventsGUI {
                     AppLogger.logInfo("Hai cliccato su: " + nomeLocaleSelezionato);
 
                     try {
-                        // 🌟 1. Chiamiamo il Controller Applicativo per avere i VERI eventi
+                        // 1. Chiamiamo il Controller Applicativo per avere i VERI eventi
                         EventController eventController = new EventController();
                         List<EventBean> eventiFuturi = eventController.getAllUpcomingEvents();
 
-                        // 🌟 2. Cerchiamo l'evento corrispondente al locale cliccato
+                        // 2. Cerchiamo l'evento corrispondente al locale cliccato
                         EventBean veroEvento = null;
                         for (EventBean evento : eventiFuturi) {
                             if (evento.getLocalName().equalsIgnoreCase(nomeLocaleSelezionato)) {
@@ -43,7 +43,7 @@ public class SearchEventsGUI {
                             }
                         }
 
-                        // 🌟 3. Se esiste, andiamo al checkout, altrimenti avvisiamo l'utente
+                        // 3. Se esiste, andiamo al checkout, altrimenti avvisiamo l'utente
                         if (veroEvento != null) {
                             new BookTicketGUI(stage, veroEvento).show();
                         } else {

@@ -15,8 +15,6 @@ import java.util.List;
 public class UserDAODB implements UserDAO {
 
     private static final String UPDATE_PASSWORD = "UPDATE user SET password = ? WHERE id = ?";
-
-    // 🌟 1. HO AGGIUNTO 'dob', 'gender' E 'country' ALLE QUERY 🌟
     private static final String GET_ALL =
             "SELECT id, name, surname, dob, gender, country, city, email, role FROM user";
     private static final String FIND_BY_EMAIL =
@@ -52,8 +50,6 @@ public class UserDAODB implements UserDAO {
         String email = rs.getString("email");
         String city = rs.getString("city");
         Role role = Role.fromString(rs.getString("role"));
-
-        // 🌟 2. ESTRAGGO I NUOVI CAMPI DAL RESULTSET 🌟
         String country = rs.getString("country");
         String gender = rs.getString("gender");
 
@@ -65,7 +61,7 @@ public class UserDAODB implements UserDAO {
         }
 
         // Estraiamo la password dal DB.
-        // Nota: GET_ALL non chiede la password, quindi dobbiamo controllare se la colonna esiste per evitare errori.
+        // GET_ALL non chiede la password, quindi dobbiamo controllare se la colonna esiste per evitare errori.
         String password = null;
         try {
             password = rs.getString("password");
@@ -73,7 +69,7 @@ public class UserDAODB implements UserDAO {
             // Se la colonna password non è presente nella query (come in GET_ALL), la ignoriamo.
         }
 
-        // 🌟 3. POPOLIAMO GLI OGGETTI CON I DATI RECUPERATI 🌟
+        // 3. POPOLIAMO GLI OGGETTI CON I DATI RECUPERATI
         if (role == Role.CLIENT) {
             Client c = new Client(id, name, surname, email, password);
             c.setCity(city);

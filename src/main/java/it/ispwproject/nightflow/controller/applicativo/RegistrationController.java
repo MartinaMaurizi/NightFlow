@@ -77,7 +77,7 @@ public class RegistrationController {
         }
     }
 
-    // ─── NUOVI METODI DI VALIDAZIONE (Ispirati alla logica della tua collega) ───
+    // ─── METODI DI VALIDAZIONE (Ispirati alla logica della tua collega) ───
 
     private void validateBean(RegistrationBean bean) throws RegistrationException {
         if (bean == null) {

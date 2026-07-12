@@ -49,11 +49,11 @@ public class ManageParticipantsGUIView extends PageGUIView {
 
         VBox info = new VBox(3);
 
-        // 🌟 Nome cliente nero
+        // Nome cliente nero
         Label nameLabel = new Label(client.getFullName());
         nameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #000000;");
 
-        // 🌟 Email cliente nera
+        // Email cliente nera
         Label emailLabel = new Label("Email: " + client.getEmail());
         emailLabel.setStyle("-fx-text-fill: #000000;");
 

@@ -30,11 +30,9 @@ public class LoginCLI extends AbstractCLIState {
         try {
             LoginResult result = loginController.login(email, password);
 
-            // Assicurati che la tua classe User abbia il metodo getNome() o getName()
             String nome = SessionManager.getInstance().getLoggedUser().getName();
             view.mostraSuccesso(nome);
 
-            // Transizione verso le rispettive Dashboard del tuo progetto NightFlow
             switch (result) {
                 case SUCCESSO_CLIENT      -> goNext(context, new DashboardClientCLI());
                 case SUCCESSO_ORGANIZER -> goNext(context, new DashboardOrganizerCLI());

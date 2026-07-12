@@ -20,7 +20,7 @@ public interface BookingDAO {
     // Trova solo le prenotazioni passate (storico degli eventi a cui il cliente ha partecipato)
     List<Booking> findPastByClient(int clientId) throws DAOException;
 
-    // --- NUOVI METODI PER L'ORGANIZZATORE (Usati in ClientManagementController) ---
+    // METODI PER L'ORGANIZZATORE (Usati in ClientManagementController)
 
     // Trova gli eventi passati di un cliente specifico, ma solo per un determinato organizzatore
     List<Booking> findCompletedByClientAndOrganizer(int clientId, int organizerId) throws DAOException;

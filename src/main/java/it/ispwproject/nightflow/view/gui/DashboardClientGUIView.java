@@ -20,7 +20,7 @@ public class DashboardClientGUIView extends DashboardGUIView {
     public Button profileBtn = new Button();
     public Button homeBtn = new Button();
 
-    // 🌟 DUE COLONNE PER GLI EVENTI (Come nel mockup Canva)
+    // DUE COLONNE PER GLI EVENTI (Come nel mockup Canva)
     private final VBox leftEventsColumn = new VBox(50);
     private final VBox rightEventsColumn = new VBox(50);
 
@@ -47,7 +47,7 @@ public class DashboardClientGUIView extends DashboardGUIView {
         centerLine.setPrefWidth(2);
         centerLine.setStyle("-fx-background-color: #651fff;");
 
-        // 🌟 Aggiungiamo Colonna Sinistra, Linea Centrale, Colonna Destra
+        // Aggiungiamo Colonna Sinistra, Linea Centrale, Colonna Destra
         columnsBox.getChildren().addAll(leftEventsColumn, centerLine, rightEventsColumn);
         mainContainer.getChildren().addAll(titleBox, columnsBox);
 
@@ -76,7 +76,7 @@ public class DashboardClientGUIView extends DashboardGUIView {
             searchContainer.setPrefWidth(350);
             searchContainer.setMaxWidth(350);
 
-            // 🌟 AGGIUNTA CLASSE CSS: questa gestirà il bordo e l'illuminazione
+            // gestirà il bordo e l'illuminazione
             searchContainer.getStyleClass().add("search-field");
 
             ImageView searchIcon = new ImageView();
@@ -93,7 +93,7 @@ public class DashboardClientGUIView extends DashboardGUIView {
 
             searchContainer.getChildren().addAll(searchIcon, searchField);
 
-            // 🌟 AGGIUNTA EVENTO: Quando clicchi il rettangolo, vai alla ricerca
+            // AGGIUNTA EVENTO: Quando clicchi il rettangolo, vai alla ricerca
             searchContainer.setOnMouseClicked(e -> {
                 // Qui inserisci la chiamata per passare alla vista SearchEvent
                 // Es: MainGUI.showSearchEvent();
@@ -137,8 +137,6 @@ public class DashboardClientGUIView extends DashboardGUIView {
         btn.setMinWidth(35);
         btn.setMaxWidth(35);
 
-        // 🌟 IL SEGRETO È QUI:
-        // Abbiamo cancellato il vecchio btn.setStyle(...) e messo la classe CSS!
         btn.getStyleClass().add("icon-btn");
 
         return btn;
@@ -154,7 +152,7 @@ public class DashboardClientGUIView extends DashboardGUIView {
         for (int i = 0; i < events.size(); i++) {
             VBox card = createEventCard(events.get(i), dayFmt, monthFmt, onBookClick);
 
-            // 🌟 Distribuzione Alternata: i pari a sinistra, i dispari a destra
+            // Distribuzione Alternata: i pari a sinistra, i dispari a destra
             if (i % 2 == 0) {
                 leftEventsColumn.getChildren().add(card);
             } else {

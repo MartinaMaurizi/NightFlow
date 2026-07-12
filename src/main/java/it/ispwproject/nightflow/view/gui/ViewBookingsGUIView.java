@@ -53,7 +53,7 @@ public class ViewBookingsGUIView extends PageGUIView {
         VBox listBox = new VBox(12);
         listBox.setAlignment(Pos.TOP_CENTER);
 
-        // 🌟 ECCO LA MAGIA: Impedisce alla lista di sformarsi quando aggiungi nuove prenotazioni!
+        // Impedisce alla lista di sformarsi quando aggiungi nuove prenotazioni!
         listBox.setFillWidth(false);
 
         Runnable refreshList = () -> {
@@ -83,7 +83,7 @@ public class ViewBookingsGUIView extends PageGUIView {
         HBox card = new HBox(15);
         card.getStyleClass().add("info-card");
 
-        // 🌟 IL SEGRETO 1: Forziamo TUTTE le carte ad avere esattamente questa larghezza!
+        // Forziamo TUTTE le carte ad avere esattamente questa larghezza!
         card.setPrefWidth(640);
         card.setMaxWidth(640);
         card.setAlignment(Pos.CENTER_LEFT); // Tutto allineato a sinistra (centrato in verticale)
@@ -109,7 +109,7 @@ public class ViewBookingsGUIView extends PageGUIView {
 
         textContainer.getChildren().addAll(eventName, info, ticketInfo);
 
-        // 🌟 La molla che spinge i bottoni a destra
+        // La molla che spinge i bottoni a destra
         HBox.setHgrow(textContainer, Priority.ALWAYS);
 
 // ── PARTE DESTRA: I BOTTONI UNO SOPRA L'ALTRO ───────────────
@@ -125,7 +125,7 @@ public class ViewBookingsGUIView extends PageGUIView {
                 if (onEdit != null) {
                     Button editBtn = new Button("Modifica Prenotazione");
                     editBtn.getStyleClass().add("btn-viola-small");
-                    // 🌟 IL SEGRETO 2: Forziamo i bottoni ad avere la stessa larghezza
+                    // Forziamo i bottoni ad avere la stessa larghezza
                     editBtn.setPrefWidth(160);
                     editBtn.setOnAction(e -> onEdit.accept(b));
                     actions.getChildren().add(editBtn);
@@ -136,11 +136,11 @@ public class ViewBookingsGUIView extends PageGUIView {
                 actions.getChildren().add(paidBadge);
             }
 
-            // 🌟 Aggiungi il pulsante Annulla SOLO SE non è stato pagato online
+            // Aggiungi il pulsante Annulla SOLO SE non è stato pagato online
             if (onCancel != null && !isPaidOnline) {
                 Button cancelBtn = new Button("Annulla Prenotazione");
                 cancelBtn.getStyleClass().add("danger-button");
-                // 🌟 IL SEGRETO 2: Stessa larghezza anche per il tasto rosso!
+                // Stessa larghezza anche per il tasto rosso!
                 cancelBtn.setPrefWidth(160);
                 cancelBtn.setOnAction(e -> onCancel.accept(b));
                 actions.getChildren().add(cancelBtn);

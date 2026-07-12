@@ -47,12 +47,12 @@
     -fx-font-weight: bold; /* Poppins in grassetto sul bottone */
 }
 
-/* 🌟 Effetto passaggio del mouse */
+/* Effetto passaggio del mouse */
 .button:hover {
     -fx-background-color: #8452ff; /* Viola più chiaro */
 }
 
-/* 🌟 Effetto al click */
+/*  Effetto al click */
 .button:pressed {
     -fx-background-color: #4a00e0; /* Viola più scuro */
 }
@@ -69,13 +69,13 @@
     -fx-cursor: hand;
 }
 
-/* 🌟 Effetto passaggio del mouse (Leggero bagliore bianco/lilla) */
+/* Effetto passaggio del mouse (Leggero bagliore bianco/lilla) */
 .hyperlink:hover {
     -fx-text-fill: #ffffff;
     -fx-effect: dropshadow(gaussian, #b39eff, 10, 0.5, 0, 0);
 }
 
-/* 🌟 EFFETTO ILLUMINAZIONE AL CLICK (Forte bagliore rosa/neon!) */
+/* EFFETTO ILLUMINAZIONE AL CLICK (Forte bagliore rosa/neon!) */
 .hyperlink:pressed {
     -fx-text-fill: #ffffff;
     -fx-effect: dropshadow(gaussian, #cb6ce6, 25, 0.8, 0, 0);
@@ -182,19 +182,19 @@
    EFFETTI ICONE TENDINE E CALENDARIO
    ========================================= */
 
-/* 🌟 1. Fa comparire la manina quando passi sopra le icone */
+/* 1. Fa comparire la manina quando passi sopra le icone */
 #Registration-Root .combo-box .arrow-button,
 #Registration-Root .date-picker .arrow-button {
     -fx-cursor: hand;
 }
 
-/* 🌟 2. EFFETTO HOVER: L'icona diventa lilla/rosa quando ci passi il mouse */
+/* 2. EFFETTO HOVER: L'icona diventa lilla/rosa quando ci passi il mouse */
 #Registration-Root .combo-box .arrow-button:hover .arrow,
 #Registration-Root .date-picker .arrow-button:hover .arrow {
     -fx-background-color: #cb6ce6;
 }
 
-/* 🌟 3. EFFETTO CLICK: L'icona diventa viola scuro quando la clicchi */
+/* 3. EFFETTO CLICK: L'icona diventa viola scuro quando la clicchi */
 #Registration-Root .combo-box .arrow-button:pressed .arrow,
 #Registration-Root .date-picker .arrow-button:pressed .arrow {
     -fx-background-color: #4a00e0;
@@ -264,7 +264,7 @@
    NAVBAR BOTTONI (Log out e Icone)
    ========================================= */
 
-/* 🌟 TASTO LOG OUT NERO */
+/* TASTO LOG OUT NERO */
 .logout-btn {
     -fx-background-color: black;
     -fx-text-fill: white;
@@ -284,7 +284,7 @@
     -fx-effect: dropshadow(gaussian, white, 15, 0.7, 0, 0); /* Bagliore bianco */
 }
 
-/* 🌟 TASTI ICONA (Home e Profilo) */
+/* TASTI ICONA (Home e Profilo) */
 .icon-btn {
     -fx-background-color: transparent;
     -fx-cursor: hand;
@@ -299,7 +299,7 @@
     -fx-effect: dropshadow(gaussian, #cb6ce6, 15, 0.6, 0, 0); /* Bagliore rosa */
 }
 
-/* 🌟 TASTO INDIETRO (Compatto ed elegante) */
+/* TASTO INDIETRO (Compatto ed elegante) */
 .back-btn {
     -fx-background-color: transparent;
     -fx-text-fill: #651fff;
@@ -322,15 +322,15 @@
 /* =========================================
    BOTTONI AZIONE PROFILO (Modifica, Prenotazioni...)
    ========================================= */
-/* 🌟 BOTTONI VIOLA GRANDI (es. Check Out, Crea Evento) */
+/* BOTTONI VIOLA GRANDI (es. Check Out, Crea Evento) */
 .btn-viola-large {
     -fx-background-color: #651fff;
     -fx-text-fill: white;
     -fx-background-radius: 10;
     -fx-font-size: 16px;
-    -fx-padding: 10 20; /* 🌟 Ho ridotto il 40 a 20 per non farlo troppo largo */
+    -fx-padding: 10 20;
     -fx-cursor: hand;
-    -fx-alignment: center; /* 🌟 QUESTA RIGA FORZA LA SCRITTA AL CENTRO */
+    -fx-alignment: center; /* QUESTA RIGA FORZA LA SCRITTA AL CENTRO */
 }
 
 .btn-viola-large:hover {
@@ -341,7 +341,7 @@
     -fx-background-color: #4a00e0;
 }
 
-/* 🌟 BOTTONI VIOLA PICCOLI (es. Modifica Pagamento) */
+/*  BOTTONI VIOLA PICCOLI (es. Modifica Pagamento) */
 .btn-viola-small {
     -fx-background-color: #651fff;
     -fx-text-fill: white;
@@ -358,7 +358,7 @@
     -fx-background-color: #4a00e0;
 }
 
-/* 🌟 BOTTONE ROSSO PER ANNULLARE */
+/*  BOTTONE ROSSO PER ANNULLARE */
 .danger-button {
     -fx-background-color: #651fff;
     -fx-text-fill: white;
@@ -378,7 +378,7 @@
     -fx-background-color: #4a00e0; /* viola scuro quando clicchi */
 }
 
-/* 🌟 BOTTONI DEL PROFILO (Bordi arrotondati, viola chiaro) */
+/* BOTTONI DEL PROFILO (Bordi arrotondati, viola chiaro) */
 .profile-action-button {
     -fx-background-color: #bbaaf2; /* Il viola chiaro NightFlow */
     -fx-text-fill: black;
@@ -398,7 +398,7 @@
     -fx-background-color: #7b5aff; /* Viola NightFlow classico quando clicchi */
 }
 
-/* 🌟 LA SFERA DI CONTENIMENTO DELLE PRENOTAZIONI */
+/* LA SFERA DI CONTENIMENTO DELLE PRENOTAZIONI */
 .info-card {
     -fx-background-color: white; /* Sfondo bianco per far leggere il testo */
     -fx-background-radius: 10;   /* Bordi morbidi */
@@ -420,13 +420,13 @@
     -fx-transition: 0.3s; /* Effetto fluido */
 }
 
-/* 🌟 Effetto ILLUMINAZIONE al passaggio del mouse */
+/* Effetto ILLUMINAZIONE al passaggio del mouse */
 .search-field:hover {
     -fx-border-color: #b39eff;
     -fx-effect: dropshadow(gaussian, #b39eff, 10, 0.3, 0, 0);
 }
 
-/* 🌟 Effetto ACCENSIONE quando clicchi o quando è attivo */
+/* Effetto ACCENSIONE quando clicchi o quando è attivo */
 .search-field:focused, .search-field:pressed {
     -fx-border-color: #cb6ce6;
     -fx-effect: dropshadow(gaussian, #cb6ce6, 15, 0.5, 0, 0);

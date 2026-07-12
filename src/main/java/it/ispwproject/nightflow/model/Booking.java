@@ -18,7 +18,7 @@ public class Booking extends Observable {
     private String ticketCode;
     private PaymentMethod paymentMethod;
     private LocalDateTime createdAt;
-
+    private String ticketType;
     // Blocco del biglietto per 15 minuti (Soft Lock temporale)
     private LocalDateTime reservedUntil;
 
@@ -79,8 +79,6 @@ public class Booking extends Observable {
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public LocalDateTime getReservedUntil() { return reservedUntil; }
     public void setReservedUntil(LocalDateTime reservedUntil) { this.reservedUntil = reservedUntil; }
-    private String ticketType;
-
     public String getTicketType() { return ticketType; }
     public void setTicketType(String ticketType) { this.ticketType = ticketType; }
 }

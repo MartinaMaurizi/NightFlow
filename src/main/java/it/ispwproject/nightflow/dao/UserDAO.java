@@ -13,6 +13,5 @@ public interface UserDAO {
     // Restituisce la lista di tutti gli utenti registrati (utile per eventuali pannelli di amministrazione)
     List<User> getAll() throws DAOException;
 
-    // 🌟 Aggiunto throws DAOException
     void updatePassword(int id, String newPassword) throws DAOException;
 }

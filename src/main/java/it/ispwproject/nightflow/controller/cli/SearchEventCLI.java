@@ -45,7 +45,7 @@ public class SearchEventCLI extends AbstractCLIState {
                 goBack(context);
             } else {
                 view.mostraRisultati(risultati);
-                // 🌟 Ora chiediamo di selezionare un evento invece di uscire subito
+                // chiediamo di selezionare un evento invece di uscire subito
                 int scelta = view.chiediSelezioneEvento(risultati.size());
 
                 if (scelta == 0) {

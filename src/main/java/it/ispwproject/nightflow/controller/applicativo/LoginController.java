@@ -52,7 +52,7 @@ public class LoginController {
                 new SessionBean(user.getEmail(), credentials.getRole())
         );
 
-        // 2. Lo switch smista l'utente verso la dashboard corretta del tuo progetto
+        // Lo switch smista l'utente verso la dashboard corretta del tuo progetto
         return switch (credentials.getRole()) {
             case CLIENT       -> LoginResult.SUCCESSO_CLIENT;
             case ORGANIZER -> LoginResult.SUCCESSO_ORGANIZER;

@@ -73,7 +73,7 @@ public class BookTicketGUIView {
 
         checkoutBtn.getStyleClass().add("btn-viola-large");
 
-        // Niente più "Ingresso Base" di default! Mostriamo un avviso se non c'è selezione
+        // Mostriamo un avviso se non c'è selezione
         checkoutBtn.setOnAction(e -> {
             RadioButton selected = (RadioButton) ticketGroup.getSelectedToggle();
             if (selected != null) {

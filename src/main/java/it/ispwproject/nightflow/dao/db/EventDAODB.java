@@ -11,7 +11,7 @@ import java.util.List;
 
 public class EventDAODB implements EventDAO {
 
-    // 🌟 1. ALLINEATO AL TUO DB: Tabella 'event', e colonne 'club_name', 'total_tickets', 'base_price'
+    // 1. ALLINEATO AL DB: Tabella 'event', e colonne 'club_name', 'total_tickets', 'base_price'
     private static final String FIND_BY_ID =
             "SELECT id, organizer_id, name, description, date_time, location, club_name, total_tickets, available_tickets, base_price FROM event WHERE id = ?";
 
@@ -143,7 +143,7 @@ public class EventDAODB implements EventDAO {
 
     @Override
     public void delete(int eventId, int organizerId) throws DAOException {
-        // RISOLTO: Ora passiamo la costante DELETE_EVENT al PreparedStatement
+        // passiamo la costante DELETE_EVENT al PreparedStatement
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(DELETE_EVENT)) {
             ps.setInt(1, eventId);

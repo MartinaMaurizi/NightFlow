@@ -24,7 +24,7 @@ public class ViewEventsGUIView extends PageGUIView {
 
     /**
      * Costruisce il contenuto centrale con i toggle button e la lista degli eventi.
-     * 🌟 AGGIORNATO: Aggiunto Consumer per gestire la modifica della data.
+     * Aggiunto Consumer per gestire la modifica della data.
      */
     public void buildContent(BorderPane root,
                              List<EventBean> upcoming,
@@ -61,7 +61,7 @@ public class ViewEventsGUIView extends PageGUIView {
                     listBox.getChildren().add(emptyLabel("Nessun evento in programma."));
                 } else {
                     for (EventBean e : upcoming) {
-                        // 🌟 Passiamo onEditDate alla card
+                        // Passiamo onEditDate alla card
                         listBox.getChildren().add(buildEventCard(e, true, onEditDate, onDelete));
                     }
                 }
@@ -97,7 +97,7 @@ public class ViewEventsGUIView extends PageGUIView {
         Label eventName = new Label(eventBean.getName());
         eventName.getStyleClass().add("title-label");
 
-        // 🌟 La data diventa un "link" cliccabile se l'evento è modificabile
+        // La data diventa un "link" cliccabile se l'evento è modificabile
         Label dateLabel = new Label("Data: " + eventBean.getDateTime().format(fmt));
         dateLabel.getStyleClass().add("info-text");
 

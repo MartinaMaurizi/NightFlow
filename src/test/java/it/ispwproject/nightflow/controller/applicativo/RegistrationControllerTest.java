@@ -47,8 +47,6 @@ class RegistrationControllerTest {
         bean.setConfirmPassword("Password123");
         bean.setRole(Role.CLIENT);
 
-        // 🌟 Campi anagrafici obbligatori per NightFlow!
-        // RISOLTO: Uso di Month.MAY invece di 5
         bean.setDateOfBirth(LocalDate.of(1995, Month.MAY, 20));
         bean.setGender("Uomo");
         bean.setCountry("Italia");
@@ -60,7 +58,7 @@ class RegistrationControllerTest {
         RegistrationBean duplicato = new RegistrationBean();
         duplicato.setName("Luigi");
         duplicato.setSurname("Verdi");
-        duplicato.setEmail("mario@test.com"); // 🌟 STESSA EMAIL
+        duplicato.setEmail("mario@test.com"); // STESSA EMAIL
         duplicato.setPassword("Password123");
         duplicato.setConfirmPassword("Password123");
         duplicato.setRole(Role.CLIENT);

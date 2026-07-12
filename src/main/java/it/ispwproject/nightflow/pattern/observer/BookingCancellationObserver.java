@@ -16,7 +16,7 @@ public class BookingCancellationObserver implements Observer {
     @Override
     public void update() {
         try {
-            // 🌟 1. Controllo sicurezza Cliente
+            // 1. Controllo sicurezza Cliente
             if (booking.getClient() == null || booking.getClient().getEmail() == null) {
                 AppLogger.logWarning("Dati cliente mancanti. Impossibile inviare email.");
                 return;
@@ -24,12 +24,12 @@ public class BookingCancellationObserver implements Observer {
 
             BookingResponseBean response = buildResponse();
 
-            // 🌟 2. Invio email al Cliente (QUESTA ORA PARTIRÀ SICURAMENTE)
+            // 2. Invio email al Cliente (QUESTA ORA PARTIRÀ SICURAMENTE)
             NotificationService.sendBookingCancellation(
                     booking.getClient().getEmail(),
                     response);
 
-            // 🌟 3. Controllo sicurezza Organizzatore anti-crash
+            // 3. Controllo sicurezza Organizzatore anti-crash
             if (booking.getOrganizer() != null && booking.getOrganizer().getEmail() != null) {
                 NotificationService.sendBookingCancellationToOrganizer(
                         booking.getOrganizer().getEmail(),

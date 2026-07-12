@@ -8,13 +8,11 @@ import it.ispwproject.nightflow.pattern.state.AbstractCLIState;
 import it.ispwproject.nightflow.pattern.state.CLIStateMachine;
 import java.util.List;
 
-// 1. ESTENDIAMO LA CLASSE ASTRATTA
 public class ManageParticipantsCLI extends AbstractCLIState {
 
     private final ManageParticipantsView view = new ManageParticipantsView();
     private final BookingController bookingController = new BookingController();
 
-    // 2. SOSTITUIAMO start() CON action() E METTIAMO @Override
     @Override
     public void action(CLIStateMachine context) {
         view.mostraIntestazione();
@@ -26,14 +24,14 @@ public class ManageParticipantsCLI extends AbstractCLIState {
 
             if (partecipanti.isEmpty()) {
                 view.attesaInvio();
-                goBack(context); // 3. Usiamo la State Machine per tornare indietro
+                goBack(context);
                 return;
             }
 
             int scelta = view.chiediScelta("Seleziona un cliente (0 per tornare):", 0, partecipanti.size());
 
             if (scelta == 0) {
-                goBack(context); // 3. Usiamo la State Machine per tornare indietro
+                goBack(context);
                 return;
             }
 

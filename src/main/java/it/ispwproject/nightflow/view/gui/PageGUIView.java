@@ -15,7 +15,7 @@ public abstract class PageGUIView {
     // Top bar comune a tutte le pagine secondarie
     // ────────────────────────────────────────────────────────────────────────
 
-    // 🌟 NUOVO METODO COMPLETO CON I BOTTONI DELLA NAVBAR
+    // METODO COMPLETO CON I BOTTONI DELLA NAVBAR
     public HBox buildTopBar(String titleText, Runnable onBack, Runnable onLogout, Runnable onProfile, Runnable onHome) {
         HBox bar = new HBox();
         bar.getStyleClass().add("navbar");
@@ -85,7 +85,7 @@ public abstract class PageGUIView {
     // Shell comune (BorderPane con top bar)
     // ────────────────────────────────────────────────────────────────────────
 
-    // 🌟 NUOVO SHELL COMPLETO (Passa i bottoni)
+    // (Passa i bottoni)
     public BorderPane buildShell(String titleText, Runnable onBack, Runnable onLogout, Runnable onProfile, Runnable onHome) {
         BorderPane shell = new BorderPane();
         shell.getStyleClass().add("nightflow-background");
@@ -93,7 +93,7 @@ public abstract class PageGUIView {
         return shell;
     }
 
-    // 🌟 VECCHIO SHELL (Passa solo l'indietro)
+    //Passa solo l'indietro
     public BorderPane buildShell(String titleText, Runnable onBack) {
         return buildShell(titleText, onBack, null, null, null);
     }
@@ -127,8 +127,6 @@ public abstract class PageGUIView {
         btn.setMinWidth(35);
         btn.setMaxWidth(35);
 
-        // 🌟 RIMOSSO il setStyle che bloccava il CSS
-        // 🌟 AGGIUNTA la classe CSS che avevi definito prima
         btn.getStyleClass().add("icon-btn");
 
         return btn;

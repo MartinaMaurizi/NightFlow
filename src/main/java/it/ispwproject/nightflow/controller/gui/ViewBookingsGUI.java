@@ -43,10 +43,10 @@ public class ViewBookingsGUI {
                     .filter(b -> b.getEvent().getDateTime().isAfter(LocalDateTime.now(Clock.systemDefaultZone())))
                     .sorted((a, b) -> a.getEvent().getDateTime().compareTo(b.getEvent().getDateTime()))
                     .toList();
-// 🌟 Ora chiediamo direttamente le prenotazioni cancellate al Controller!
+           // Ora chiediamo direttamente le prenotazioni cancellate al Controller!
             List<BookingResponseBean> cancelled = bookingController.getCancelledBookings();
 
-            // 🌟 PASSIAMO ENTRAMBI I METODI (ANNULLA E MODIFICA)
+            // PASSIAMO ENTRAMBI I METODI (ANNULLA E MODIFICA)
             view.buildContent(root, confirmed, cancelled, past, this::confirmCancel, this::handleEditBooking);
 
         } catch (DAOException e) {

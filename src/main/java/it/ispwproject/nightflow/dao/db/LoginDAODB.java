@@ -15,7 +15,7 @@ public class LoginDAODB implements LoginDAO {
 
     @Override
     public Credentials execute(String email, String plainPassword) throws LoginException {
-        // 🌟 IL DAO RICEVE LA PASSWORD GIÀ CRIPTATA DAL CONTROLLER
+        // IL DAO RICEVE LA PASSWORD GIÀ CRIPTATA DAL CONTROLLER
         // Quindi si limita a passarla al database senza fare altre modifiche
         String hashedPassword = plainPassword;
 

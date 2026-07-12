@@ -11,7 +11,7 @@ import java.util.List;
 
 public class OrganizerDAODB implements OrganizerDAO {
 
-    // 🌟 ALLINEATO AL TUO DB: Tabella 'user', tolto organizer_details
+    // ALLINEATO AL TUO DB: Tabella 'user', tolto organizer_details
     private static final String FIND_ALL =
             "SELECT id, name, surname, email FROM user WHERE role = 'ORGANIZER'";
 

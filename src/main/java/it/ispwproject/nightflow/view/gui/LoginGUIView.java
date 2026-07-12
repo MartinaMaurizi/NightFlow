@@ -16,10 +16,10 @@ public class LoginGUIView {
     public final Button loginBtn = new Button("Login");
     public final Hyperlink registerLink = new Hyperlink("Registrati qui");
 
-    // NUOVO: Etichetta per mostrare gli errori di login in grafica
+    // Etichetta per mostrare gli errori di login in grafica
     private final Label errorLabel = new Label();
 
-    // NUOVO: Passiamo le azioni come parametri (Runnable) per mantenere la classe pura
+    // Passiamo le azioni come parametri (Runnable) per mantenere la classe pura
     public VBox buildRoot(Runnable onLoginClick, Runnable onRegisterClick) {
 
         emailField.setPromptText("Email");
@@ -66,8 +66,6 @@ public class LoginGUIView {
 
         registerLink.setOnAction(e -> onRegisterClick.run());
 
-        // 🌟 AGGIUNTO: Forziamo l'uso del nostro CSS per l'effetto hover e click!
-        // Rimuoviamo anche il bordo di focus (il fastidioso tratteggio di JavaFX)
         registerLink.getStyleClass().add("hyperlink");
         registerLink.setStyle("-fx-border-color: transparent; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
 
@@ -90,7 +88,7 @@ public class LoginGUIView {
         return root;
     }
 
-    // NUOVO: Metodo che il Controller chiama se il login fallisce
+    // Metodo che il Controller chiama se il login fallisce
     public void setError(String message) {
         errorLabel.setText(message);
         errorLabel.setVisible(true);

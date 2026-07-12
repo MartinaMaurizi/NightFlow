@@ -13,7 +13,7 @@ import java.util.List;
 
 public class BookingDAODB extends AbstractBookingDAO {
 
-    // 🌟 INSERIMENTO CON TUTTI I CAMPI: ticket_type, payment_method, ticket_code
+    // INSERIMENTO CON TUTTI I CAMPI: ticket_type, payment_method, ticket_code
     private static final String INSERT_BOOKING =
             "INSERT INTO booking (client_id, event_id, ticket_type, price_paid, payment_method, ticket_code, status, created_at) " +
                     "VALUES (?, ?, ?, ?, ?, ?, 'CONFIRMED', ?)";
@@ -31,7 +31,7 @@ public class BookingDAODB extends AbstractBookingDAO {
     private static final String REDUCE_TICKET_AVAILABILITY =
             "UPDATE event SET available_tickets = available_tickets - 1 WHERE id = ?";
 
-    // 🌟 SELEZIONE CON TUTTI I CAMPI: b.payment_method, b.ticket_code
+    // SELEZIONE CON TUTTI I CAMPI: b.payment_method, b.ticket_code
     private static final String SELECT_BOOKINGS =
             "SELECT b.id, b.status, b.ticket_type, b.price_paid, b.payment_method, b.ticket_code, b.created_at, " +
                     "       u_c.id c_id, u_c.name c_name, u_c.surname c_surname, u_c.email c_email, " +
@@ -49,6 +49,7 @@ public class BookingDAODB extends AbstractBookingDAO {
     private static final String FIND_COMPLETED_BY_CLIENT_AND_ORGANIZER = SELECT_BOOKINGS + "WHERE b.client_id = ? AND e.organizer_id = ? AND b.status = 'CONFIRMED' AND e.date_time <= NOW() ORDER BY e.date_time DESC";
     private static final String FIND_UPCOMING_BY_CLIENT_AND_ORGANIZER = SELECT_BOOKINGS + "WHERE b.client_id = ? AND e.organizer_id = ? AND b.status = 'CONFIRMED' AND e.date_time > NOW() ORDER BY e.date_time ASC";
     private static final String FIND_CANCELLED_BY_CLIENT = SELECT_BOOKINGS + "WHERE b.client_id = ? AND b.status = 'CANCELLED' ORDER BY b.created_at DESC";
+
     @Override
     public void save(Booking booking) throws DAOException {
         try (Connection conn = ConnectionFactory.getConnection();
@@ -232,8 +233,6 @@ public class BookingDAODB extends AbstractBookingDAO {
         Booking booking = new Booking(client, event);
         booking.setId(rs.getInt("id"));
         booking.setStatus(BookingStatus.valueOf(rs.getString("status")));
-
-        // 🌟 ECCO I CAMPI CHE VENIVANO MANGIATI!
         booking.setTicketCode(rs.getString("ticket_code"));
         booking.setTicketType(rs.getString("ticket_type"));
 
@@ -264,7 +263,7 @@ public class BookingDAODB extends AbstractBookingDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    // Ora mapToBooking troverà tutte le colonne perché la query è identica alle altre
+                    // mapToBooking troverà tutte le colonne perché la query è identica alle altre
                     bookings.add(mapToBooking(rs));
                 }
             }

@@ -5,7 +5,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-// 🌟 1. ORA ESTENDE PageGUIView PER PRENDERE LO STESSO SFONDO E NAVBAR!
 public class CreateEventGUIView extends PageGUIView {
 
     public final Button createBtn = new Button("Crea Evento");
@@ -27,7 +26,7 @@ public class CreateEventGUIView extends PageGUIView {
         BorderPane root = buildShell("Crea un Nuovo Evento", onBack, onLogout, onProfile, onHome);
 
         VBox mainContent = new VBox(20);
-        // 🌟 1. ORA È COMPLETAMENTE CENTRATO IN VERTICALE
+        // 1. ORA È COMPLETAMENTE CENTRATO IN VERTICALE
         mainContent.setAlignment(Pos.CENTER);
         mainContent.setMaxWidth(580);
         mainContent.setPadding(new Insets(40, 20, 50, 20));
@@ -88,7 +87,7 @@ public class CreateEventGUIView extends PageGUIView {
                 createBtn, errorLabel
         );
 
-        // 🌟 3. USIAMO STACKPANE PER FORZARE IL CENTRAGGIO TOTALE
+        // 3. USIAMO STACKPANE PER FORZARE IL CENTRAGGIO TOTALE
         StackPane centerWrapper = new StackPane(mainContent);
         centerWrapper.setAlignment(Pos.CENTER);
 

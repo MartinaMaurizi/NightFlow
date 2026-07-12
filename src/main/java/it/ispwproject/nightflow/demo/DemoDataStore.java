@@ -102,8 +102,8 @@ public class DemoDataStore {
                 today.plusDays(10).atTime(23, 0), // Tra 10 giorni alle 23:00
                 "Via Pietrasanta 16, Roma", "Satyrus", 200, 20.0, o2.getId());
 
-        // 🌟 EVENTO PASSATO PER TESTARE LO STORICO PRENOTAZIONI
-        // RISOLTO: Uso di Month.MAY invece di 5
+        //  EVENTO PASSATO PER TESTARE LO STORICO PRENOTAZIONI
+        // Uso di Month.MAY invece di 5
         Event ePassato = new Event(99, "Festa Passata", "Un evento di test nel passato",
                 LocalDateTime.of(2025, Month.MAY, 20, 22, 30), "Via Tribale 3, Roma", "Sanctuary", 100, 15.0, o1.getId());
 
@@ -123,7 +123,7 @@ public class DemoDataStore {
         e1.setAvailableTickets(e1.getAvailableTickets() - 1);
         bookings.add(b1);
 
-        // 🌟 PRENOTAZIONE EVENTO PASSATO PER IL CLIENTE DEMO (c1)
+        // PRENOTAZIONE EVENTO PASSATO PER IL CLIENTE DEMO (c1)
         Booking bPassata = new Booking(c1, ePassato);
         bPassata.setId(999);
         bPassata.setTicketType("Ingresso VIP");
