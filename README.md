@@ -88,6 +88,6 @@ Other test accounts available, see DemoDataStore for the full list.
 | Organizer  | `info@jolieclub.com`          | password123 |
 
 
-Other test accounts available, see BrainBank_db.sql for the full list.
+Other test accounts available, see NightFlow_db.sql for the full list.
 ## Author
 Maurizi Martina
