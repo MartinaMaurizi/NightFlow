@@ -2,7 +2,7 @@
   {
     "id": 1,
     "name": "Karaoke",
-    "description": "serata da non perdere | Orario: 20:00-23:00",
+    "description": "Serata da non perdere | Orario: 20:00-23:00",
     "dateTime": "2026-07-24T20:00:00",
     "location": "Via Tribale 3",
     "localName": "Habitue",
@@ -10,5 +10,53 @@
     "totalCapacity": 80,
     "availableTickets": 80,
     "price": 12.0
+  },
+  {
+    "id": 2,
+    "name": "Techno Party Blackout",
+    "description": "DJ set internazionale fino all\u0027alba. Consumazione inclusa.",
+    "dateTime": "2026-08-15T23:30:00",
+    "location": "Via Roma 10",
+    "localName": "Amnesia Club",
+    "organizerId": 4,
+    "totalCapacity": 300,
+    "availableTickets": 249,
+    "price": 25.0
+  },
+  {
+    "id": 3,
+    "name": "Live Indie Rock",
+    "description": "Concerto live delle migliori band emergenti locali.",
+    "dateTime": "2026-09-05T21:00:00",
+    "location": "Viale della Musica 55",
+    "localName": "RockHouse",
+    "organizerId": 5,
+    "totalCapacity": 150,
+    "availableTickets": 99,
+    "price": 15.0
+  },
+  {
+    "id": 4,
+    "name": "Festa di Fine Estate",
+    "description": "Drink, musica e relax. Dress code: elegante.",
+    "dateTime": "2026-09-20T19:00:00",
+    "location": "Terrazza Panoramica",
+    "localName": "SkyLounge",
+    "organizerId": 4,
+    "totalCapacity": 200,
+    "availableTickets": 180,
+    "price": 30.0
+  },
+  {
+    "id": 5,
+    "name": "Evento Passato (Invisibile)",
+    "description": "Questo evento è di Maggio! Non dovresti vederlo nella tua dashboard.",
+    "dateTime": "2026-05-10T22:00:00",
+    "location": "Via Vecchia 1",
+    "localName": "Old Pub",
+    "organizerId": 4,
+    "totalCapacity": 50,
+    "availableTickets": 50,
+    "price": 10.0
   }
 ]

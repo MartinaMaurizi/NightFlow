@@ -21,7 +21,8 @@ public class DashboardClientGUI {
     public void show() {
         Scene scene = new Scene(view.buildRoot(
                 () -> {
-                    SessionManager.getInstance().setLoggedUser(null);
+                    AppLogger.logInfo("Esecuzione Logout Client: pulizia sessione...");
+                    SessionManager.getInstance().clearSession();
                     MainGUI.showLogin();
                 },
                 () -> new ProfileGUI(stage).show()

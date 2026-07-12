@@ -17,7 +17,8 @@ public class DashboardOrganizerGUI {
     public void show() {
         Scene scene = new Scene(view.buildRoot(
                 () -> {
-                    SessionManager.getInstance().setLoggedUser(null);
+                    AppLogger.logInfo("Esecuzione Logout: pulizia sessione in corso...");
+                    SessionManager.getInstance().clearSession(); // Pulisce SIA l'User che il Bean!
                     MainGUI.showLogin();
                 },
                 () -> {

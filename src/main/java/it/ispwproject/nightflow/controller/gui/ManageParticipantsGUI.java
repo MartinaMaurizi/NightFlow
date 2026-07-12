@@ -4,6 +4,7 @@ import it.ispwproject.nightflow.bean.*;
 import it.ispwproject.nightflow.controller.applicativo.ClientManagementController;
 import it.ispwproject.nightflow.exception.DAOException;
 import it.ispwproject.nightflow.pattern.singleton.SessionManager;
+import it.ispwproject.nightflow.util.logger.AppLogger;
 import it.ispwproject.nightflow.view.gui.ManageParticipantsGUIView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -25,7 +26,8 @@ public class ManageParticipantsGUI {
         BorderPane root = view.buildRoot(
                 () -> new DashboardOrganizerGUI(stage).show(),
                 () -> {
-                    SessionManager.getInstance().setLoggedUser(null);
+                    AppLogger.logInfo("Esecuzione Logout Client: pulizia sessione...");
+                    SessionManager.getInstance().clearSession(); // 🌟 Pulizia completa!
                     MainGUI.showLogin();
                 },
                 () -> new ProfileGUI(stage).show(),

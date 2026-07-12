@@ -8,6 +8,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 public class BookTicketGUIView {
 
@@ -29,6 +30,12 @@ public class BookTicketGUIView {
 
         Label title = new Label(event.getName());
         title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: black;");
+
+        // Mostra la data dell'evento formattata in modo dinamico
+        String formattedDate = event.getDateTime().format(DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy", Locale.ITALIAN));
+        formattedDate = formattedDate.substring(0, 1).toUpperCase() + formattedDate.substring(1);
+        Label dateLabel = new Label("📅 " + formattedDate);
+        dateLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #651fff;");
 
         Label locationLabel = new Label("📍 " + event.getLocalName() + " - " + event.getLocation());
         locationLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #555555;");
@@ -53,27 +60,24 @@ public class BookTicketGUIView {
         Label ingressoLbl = new Label("Ingresso");
         ingressoLbl.setStyle("-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: black;");
 
-        String eventTime = event.getDateTime().format(DateTimeFormatter.ofPattern("HH:mm"));
-        if (event.getDescription().contains("Orario:")) {
-            eventTime = event.getDescription().split("Orario:")[1].trim();
-        } else {
-            eventTime += " - Late";
-        }
+        // 🌟 LOGICA MODIFICATA: Calcolo dell'orario 100% dinamico in base all'ora dell'evento 🌟
+        String startTime = event.getDateTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+        String endTime = event.getDateTime().plusHours(3).format(DateTimeFormatter.ofPattern("HH:mm"));
+        String eventTime = startTime + "-" + endTime;
 
-        // 2. CALCOLIAMO I PREZZI COME NUMERI VERI (DOUBLE)
+        // Calcolo dei prezzi numerici
         double basePriceValue = event.getPrice();
         double drinkPriceValue = event.getPrice() + 5.0;
         double vipPriceValue = event.getPrice() + 85.0;
 
         ticketSection.getChildren().addAll(listeLbl, ingressoLbl,
-                createTicketRow(eventTime, "Senza drink", basePriceValue), // Passiamo il Double
+                createTicketRow(eventTime, "Senza drink", basePriceValue),
                 createTicketRow(eventTime, "Con drink", drinkPriceValue),
                 createTicketRow(eventTime, "Tavolo VIP", vipPriceValue)
         );
 
         checkoutBtn.getStyleClass().add("btn-viola-large");
 
-        // Mostriamo un avviso se non c'è selezione
         checkoutBtn.setOnAction(e -> {
             RadioButton selected = (RadioButton) ticketGroup.getSelectedToggle();
             if (selected != null) {
@@ -88,7 +92,7 @@ public class BookTicketGUIView {
             }
         });
 
-        mainContent.getChildren().addAll(title, locationLabel, imageContainer, ticketSection, checkoutBtn);
+        mainContent.getChildren().addAll(title, dateLabel, locationLabel, imageContainer, ticketSection, checkoutBtn);
 
         VBox centerWrapper = new VBox(mainContent);
         centerWrapper.setAlignment(Pos.TOP_CENTER);
@@ -108,8 +112,8 @@ public class BookTicketGUIView {
         nav.setPadding(new Insets(15, 30, 15, 0));
         nav.setStyle("-fx-background-color: #ede7f6; -fx-border-color: #651fff; -fx-border-width: 0 0 2 0;");
 
-        HBox leftBox = new HBox(5); // Spazio ridotto tra bottone e logo
-        leftBox.setAlignment(Pos.CENTER_LEFT);// Fissiamo una larghezza massima per il blocco sinistro
+        HBox leftBox = new HBox(5);
+        leftBox.setAlignment(Pos.CENTER_LEFT);
 
         backBtn.setText("< Indietro");
         backBtn.getStyleClass().clear();
@@ -150,12 +154,10 @@ public class BookTicketGUIView {
         Label timeLbl = new Label(time); timeLbl.setPrefWidth(100); timeLbl.setStyle("-fx-text-fill: black;");
         Label descLbl = new Label("| " + desc); HBox.setHgrow(descLbl, Priority.ALWAYS); descLbl.setMaxWidth(Double.MAX_VALUE); descLbl.setStyle("-fx-text-fill: black;");
 
-        // Lo mostriamo a schermo con due decimali
-        Label priceLbl = new Label(String.format("%.2f €", finalPrice)); priceLbl.setStyle("-fx-text-fill: black;");
+        Label priceLbl = new Label(String.format(Locale.ITALIAN, "%.2f €", finalPrice)); priceLbl.setStyle("-fx-text-fill: black;");
 
         RadioButton radio = new RadioButton();
         radio.setToggleGroup(ticketGroup);
-        //  Salviamo un ARRAY con la descrizione e il prezzo VERO
         radio.setUserData(new Object[]{desc, finalPrice});
         radio.setStyle("-fx-cursor: hand;");
 

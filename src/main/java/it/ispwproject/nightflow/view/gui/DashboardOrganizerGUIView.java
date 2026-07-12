@@ -1,12 +1,12 @@
 package it.ispwproject.nightflow.view.gui;
 
+import it.ispwproject.nightflow.pattern.singleton.SessionManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-
-public class DashboardOrganizerGUIView extends PageGUIView{
+public class DashboardOrganizerGUIView extends DashboardGUIView {
 
     public final Button logoutBtn = new Button("Log out");
     public final Button createEventBtn = new Button("➕ Crea Evento");
@@ -28,7 +28,16 @@ public class DashboardOrganizerGUIView extends PageGUIView{
         mainContent.setAlignment(Pos.CENTER);
         mainContent.setPadding(new Insets(50));
 
-        Label welcomeLabel = new Label("Benvenuto, Organizzatore!");
+// Recupera il nome
+        String nomeOrganizzatore = "";
+        if (it.ispwproject.nightflow.pattern.singleton.SessionManager.getInstance().getLoggedUser() != null) {
+            nomeOrganizzatore = it.ispwproject.nightflow.pattern.singleton.SessionManager.getInstance().getLoggedUser().getName();
+        }
+
+// Crea la label dinamica
+        Label welcomeLabel = new Label("Benvenuto, Organizzatore " + nomeOrganizzatore + "!");
+
+// Applica il TUO stile (Grande, grassetto, viola)
         welcomeLabel.setStyle("-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #5e17eb;");
 
         Label subTitle = new Label("Cosa vuoi fare oggi?");
@@ -77,7 +86,7 @@ public class DashboardOrganizerGUIView extends PageGUIView{
         HBox rightBox = new HBox(15);
         rightBox.setAlignment(Pos.CENTER_RIGHT);
 
-        // Creiamo i due bottoni icona
+        // Creiamo i due bottoni icona usando il metodo EREDITATO da DashboardGUIView
         profileBtn = createIconButton("/icons/profileButton.png");
         homeBtn = createIconButton("/icons/homeButton.png");
 
@@ -94,5 +103,4 @@ public class DashboardOrganizerGUIView extends PageGUIView{
 
         return nav;
     }
-
 }

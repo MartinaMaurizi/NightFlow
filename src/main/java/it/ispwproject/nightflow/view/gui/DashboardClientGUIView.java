@@ -71,39 +71,40 @@ public class DashboardClientGUIView extends DashboardGUIView {
         nav.setLeft(logo);
         BorderPane.setAlignment(logo, Pos.CENTER_LEFT);
 
-            HBox searchContainer = new HBox(8);
-            searchContainer.setAlignment(Pos.CENTER_LEFT);
-            searchContainer.setPrefWidth(350);
-            searchContainer.setMaxWidth(350);
+        HBox searchContainer = new HBox(8);
+        searchContainer.setAlignment(Pos.CENTER_LEFT);
+        searchContainer.setPrefWidth(350);
+        searchContainer.setMaxWidth(350);
 
-            // gestirà il bordo e l'illuminazione
-            searchContainer.getStyleClass().add("search-field");
+        // gestirà il bordo e l'illuminazione
+        searchContainer.getStyleClass().add("search-field");
 
-            ImageView searchIcon = new ImageView();
-            try {
-                searchIcon.setImage(new Image(getClass().getResourceAsStream("/icons/cerca.png")));
-                searchIcon.setFitHeight(16);
-                searchIcon.setFitWidth(16);
-            } catch (Exception e) {}
+        ImageView searchIcon = new ImageView();
+        try {
+            searchIcon.setImage(new Image(getClass().getResourceAsStream("/icons/cerca.png")));
+            searchIcon.setFitHeight(16);
+            searchIcon.setFitWidth(16);
+        } catch (Exception e) {}
 
-            searchField.setPromptText("Cerca");
-            searchField.setStyle("-fx-background-color: transparent; -fx-text-fill: #5e17eb; -fx-prompt-text-fill: #b39eff;");
+        searchField.setPromptText("Cerca");
+        searchField.setStyle("-fx-background-color: transparent; -fx-text-fill: #5e17eb; -fx-prompt-text-fill: #b39eff;");
 
-            HBox.setHgrow(searchField, Priority.ALWAYS);
+        HBox.setHgrow(searchField, Priority.ALWAYS);
 
-            searchContainer.getChildren().addAll(searchIcon, searchField);
+        searchContainer.getChildren().addAll(searchIcon, searchField);
 
-            // AGGIUNTA EVENTO: Quando clicchi il rettangolo, vai alla ricerca
-            searchContainer.setOnMouseClicked(e -> {
-                // Qui inserisci la chiamata per passare alla vista SearchEvent
-                // Es: MainGUI.showSearchEvent();
-            });
+        // AGGIUNTA EVENTO: Quando clicchi il rettangolo, vai alla ricerca
+        searchContainer.setOnMouseClicked(e -> {
+            // Qui inserisci la chiamata per passare alla vista SearchEvent
+            // Es: MainGUI.showSearchEvent();
+        });
 
-            nav.setCenter(searchContainer);
+        nav.setCenter(searchContainer);
 
         HBox rightBox = new HBox(15);
         rightBox.setAlignment(Pos.CENTER_RIGHT);
 
+        // Uso il metodo EREDITATO da DashboardGUIView
         profileBtn = createIconButton("/icons/profileButton.png");
         profileBtn.setOnAction(e -> onProfile.run());
 
@@ -121,25 +122,6 @@ public class DashboardClientGUIView extends DashboardGUIView {
         BorderPane.setAlignment(rightBox, Pos.CENTER_RIGHT);
 
         return nav;
-    }
-
-    private Button createIconButton(String path) {
-        Button btn = new Button();
-        try {
-            ImageView icon = new ImageView(new Image(getClass().getResourceAsStream(path)));
-            icon.setFitHeight(20); icon.setFitWidth(20);
-            btn.setGraphic(icon);
-        } catch (Exception e) {
-            btn.setText("?");
-        }
-
-        btn.setPrefWidth(35);
-        btn.setMinWidth(35);
-        btn.setMaxWidth(35);
-
-        btn.getStyleClass().add("icon-btn");
-
-        return btn;
     }
 
     public void updateEventList(List<EventBean> events, Consumer<EventBean> onBookClick) {
@@ -222,7 +204,6 @@ public class DashboardClientGUIView extends DashboardGUIView {
         bookBtn.setPrefWidth(250);
         bookBtn.getStyleClass().add("prenota-button");
         bookBtn.setOnAction(e -> onBookClick.accept(event));
-
 
         Label listLabel = new Label("Ingresso in lista");
         listLabel.setStyle("-fx-text-fill: black;");

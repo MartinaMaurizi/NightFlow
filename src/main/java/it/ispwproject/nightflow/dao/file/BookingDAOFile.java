@@ -1,15 +1,15 @@
 package it.ispwproject.nightflow.dao.file;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
 import it.ispwproject.nightflow.dao.AbstractBookingDAO;
 import it.ispwproject.nightflow.enumerator.BookingStatus;
 import it.ispwproject.nightflow.exception.DAOException;
 import it.ispwproject.nightflow.model.Booking;
+import it.ispwproject.nightflow.model.Client;
 import it.ispwproject.nightflow.model.Event;
+import it.ispwproject.nightflow.model.Organizer;
+import it.ispwproject.nightflow.model.User;
 import it.ispwproject.nightflow.util.logger.AppLogger;
 
 import java.io.*;
@@ -29,6 +29,22 @@ public class BookingDAOFile extends AbstractBookingDAO {
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
                 .registerTypeAdapter(LocalTime.class, new LocalTimeAdapter())
+                // 🌟 ECCO LA SOLUZIONE PER LA CLASSE ASTRATTA USER 🌟
+                .registerTypeAdapter(User.class, new JsonDeserializer<User>() {
+                    @Override
+                    public User deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+                        JsonObject jsonObject = json.getAsJsonObject();
+                        // Se c'è il ruolo organizzatore, deserializza come Organizer
+                        if (jsonObject.has("role")) {
+                            String role = jsonObject.get("role").getAsString();
+                            if (role.equalsIgnoreCase("ORGANIZER")) {
+                                return context.deserialize(jsonObject, Organizer.class);
+                            }
+                        }
+                        // Altrimenti, di default, in una prenotazione l'utente è un Client
+                        return context.deserialize(jsonObject, Client.class);
+                    }
+                })
                 .addSerializationExclusionStrategy(new ExclusionStrategy() {
                     @Override
                     public boolean shouldSkipField(FieldAttributes f) { return f.getName().equals("observers"); }
@@ -56,7 +72,6 @@ public class BookingDAOFile extends AbstractBookingDAO {
         updateEventTickets(booking.getEvent().getId(), false);
     }
 
-    // SALVATAGGIO SU FILE
     @Override
     public void update(Booking booking) throws DAOException {
         boolean found = false;
@@ -189,6 +204,7 @@ public class BookingDAOFile extends AbstractBookingDAO {
             AppLogger.logError("Errore aggiornamento eventi JSON: " + e.getMessage());
         }
     }
+
     @Override
     public List<Booking> getBookingsByEventId(int eventId) throws DAOException {
         // Filtriamo la cache (identityMap) che è sempre sincronizzata con il file
@@ -198,6 +214,7 @@ public class BookingDAOFile extends AbstractBookingDAO {
                         && b.getStatus() == BookingStatus.CONFIRMED)
                 .toList();
     }
+
     @Override
     public List<Booking> findCancelledByClient(int clientId) throws DAOException {
         // Filtriamo dalla nostra 'identityMap' (la cache in memoria che legge/scrive sul file JSON)

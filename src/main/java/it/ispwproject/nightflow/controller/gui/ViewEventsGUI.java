@@ -3,6 +3,8 @@ package it.ispwproject.nightflow.controller.gui;
 import it.ispwproject.nightflow.bean.EventBean;
 import it.ispwproject.nightflow.controller.applicativo.EventController;
 import it.ispwproject.nightflow.exception.DAOException;
+import it.ispwproject.nightflow.pattern.singleton.SessionManager;
+import it.ispwproject.nightflow.util.logger.AppLogger;
 import it.ispwproject.nightflow.view.gui.ViewEventsGUIView;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -28,8 +30,9 @@ public class ViewEventsGUI {
     public void show() {
         BorderPane root = view.buildRoot(
                 () -> new DashboardOrganizerGUI(stage).show(), // 1. Azione Indietro
-                () -> {                                        // 2. Azione Logout
-                    it.ispwproject.nightflow.pattern.singleton.SessionManager.getInstance().setLoggedUser(null);
+                () -> {
+                    AppLogger.logInfo("Esecuzione Logout Client: pulizia sessione...");
+                    SessionManager.getInstance().clearSession(); // 🌟 Pulizia completa!
                     MainGUI.showLogin();
                 },
                 () -> new ProfileGUI(stage).show(),            // 3. Azione Profilo

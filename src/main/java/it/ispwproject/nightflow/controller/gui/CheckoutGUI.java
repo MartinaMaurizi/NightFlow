@@ -182,7 +182,8 @@ public class CheckoutGUI {
 
         } catch (Exception dbEx) {
             AppLogger.logError("Errore salvataggio: " + dbEx.getMessage());
-            showAlert(Alert.AlertType.ERROR, "Errore di Sistema", dbEx.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Impossibile completare la prenotazione", dbEx.getMessage());
+            new DashboardClientGUI(stage).show();
         }
     }
 

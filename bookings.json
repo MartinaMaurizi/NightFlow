@@ -26,7 +26,89 @@
     "ticketCode": "NF-TKT-504D7668",
     "paymentMethod": "PAYPAL",
     "createdAt": "2026-07-08T19:02:43.572681",
-    "reservedUntil": "2026-07-08T19:17:43.572681",
-    "ticketType": "Tavolo VIP"
+    "ticketType": "Tavolo VIP",
+    "reservedUntil": "2026-07-08T19:17:43.572681"
+  },
+  {
+    "id": 2,
+    "client": {
+      "id": 2,
+      "name": "Martina",
+      "surname": "Maurizi",
+      "email": "martinamaurizi30@gmail.com",
+      "password": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+      "role": "CLIENT",
+      "dateOfBirth": "2000-07-10",
+      "gender": "Donna",
+      "country": "Italia",
+      "city": "Roma"
+    },
+    "organizer": {
+      "localNames": [],
+      "id": 4,
+      "name": "Luca",
+      "surname": "Messina",
+      "email": "info@jolieclub.com",
+      "role": "ORGANIZER"
+    },
+    "event": {
+      "id": 2,
+      "name": "Techno Party Blackout",
+      "description": "DJ set internazionale fino all\u0027alba. Consumazione inclusa.",
+      "dateTime": "2026-08-15T23:30:00",
+      "location": "Via Roma 10",
+      "localName": "Amnesia Club",
+      "organizerId": 4,
+      "totalCapacity": 300,
+      "availableTickets": 250,
+      "price": 25.0
+    },
+    "status": "CONFIRMED",
+    "ticketCode": "NF-TKT-F346072C",
+    "paymentMethod": "CREDIT_CARD",
+    "createdAt": "2026-07-12T19:19:41.263106",
+    "ticketType": "Tavolo VIP",
+    "reservedUntil": "2026-07-12T19:34:41.263106"
+  },
+  {
+    "id": 3,
+    "client": {
+      "id": 2,
+      "name": "Martina",
+      "surname": "Maurizi",
+      "email": "martinamaurizi30@gmail.com",
+      "password": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+      "role": "CLIENT",
+      "dateOfBirth": "2000-07-10",
+      "gender": "Donna",
+      "country": "Italia",
+      "city": "Roma"
+    },
+    "organizer": {
+      "localNames": [],
+      "id": 5,
+      "name": "Sara",
+      "surname": "Cassino",
+      "email": "info@jerorestaurant.it",
+      "role": "ORGANIZER"
+    },
+    "event": {
+      "id": 3,
+      "name": "Live Indie Rock",
+      "description": "Concerto live delle migliori band emergenti locali.",
+      "dateTime": "2026-09-05T21:00:00",
+      "location": "Viale della Musica 55",
+      "localName": "RockHouse",
+      "organizerId": 5,
+      "totalCapacity": 150,
+      "availableTickets": 100,
+      "price": 15.0
+    },
+    "status": "CONFIRMED",
+    "ticketCode": "NF-TKT-0B4CA718",
+    "paymentMethod": "PAY_ON_SITE",
+    "createdAt": "2026-07-12T19:20:16.700053",
+    "ticketType": "Senza drink",
+    "reservedUntil": "2026-07-12T19:35:16.700053"
   }
 ]

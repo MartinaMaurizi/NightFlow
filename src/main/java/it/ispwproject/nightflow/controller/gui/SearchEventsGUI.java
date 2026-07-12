@@ -23,7 +23,8 @@ public class SearchEventsGUI {
         Scene scene = new Scene(view.buildRoot(
                 () -> new DashboardClientGUI(stage).show(), // Torna indietro pulito
                 () -> {
-                    SessionManager.getInstance().setLoggedUser(null);
+                    AppLogger.logInfo("Esecuzione Logout Client: pulizia sessione...");
+                    SessionManager.getInstance().clearSession(); // 🌟 Pulizia completa!
                     MainGUI.showLogin();
                 },
                 nomeLocaleSelezionato -> {

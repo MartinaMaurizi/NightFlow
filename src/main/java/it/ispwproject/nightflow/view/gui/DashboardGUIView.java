@@ -16,7 +16,28 @@ public abstract class DashboardGUIView {
     public static final int HOUR_START = 18;
     public static final int HOUR_HEIGHT = 32;
 
-    // ── Navbar standardizzata ───────────────────────────────────────────────
+    // ── Utility per icone (Questo risolve l'errore rosso!) ────────────────
+    public Button createIconButton(String path) {
+        Button btn = new Button();
+        try {
+            ImageView icon = new ImageView(new Image(getClass().getResourceAsStream(path)));
+            icon.setFitHeight(20);
+            icon.setFitWidth(20);
+            btn.setGraphic(icon);
+        } catch (Exception e) {
+            btn.setText("?");
+        }
+
+        btn.setPrefWidth(35);
+        btn.setMinWidth(35);
+        btn.setMaxWidth(35);
+
+        btn.getStyleClass().add("icon-btn");
+
+        return btn;
+    }
+
+    // ── Navbar standardizzata (Il tuo metodo originale) ─────────────────────
     public HBox buildNavbar(String ruoloText, Runnable onLogout) {
         HBox navbar = new HBox();
         navbar.getStyleClass().add("navbar");
@@ -25,7 +46,10 @@ public abstract class DashboardGUIView {
 
         // Logo e Nome Utente
         ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/images/logo.png"), 50, 50, true, true));
-        Label welcome = new Label("Bentornato\n" + SessionManager.getInstance().getLoggedUser().getName() + "!");
+
+        // Controllo di sicurezza se l'utente non dovesse essere loggato
+        String userName = (SessionManager.getInstance().getLoggedUser() != null) ? SessionManager.getInstance().getLoggedUser().getName() : "Ospite";
+        Label welcome = new Label("Bentornato\n" + userName + "!");
         welcome.getStyleClass().add("welcome-label");
 
         HBox left = new HBox(15, logoView, welcome);
