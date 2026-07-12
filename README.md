@@ -61,10 +61,10 @@ with the following content:
 db.url=jdbc:mysql://localhost:3306/nightflowdb
 db.user.login=nf_login
 db.user.login.password=nf_login
-db.user.client=nf_client
-db.user.client.password=nf_client
-db.user.organizer=nf_organizer
-db.user.organizer.password=nf_organizer
+db.user.client=nf_cliente
+db.user.client.password=nf_cliente
+db.user.organizer=nf_organizzatore
+db.user.organizer.password=nf_organizzatore
 sendgrid.api.key=YOUR_SENDGRID_API_KEY
 ```
 ⚠️ The `db.properties` file includes database credentials and a placeholder for the SendGrid API key.
